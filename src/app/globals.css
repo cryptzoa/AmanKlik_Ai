@@ -46,6 +46,39 @@ body {
   font-family: var(--font-sans);
 }
 
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+::selection {
+  background: var(--risk);
+  color: white;
+}
+
+.motion-surface {
+  position: relative;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: 12px 12px 0 rgba(17, 17, 17, 0.055);
+}
+
+.motion-surface::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background: linear-gradient(125deg, transparent 0 60%, rgba(99, 91, 255, 0.055));
+}
+
+.lift-link {
+  transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+.lift-link:hover {
+  transform: translateY(-3px);
+}
+
 .landing-grain {
   position: relative;
   isolation: isolate;
@@ -93,5 +126,9 @@ textarea {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+
+  [data-scroll-progress-bar] {
+    display: none;
   }
 }

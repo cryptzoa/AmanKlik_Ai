@@ -1,5 +1,6 @@
 import type { AnalysisResult, RiskSignal } from "@/types/analysis";
 import { RiskScore } from "@/components/result/risk-score";
+import { InteriorShell } from "@/components/site/interior-shell";
 import Link from "next/link";
 
 const sourceLabels: Record<RiskSignal["source"], string> = {
@@ -16,7 +17,7 @@ const modeLabels: Record<AnalysisResult["analysisMode"], string> = {
 
 function SignalRow({ signal, index }: { signal: RiskSignal; index: number }) {
   return (
-    <article className="grid gap-4 border-t border-line py-6 sm:grid-cols-[64px_1fr]">
+    <article data-reveal-card className="group grid gap-4 border-t border-line py-7 transition-colors hover:bg-surface sm:grid-cols-[64px_1fr] sm:px-4">
       <span className="font-mono text-xs text-muted">{String(index + 1).padStart(2, "0")}</span>
       <div>
         <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em]">
@@ -24,7 +25,7 @@ function SignalRow({ signal, index }: { signal: RiskSignal; index: number }) {
           <span className="text-muted">{signal.severity}</span>
         </div>
         <h3 className="mt-2 text-xl font-semibold">{signal.label}</h3>
-        {signal.evidence ? <p className="mt-3 max-w-2xl rounded-xl bg-canvas px-4 py-3 text-sm text-muted">“{signal.evidence}”</p> : null}
+        {signal.evidence ? <p className="mt-3 max-w-2xl border-l-2 border-ai bg-canvas px-4 py-3 text-sm text-muted">“{signal.evidence}”</p> : null}
         <p className="mt-3 max-w-2xl leading-7 text-muted">{signal.explanation}</p>
       </div>
     </article>
@@ -32,15 +33,18 @@ function SignalRow({ signal, index }: { signal: RiskSignal; index: number }) {
 }
 
 export function ResultView({ result }: { result: AnalysisResult }) {
-  return (
-    <main className="min-h-screen px-5 py-8 sm:px-10 lg:px-16">
-      <div className="mx-auto max-w-5xl">
-        <header className="flex items-center justify-between border-b border-line pb-6">
-          <Link className="font-mono text-sm font-semibold uppercase tracking-[0.2em]" href="/">AmanKlik AI</Link>
-          <Link className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-surface" href="/scan">Cek lagi</Link>
-        </header>
+  const isElevated = result.riskLevel === "HIGH" || result.riskLevel === "VERY_HIGH";
 
-        <section className="grid gap-10 border-b border-line py-16 sm:py-24 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+  return (
+    <InteriorShell
+      eyebrow="05 / Result"
+      title={isElevated ? "Jeda sebelum bertindak." : "Tetap periksa konteksnya."}
+      description="Skor bukan vonis. Baca indikator, ketidakpastian, dan tindakan aman sebelum mengambil keputusan berikutnya."
+      marker="SKOR / ALASAN / AKSI"
+      fragments={[result.riskLevel.replace("_", " "), `${result.indicators.length} SINYAL`, modeLabels[result.analysisMode]]}
+      compact
+    >
+        <section data-reveal className="grid gap-12 border-b border-line pb-16 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
           <RiskScore score={result.finalScore} level={result.riskLevel} />
           <div>
             <div className="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-muted">
@@ -48,28 +52,32 @@ export function ResultView({ result }: { result: AnalysisResult }) {
               {result.cacheHit ? <span>· Cache</span> : null}
               <span>· {new Date(result.createdAt).toLocaleString("id-ID")}</span>
             </div>
-            <h1 className="mt-5 max-w-2xl text-4xl font-semibold leading-tight tracking-[-0.04em] sm:text-5xl">{result.summary}</h1>
+            <h2 className="mt-5 max-w-3xl text-4xl font-semibold leading-[1.02] tracking-[-0.05em] sm:text-6xl">{result.summary}</h2>
             <p className="mt-5 max-w-2xl leading-7 text-muted">{result.uncertainty}</p>
+            <Link className="lift-link mt-8 inline-flex min-h-12 items-center rounded-full bg-ink px-6 font-semibold text-surface hover:bg-ai" href="/scan">Periksa pesan lain →</Link>
           </div>
         </section>
 
         {!result.aiAvailable ? (
-          <div className="border-b border-line bg-warning-soft px-5 py-4 text-sm leading-6">
+          <div data-reveal className="border-b border-line bg-warning-soft px-5 py-4 text-sm leading-6">
             <strong>Analisis AI sedang terbatas.</strong> AmanKlik tetap menjalankan pemeriksaan pola dan struktur secara deterministik.
           </div>
         ) : null}
 
-        <section className="py-16" aria-labelledby="evidence-heading">
-          <h2 id="evidence-heading" className="text-3xl font-semibold tracking-[-0.04em]">Kenapa hasilnya seperti ini?</h2>
+        <section data-reveal className="py-16" aria-labelledby="evidence-heading">
+          <div className="grid gap-5 lg:grid-cols-[0.35fr_0.65fr]">
+          <div><p className="font-mono text-xs uppercase tracking-[0.18em] text-ai">01 / Evidence</p><h2 id="evidence-heading" className="mt-4 text-4xl font-semibold tracking-[-0.05em]">Kenapa hasilnya seperti ini?</h2></div>
           <div className="mt-6">
             {result.indicators.length ? result.indicators.map((signal, index) => <SignalRow key={`${signal.id}-${index}`} signal={signal} index={index} />) : <p className="border-t border-line py-6 text-muted">Belum ada indikator spesifik yang terdeteksi. Tetap verifikasi melalui kanal resmi.</p>}
+          </div>
           </div>
         </section>
 
         {result.urlAnalysis ? (
-          <section className="border-t border-line py-16" aria-labelledby="url-heading">
-            <h2 id="url-heading" className="text-3xl font-semibold tracking-[-0.04em]">Anatomi tautan</h2>
-            <p className="mt-5 break-all rounded-2xl bg-canvas p-5 font-mono text-sm leading-7">{result.urlAnalysis.displayUrl}</p>
+          <section data-reveal className="border-t border-line py-16" aria-labelledby="url-heading">
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-ai">02 / URL</p>
+            <h2 id="url-heading" className="mt-4 text-4xl font-semibold tracking-[-0.05em]">Anatomi tautan</h2>
+            <p className="mt-7 break-all border border-line bg-ink p-6 font-mono text-sm leading-7 text-surface sm:text-lg">{result.urlAnalysis.displayUrl}</p>
             <dl className="mt-6 grid gap-4 sm:grid-cols-2">
               <div><dt className="text-xs uppercase tracking-[0.12em] text-muted">Protocol</dt><dd className="mt-1 font-mono">{result.urlAnalysis.protocol}</dd></div>
               <div><dt className="text-xs uppercase tracking-[0.12em] text-muted">Domain utama</dt><dd className="mt-1 font-mono text-lg font-semibold">{result.urlAnalysis.domain ?? "Tidak terbaca"}</dd></div>
@@ -81,17 +89,19 @@ export function ResultView({ result }: { result: AnalysisResult }) {
         ) : null}
 
         {result.previewRedacted ? (
-          <section className="border-t border-line py-16" aria-labelledby="preview-heading">
-            <h2 id="preview-heading" className="text-3xl font-semibold tracking-[-0.04em]">Konteks yang diperiksa</h2>
-            <p className="mt-5 whitespace-pre-wrap break-words rounded-2xl bg-canvas p-5 text-sm leading-7 text-muted">{result.previewRedacted}</p>
+          <section data-reveal className="border-t border-line py-16" aria-labelledby="preview-heading">
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-ai">03 / Context</p>
+            <h2 id="preview-heading" className="mt-4 text-4xl font-semibold tracking-[-0.05em]">Konteks yang diperiksa</h2>
+            <p className="mt-7 whitespace-pre-wrap break-words border-l-4 border-ai bg-surface p-6 text-sm leading-7 text-muted shadow-[10px_10px_0_var(--ai-soft)]">{result.previewRedacted}</p>
           </section>
         ) : null}
 
-        <section className="border-t border-line py-16" aria-labelledby="action-heading">
-          <h2 id="action-heading" className="text-3xl font-semibold tracking-[-0.04em]">Yang sebaiknya dilakukan sekarang</h2>
-          <ol className="mt-6 divide-y divide-line border-y border-line">
+        <section data-reveal className="border-t border-line py-16" aria-labelledby="action-heading">
+          <p className="font-mono text-xs uppercase tracking-[0.18em] text-risk">04 / Action</p>
+          <h2 id="action-heading" className="mt-4 max-w-3xl text-4xl font-semibold tracking-[-0.05em] sm:text-6xl">Yang sebaiknya dilakukan sekarang</h2>
+          <ol className="mt-9 grid gap-px border border-line bg-line md:grid-cols-2">
             {result.actionPlan.map((action, index) => (
-              <li key={action.id} className="grid gap-3 py-5 sm:grid-cols-[48px_1fr]">
+              <li key={action.id} data-reveal-card className="grid min-h-64 gap-3 bg-surface p-6 sm:grid-cols-[48px_1fr] sm:p-8">
                 <span className="font-mono text-sm text-muted">{String(index + 1).padStart(2, "0")}</span>
                 <div>
                   <h3 className="font-semibold">{action.title}</h3>
@@ -107,8 +117,7 @@ export function ResultView({ result }: { result: AnalysisResult }) {
           </ol>
         </section>
 
-        <footer className="border-t border-line py-10 text-sm leading-6 text-muted">{result.disclaimer}</footer>
-      </div>
-    </main>
+        <footer data-reveal className="border-t border-line py-10 text-sm leading-6 text-muted">{result.disclaimer}</footer>
+    </InteriorShell>
   );
 }

@@ -30,7 +30,7 @@ test("core product pages render and connect", async ({ page }) => {
   await expect(page.getByRole("tab", { name: "Pesan" })).toBeVisible();
 
   await page.goto("/simulator");
-  await expect(page.getByRole("heading", { name: /Latih keputusanmu/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Latih refleks amanmu/i })).toBeVisible();
   await expect(page.getByRole("button", { name: "Pemberitahuan OTP" })).toBeVisible();
 });
 
@@ -63,4 +63,30 @@ test("scanner can load every kind of synthetic fixture", async ({ page }) => {
   await page.getByRole("tab", { name: "Screenshot" }).click();
   await page.getByRole("button", { name: /IMG_T1/i }).click();
   await expect(page.getByAltText("Preview screenshot yang dipilih")).toBeVisible();
+});
+
+test("every product surface uses the animated interior system without horizontal overflow", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const surfaces = [
+    ["/scan", /Periksa sebelum percaya/i],
+    ["/simulator", /Latih refleks amanmu/i],
+    ["/learn", /Kenali polanya sendiri/i],
+    ["/history", /Jejak pemeriksaanmu/i],
+    ["/alamat-yang-tidak-ada", /Jalurnya berhenti di sini/i],
+  ] as const;
+
+  for (const [route, heading] of surfaces) {
+    await page.goto(route);
+    await expect(page.getByRole("heading", { name: heading })).toBeVisible();
+    const width = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }));
+    expect(width.scroll, `${route} memiliki horizontal overflow`).toBe(width.client);
+  }
+});
+
+test("Lenis is attached globally when motion is allowed", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/learn");
+
+  await expect.poll(() => page.evaluate(() => document.documentElement.classList.contains("lenis"))).toBe(true);
+  await expect(page.locator("[data-scroll-progress-bar]")).toHaveCount(1);
 });

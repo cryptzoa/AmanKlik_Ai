@@ -1,6 +1,5 @@
-import Link from "next/link";
-
 import { SimulatorClient } from "@/app/simulator/simulator-client";
+import { InteriorShell } from "@/components/site/interior-shell";
 
 export const metadata = {
   title: "Simulator — AmanKlik AI",
@@ -8,19 +7,20 @@ export const metadata = {
 
 export default function SimulatorPage() {
   return (
-    <main className="min-h-screen px-5 py-8 sm:px-10 lg:px-16">
-      <div className="mx-auto max-w-5xl">
-        <header className="flex items-center justify-between border-b border-line pb-6">
-          <Link className="font-mono text-sm font-semibold uppercase tracking-[0.2em]" href="/">AmanKlik AI</Link>
-          <Link className="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-surface" href="/scan">Cek pesan</Link>
-        </header>
-        <section className="py-16 sm:py-24">
-          <p className="font-mono text-xs uppercase tracking-[0.22em] text-ai">AmanKlik / Simulator</p>
-          <h1 className="mt-5 max-w-3xl text-5xl font-semibold leading-[0.98] tracking-[-0.05em] sm:text-7xl">Latih keputusanmu tanpa risiko nyata.</h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">Kenali pola tekanan, rahasia, identitas, dan tautan lewat skenario sintetis.</p>
+    <InteriorShell
+      eyebrow="02 / Simulator"
+      title="Latih refleks amanmu."
+      description="Hadapi skenario sintetis, pilih responsmu, dan lihat kapan keputusan seharusnya dipindahkan ke kanal verifikasi independen."
+      marker="PILIH / NILAI / PELAJARI"
+      fragments={["JANGAN BURU-BURU", "CEK ULANG", "KANAL RESMI"]}
+    >
+      <section data-reveal>
+        <div className="grid gap-8 border-b border-line pb-8 lg:grid-cols-2 lg:items-end">
+          <h2 className="max-w-3xl text-4xl font-semibold leading-[0.95] tracking-[-0.05em] sm:text-6xl">Keputusan kecil, dampak besar.</h2>
+          <p className="max-w-xl text-sm leading-7 text-muted lg:justify-self-end">Tidak ada data nyata atau konsekuensi nyata di sini. Tujuannya membangun jeda sebelum mengeklik, membalas, atau mengirim sesuatu.</p>
+        </div>
           <SimulatorClient />
-        </section>
-      </div>
-    </main>
+      </section>
+    </InteriorShell>
   );
 }
