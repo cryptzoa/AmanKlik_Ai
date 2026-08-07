@@ -86,6 +86,7 @@ Use only synthetic fixtures: new-number impersonation, OTP verification, benign 
 - Added [`DEPLOYMENT_RAILWAY.md`](./DEPLOYMENT_RAILWAY.md) with the Railway PostgreSQL, Gemini secret, `AI_MODE=live`, migration, healthcheck, and verification procedure. The current agent shell still reports Node 22.23.1; the user reports Node 26 on the working machine, and the project accepts Node >=24. Verify the runtime in the shell used for the live check.
 - Replaced the opaque `drizzle-kit migrate` pre-deploy entry point with `scripts/migrate.mjs`. It checks connectivity first and prints only sanitized PostgreSQL error metadata, never the connection URL, so Railway can expose the real migration failure.
 - Railway connectivity is confirmed. The first detailed pre-deploy log identified missing `drizzle/meta/_journal.json`; migration metadata is now versioned because Drizzle requires the journal at runtime.
+- Railway runtime sets `HOSTNAME` to the container ID. `scripts/start.mjs` now forces `0.0.0.0` immediately before loading the Next.js standalone server so deployment healthchecks can reach port `PORT`.
 - The Vitest config emits a non-blocking Vite native-config warning; clean it up when the test config is hardened.
 
 ## Source map
