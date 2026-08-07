@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, desc, eq, gt } from "drizzle-orm";
+import { and, desc, eq, gt, or, sql } from "drizzle-orm";
 
 import { requireDb } from "@/db/client";
 import { analysisCache, scans } from "@/db/schema";
@@ -24,6 +24,7 @@ export async function createScan(input: {
     const [row] = await requireDb()
       .insert(scans)
       .values({
+        id: input.result.scanId,
         sessionId: input.sessionId,
         inputType: input.inputType,
         inputHash: input.inputHash,
@@ -51,7 +52,12 @@ export async function getScanForSession(scanId: string, sessionId: string) {
     const [row] = await requireDb()
       .select()
       .from(scans)
-      .where(and(eq(scans.id, scanId), eq(scans.sessionId, sessionId)))
+      .where(
+        and(
+          eq(scans.sessionId, sessionId),
+          or(eq(scans.id, scanId), sql`${scans.resultJson} ->> 'scanId' = ${scanId}`),
+        ),
+      )
       .limit(1);
 
     return row ?? null;

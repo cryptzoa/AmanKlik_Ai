@@ -88,6 +88,7 @@ Use only synthetic fixtures: new-number impersonation, OTP verification, benign 
 - Railway connectivity is confirmed. The first detailed pre-deploy log identified missing `drizzle/meta/_journal.json`; migration metadata is now versioned because Drizzle requires the journal at runtime.
 - Railway runtime sets `HOSTNAME` to the container ID. `scripts/start.mjs` now forces `0.0.0.0` immediately before loading the Next.js standalone server so deployment healthchecks can reach port `PORT`.
 - `scripts/prepare-standalone.mjs` runs post-build and copies Next static/public assets into the standalone tree; this prevents production CSS/JS requests from returning 404.
+- Scan persistence now uses `AnalysisResult.scanId` as the database primary key. Result lookup also supports the legacy `result_json.scanId` so scans created before the fix remain session-owned and accessible.
 - The Vitest config emits a non-blocking Vite native-config warning; clean it up when the test config is hardened.
 
 ## Source map
