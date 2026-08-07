@@ -87,6 +87,7 @@ Use only synthetic fixtures: new-number impersonation, OTP verification, benign 
 - Replaced the opaque `drizzle-kit migrate` pre-deploy entry point with `scripts/migrate.mjs`. It checks connectivity first and prints only sanitized PostgreSQL error metadata, never the connection URL, so Railway can expose the real migration failure.
 - Railway connectivity is confirmed. The first detailed pre-deploy log identified missing `drizzle/meta/_journal.json`; migration metadata is now versioned because Drizzle requires the journal at runtime.
 - Railway runtime sets `HOSTNAME` to the container ID. `scripts/start.mjs` now forces `0.0.0.0` immediately before loading the Next.js standalone server so deployment healthchecks can reach port `PORT`.
+- `scripts/prepare-standalone.mjs` runs post-build and copies Next static/public assets into the standalone tree; this prevents production CSS/JS requests from returning 404.
 - The Vitest config emits a non-blocking Vite native-config warning; clean it up when the test config is hardened.
 
 ## Source map
