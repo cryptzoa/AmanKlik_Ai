@@ -1,0 +1,60 @@
+import type { ActionItem } from "@/types/analysis";
+
+const ACTIONS: Record<string, ActionItem> = {
+  do_not_click: {
+    id: "do_not_click",
+    priority: "now",
+    title: "Hindari membuka tautan dari pesan",
+    body: "Jika perlu memeriksa akun atau pesanan, buka aplikasi atau alamat resmi secara mandiri.",
+  },
+  do_not_share_credentials: {
+    id: "do_not_share_credentials",
+    priority: "now",
+    title: "Jangan bagikan password atau PIN",
+    body: "Jangan meneruskan password, PIN, atau kata sandi kepada pengirim.",
+  },
+  do_not_share_otp: {
+    id: "do_not_share_otp",
+    priority: "now",
+    title: "Jangan bagikan OTP",
+    body: "Jangan meneruskan kode OTP, PIN, atau kata sandi kepada pengirim.",
+  },
+  verify_independently: {
+    id: "verify_independently",
+    priority: "next",
+    title: "Verifikasi lewat kanal lain",
+    body: "Buka aplikasi atau situs resmi secara mandiri, atau hubungi nomor yang sudah kamu percaya. Jangan memakai kontak dari pesan mencurigakan.",
+  },
+  contact_provider: {
+    id: "contact_provider",
+    priority: "if_already_acted",
+    title: "Hubungi penyedia terkait",
+    body: "Jika sudah memberikan data atau mengirim uang, segera hubungi penyedia layanan melalui kanal resminya.",
+  },
+  secure_account: {
+    id: "secure_account",
+    priority: "if_already_acted",
+    title: "Amankan akun",
+    body: "Ganti kredensial melalui aplikasi resmi dan periksa aktivitas akun jika ada data yang sudah terlanjur diberikan.",
+  },
+  preserve_evidence: {
+    id: "preserve_evidence",
+    priority: "if_already_acted",
+    title: "Simpan bukti",
+    body: "Simpan screenshot, kronologi, identitas transaksi, dan detail relevan untuk proses pelaporan resmi.",
+  },
+  report_officially: {
+    id: "report_officially",
+    priority: "if_already_acted",
+    title: "Gunakan kanal pelaporan resmi",
+    body: "Gunakan kanal resmi penyedia layanan atau institusi terkait, bukan tautan pelaporan dari pesan mencurigakan.",
+  },
+};
+
+const DEFAULT_ACTION_TAGS = ["verify_independently", "do_not_share_credentials", "contact_provider"];
+
+export function actionPlanFor(tags: string[] = []): ActionItem[] {
+  const merged = [...tags, ...DEFAULT_ACTION_TAGS];
+  const uniqueTags = [...new Set(merged)];
+  return uniqueTags.map((tag) => ACTIONS[tag]).filter((action): action is ActionItem => Boolean(action));
+}

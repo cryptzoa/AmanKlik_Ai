@@ -1,0 +1,56 @@
+import "server-only";
+
+import { z } from "zod";
+
+const rawEnvSchema = z.object({
+  NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+  DATABASE_URL: z.string().url().optional(),
+  GEMINI_API_KEY: z.string().min(1).optional(),
+  GEMINI_MODEL: z.string().default("gemini-3.6-flash"),
+  GEMINI_FALLBACK_MODEL: z.string().default("gemini-3.5-flash-lite"),
+  GEMINI_EMBEDDING_MODEL: z.string().default("gemini-embedding-2"),
+  AI_MODE: z.enum(["live", "mock"]).default("mock"),
+  CACHE_HMAC_SECRET: z.string().min(16).default("local-development-secret-change-me"),
+  APP_BASE_URL: z.string().url().default("http://localhost:3000"),
+  SCAN_RATE_LIMIT: z.coerce.number().int().positive().default(10),
+  SCAN_RATE_WINDOW_SECONDS: z.coerce.number().int().positive().default(600),
+  ANALYSIS_CACHE_TTL_SECONDS: z.coerce.number().int().positive().default(86_400),
+  MAX_UPLOAD_BYTES: z.coerce.number().int().positive().default(5_242_880),
+  MAX_TEXT_CHARS: z.coerce.number().int().positive().default(8_000),
+  AI_TIMEOUT_MS: z.coerce.number().int().positive().default(25_000),
+  AI_MAX_CONCURRENCY: z.coerce.number().int().positive().default(2),
+  RAG_TOP_K: z.coerce.number().int().positive().default(3),
+  RAG_EMBEDDING_DIM: z.coerce.number().int().positive().default(768),
+});
+
+const parsedEnv = rawEnvSchema.superRefine((value, context) => {
+  const isNextBuild = process.env.NEXT_PHASE === "phase-production-build";
+
+  if (value.NODE_ENV === "production" && !value.DATABASE_URL && !isNextBuild) {
+    context.addIssue({
+      code: "custom",
+      path: ["DATABASE_URL"],
+      message: "DATABASE_URL is required in production",
+    });
+  }
+
+  if (value.NODE_ENV === "production" && value.AI_MODE === "mock" && !isNextBuild) {
+    context.addIssue({
+      code: "custom",
+      path: ["AI_MODE"],
+      message: "AI_MODE=mock is not allowed in production",
+    });
+  }
+
+  if (value.AI_MODE === "live" && !value.GEMINI_API_KEY) {
+    context.addIssue({
+      code: "custom",
+      path: ["GEMINI_API_KEY"],
+      message: "GEMINI_API_KEY is required when AI_MODE=live",
+    });
+  }
+});
+
+export const env = parsedEnv.parse(process.env);
+
+export type AppEnv = typeof env;
