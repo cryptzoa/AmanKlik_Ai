@@ -32,6 +32,8 @@ pnpm build
 The local test mode uses `AI_MODE=mock`. A Railway deployment must use
 `AI_MODE=live`, a server-side `GEMINI_API_KEY`, PostgreSQL, and migrations.
 
+Deployment step-by-step: [`DEPLOYMENT_RAILWAY.md`](./DEPLOYMENT_RAILWAY.md).
+
 ## Safety boundary
 
 AmanKlik never fetches or probes user-submitted URLs. URL analysis is static and
