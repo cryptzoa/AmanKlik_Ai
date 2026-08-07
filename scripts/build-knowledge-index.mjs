@@ -14,6 +14,10 @@ const optionalEmbedding = process.argv.includes("--optional");
 const embeddingModel = process.env.GEMINI_EMBEDDING_MODEL || "gemini-embedding-2";
 const embeddingDimension = Number(process.env.RAG_EMBEDDING_DIM || 768);
 
+function usesEmbedding2(model) {
+  return model.includes("embedding-2");
+}
+
 function parseList(value = "") {
   return value.split(",").map((item) => item.trim()).filter(Boolean);
 }
@@ -64,14 +68,29 @@ async function embedDocuments(chunks) {
   }
 
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-  const response = await ai.models.embedContent({
-    model: embeddingModel,
-    contents: chunks.map((chunk) => `${chunk.documentTitle}\n${chunk.title}\n${chunk.text}`),
-    config: {
-      taskType: "RETRIEVAL_DOCUMENT",
-      outputDimensionality: embeddingDimension,
-    },
-  });
+  const embedding2 = usesEmbedding2(embeddingModel);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), Number(process.env.AI_TIMEOUT_MS || 25_000));
+  let response;
+  try {
+    response = await ai.models.embedContent({
+      model: embeddingModel,
+      contents: chunks.map((chunk) => ({
+        parts: [{
+          text: embedding2
+            ? `title: ${chunk.documentTitle} | text: ${chunk.title}\n${chunk.text}`
+            : `${chunk.documentTitle}\n${chunk.title}\n${chunk.text}`,
+        }],
+      })),
+      config: {
+        abortSignal: controller.signal,
+        ...(!embedding2 ? { taskType: "RETRIEVAL_DOCUMENT" } : {}),
+        outputDimensionality: embeddingDimension,
+      },
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
 
   if (!response.embeddings || response.embeddings.length !== chunks.length) {
     throw new Error("Jumlah embedding tidak sesuai dengan jumlah chunk.");

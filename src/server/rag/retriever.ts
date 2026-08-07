@@ -92,15 +92,17 @@ function hasEmbeddingIndex(): boolean {
 async function embedQuery(query: string): Promise<number[]> {
   return withAiConcurrency(async () => {
     const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
+    const model = index.embeddingModel ?? env.GEMINI_EMBEDDING_MODEL;
+    const embedding2 = model.includes("embedding-2");
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), env.AI_TIMEOUT_MS);
     try {
       const response = await ai.models.embedContent({
-        model: index.embeddingModel ?? env.GEMINI_EMBEDDING_MODEL,
-        contents: query,
+        model,
+        contents: embedding2 ? `task: search result | query: ${query}` : query,
         config: {
           abortSignal: controller.signal,
-          taskType: "RETRIEVAL_QUERY",
+          ...(!embedding2 ? { taskType: "RETRIEVAL_QUERY" } : {}),
           outputDimensionality: env.RAG_EMBEDDING_DIM,
         },
       });
