@@ -4,7 +4,6 @@ out/
 coverage/
 playwright-report/
 test-results/
-drizzle/meta/
 .env
 .env.*
 !.env.example
