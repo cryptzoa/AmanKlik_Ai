@@ -11,6 +11,16 @@ import type { KnowledgeMatch } from "@/server/rag/types";
 
 export const DISCLAIMER = "Penilaian ini menunjukkan indikator risiko dan dapat keliru. Verifikasi melalui kanal resmi sebelum mengambil keputusan.";
 
+export function hashCanonicalInput(inputType: InputType, canonicalInput: string | Uint8Array): string {
+  if (typeof canonicalInput === "string") return hmacInput(`${inputType}\0${canonicalInput}`);
+
+  const prefix = new TextEncoder().encode(`${inputType}\0`);
+  const namespaced = new Uint8Array(prefix.length + canonicalInput.length);
+  namespaced.set(prefix);
+  namespaced.set(canonicalInput, prefix.length);
+  return hmacInput(namespaced);
+}
+
 export function extractUrls(input: string): string[] {
   return [...input.matchAll(/https?:\/\/[^\s<>]+/gi)]
     .map(([match]) => match.replace(/[),.!?;:]+$/g, ""))
@@ -74,6 +84,16 @@ export function createResult(input: {
   };
 }
 
+export function materializeCachedResult(result: AnalysisResult): AnalysisResult {
+  return {
+    ...result,
+    scanId: randomUUID(),
+    analysisMode: "cached_hybrid",
+    cacheHit: true,
+    createdAt: new Date().toISOString(),
+  };
+}
+
 export async function persistResult(input: {
   sessionId: string;
   inputType: InputType;
@@ -85,7 +105,7 @@ export async function persistResult(input: {
   modelId?: string | null;
   providerLatencyMs?: number | null;
 }) {
-  const inputHash = hmacInput(input.canonicalInput);
+  const inputHash = hashCanonicalInput(input.inputType, input.canonicalInput);
   const expiresAt = new Date(Date.now() + env.ANALYSIS_CACHE_TTL_SECONDS * 1000);
 
   await createScan({
@@ -102,7 +122,7 @@ export async function persistResult(input: {
     expiresAt,
   });
 
-  if (!input.cacheHit) {
+  if (!input.cacheHit && input.aiAvailable) {
     await upsertCache({
       inputHash,
       inputType: input.inputType,
@@ -116,6 +136,8 @@ export async function persistResult(input: {
   return { inputHash, expiresAt };
 }
 
-export async function getCachedResult(canonicalInput: string | Uint8Array) {
-  return findCacheByHash(hmacInput(canonicalInput));
+export async function getCachedResult(inputType: InputType, canonicalInput: string | Uint8Array) {
+  const cached = await findCacheByHash(hashCanonicalInput(inputType, canonicalInput));
+  if (!cached || cached.inputType !== inputType || cached.analysisMode !== "hybrid" || !cached.resultJson.aiAvailable) return null;
+  return cached;
 }

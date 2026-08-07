@@ -2,13 +2,30 @@ import type { AiAnalysis } from "@/server/ai/client";
 import { getAiClient } from "@/server/ai";
 import { analyzeUrl } from "@/server/url/analyzer";
 import { fuseRisk } from "@/server/risk/engine";
-import { aiSignalsFromResult, createResult, persistResult } from "@/server/scan/shared";
+import { aiSignalsFromResult, createResult, getCachedResult, materializeCachedResult, persistResult } from "@/server/scan/shared";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
 import { formatKnowledgeForPrompt, retrieveKnowledge } from "@/server/rag/retriever";
 
 export async function analyzeSubmittedUrl(input: { url: string; sessionId?: string }) {
   const urlAnalysis = analyzeUrl(input.url);
   const sessionId = input.sessionId ?? (await getAnonymousSessionId());
+  const canonicalInput = input.url.trim();
+  const cached = await getCachedResult("url", canonicalInput);
+  if (cached) {
+    const result = materializeCachedResult(cached.resultJson);
+    await persistResult({
+      sessionId,
+      inputType: "url",
+      canonicalInput,
+      result,
+      analysisMode: "cached_hybrid",
+      aiAvailable: true,
+      cacheHit: true,
+      modelId: cached.modelId,
+    });
+    return { result, degraded: false, sessionId };
+  }
+
   const knowledge = await retrieveKnowledge([
     "tautan url domain phishing login",
     urlAnalysis.displayUrl,
@@ -57,7 +74,7 @@ export async function analyzeSubmittedUrl(input: { url: string; sessionId?: stri
   await persistResult({
     sessionId,
     inputType: "url",
-    canonicalInput: input.url.trim(),
+    canonicalInput,
     result,
     analysisMode: fusion.analysisMode,
     aiAvailable: Boolean(aiAnalysis),

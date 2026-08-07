@@ -5,13 +5,29 @@ import { preprocessImage, type UploadFile } from "@/server/image/preprocess";
 import { analyzeUrl } from "@/server/url/analyzer";
 import { fuseRisk } from "@/server/risk/engine";
 import { detectMessageSignals, normalizeText } from "@/server/risk/signals";
-import { aiSignalsFromResult, createResult, extractUrls, persistResult } from "@/server/scan/shared";
+import { aiSignalsFromResult, createResult, extractUrls, getCachedResult, materializeCachedResult, persistResult } from "@/server/scan/shared";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
 import { retrieveKnowledge } from "@/server/rag/retriever";
 
 export async function analyzeImage(input: { file: UploadFile; sessionId?: string }) {
   const processed = await preprocessImage(input.file);
   const sessionId = input.sessionId ?? (await getAnonymousSessionId());
+  const cached = await getCachedResult("image", processed.bytes);
+  if (cached) {
+    const result = materializeCachedResult(cached.resultJson);
+    await persistResult({
+      sessionId,
+      inputType: "image",
+      canonicalInput: processed.bytes,
+      result,
+      analysisMode: "cached_hybrid",
+      aiAvailable: true,
+      cacheHit: true,
+      modelId: cached.modelId,
+    });
+    return { result, degraded: false, sessionId };
+  }
+
   let aiAnalysis: AiAnalysis;
 
   try {

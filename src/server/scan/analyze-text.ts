@@ -3,13 +3,29 @@ import type { AiAnalysis } from "@/server/ai/client";
 import { analyzeUrl } from "@/server/url/analyzer";
 import { fuseRisk } from "@/server/risk/engine";
 import { detectMessageSignals, normalizeText } from "@/server/risk/signals";
-import { aiSignalsFromResult, createResult, extractUrls, persistResult } from "@/server/scan/shared";
+import { aiSignalsFromResult, createResult, extractUrls, getCachedResult, materializeCachedResult, persistResult } from "@/server/scan/shared";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
 import { formatKnowledgeForPrompt, retrieveKnowledge } from "@/server/rag/retriever";
 
 export async function analyzeText(input: { text: string; sessionId?: string }) {
   const normalizedText = normalizeText(input.text);
   const sessionId = input.sessionId ?? (await getAnonymousSessionId());
+  const cached = await getCachedResult("text", normalizedText);
+  if (cached) {
+    const result = materializeCachedResult(cached.resultJson);
+    await persistResult({
+      sessionId,
+      inputType: "text",
+      canonicalInput: normalizedText,
+      result,
+      analysisMode: "cached_hybrid",
+      aiAvailable: true,
+      cacheHit: true,
+      modelId: cached.modelId,
+    });
+    return { result, degraded: false, sessionId };
+  }
+
   const ruleSignals = detectMessageSignals(normalizedText);
   const urls = extractUrls(normalizedText);
   const urlAnalysis = urls[0] ? analyzeUrl(urls[0]) : null;

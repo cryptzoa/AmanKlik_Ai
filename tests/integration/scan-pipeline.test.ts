@@ -23,6 +23,7 @@ describe("mock scan pipeline", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     repositoryMocks.createScan.mockResolvedValue({ id: "scan-id" });
+    repositoryMocks.findCacheByHash.mockResolvedValue(null);
     repositoryMocks.upsertCache.mockResolvedValue(undefined);
   });
 
@@ -58,5 +59,26 @@ describe("mock scan pipeline", () => {
     expect(output.result.inputType).toBe("image");
     expect(output.result.aiAvailable).toBe(true);
     expect(repositoryMocks.createScan).toHaveBeenCalledOnce();
+  });
+
+  it("materializes a cache hit with a fresh scan ID without calling the provider path", async () => {
+    const fixture = DEMO_TEXT_FIXTURES.find((item) => item.id === "T1");
+    const initial = await analyzeText({ text: fixture?.text ?? "", sessionId });
+    repositoryMocks.findCacheByHash.mockResolvedValue({
+      inputType: "text",
+      analysisMode: "hybrid",
+      modelId: initial.result.modelId,
+      resultJson: initial.result,
+    });
+    repositoryMocks.createScan.mockClear();
+    repositoryMocks.upsertCache.mockClear();
+
+    const cached = await analyzeText({ text: fixture?.text ?? "", sessionId });
+
+    expect(cached.result.scanId).not.toBe(initial.result.scanId);
+    expect(cached.result.analysisMode).toBe("cached_hybrid");
+    expect(cached.result.cacheHit).toBe(true);
+    expect(repositoryMocks.createScan).toHaveBeenCalledOnce();
+    expect(repositoryMocks.upsertCache).not.toHaveBeenCalled();
   });
 });
