@@ -84,6 +84,7 @@ Use only synthetic fixtures: new-number impersonation, OTP verification, benign 
 - No local PostgreSQL or Gemini key is configured. Valid scan requests correctly fail with a safe save error until `DATABASE_URL` is available; the app does not fake persistence. Health is intentionally degraded-but-200 in local development without a database and must be healthy with DB connectivity in production.
 - RAG corpus/index, full cache-hit path, real screenshot fixture assets, stronger P0 E2E for scan flows, security headers/CSP, and Railway deployment/prewarm remain.
 - Added [`DEPLOYMENT_RAILWAY.md`](./DEPLOYMENT_RAILWAY.md) with the Railway PostgreSQL, Gemini secret, `AI_MODE=live`, migration, healthcheck, and verification procedure. The current agent shell still reports Node 22.23.1; the user reports Node 26 on the working machine, and the project accepts Node >=24. Verify the runtime in the shell used for the live check.
+- Replaced the opaque `drizzle-kit migrate` pre-deploy entry point with `scripts/migrate.mjs`. It checks connectivity first and prints only sanitized PostgreSQL error metadata, never the connection URL, so Railway can expose the real migration failure.
 - The Vitest config emits a non-blocking Vite native-config warning; clean it up when the test config is hardened.
 
 ## Source map
