@@ -12,6 +12,16 @@ test("health endpoint responds with the public envelope", async ({ request }) =>
   expect(typeof body.data.version).toBe("string");
 });
 
+test("public pages send the baseline browser security policy", async ({ request }) => {
+  const response = await request.get("/");
+
+  expect(response.headers()["x-content-type-options"]).toBe("nosniff");
+  expect(response.headers()["x-frame-options"]).toBe("DENY");
+  expect(response.headers()["cross-origin-opener-policy"]).toBe("same-origin");
+  expect(response.headers()["content-security-policy"]).toContain("frame-ancestors 'none'");
+  expect(response.headers()["content-security-policy"]).toContain("object-src 'none'");
+});
+
 test("core product pages render and connect", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: /Jangan percaya pesannya/i })).toBeVisible();
@@ -22,4 +32,35 @@ test("core product pages render and connect", async ({ page }) => {
   await page.goto("/simulator");
   await expect(page.getByRole("heading", { name: /Latih keputusanmu/i })).toBeVisible();
   await expect(page.getByRole("button", { name: "Pemberitahuan OTP" })).toBeVisible();
+});
+
+test("landing stays readable with reduced motion and on mobile", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+
+  await expect(page.getByRole("heading", { name: /Jangan percaya pesannya/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Satu pesan/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Nama merek bisa ditempel/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Bukan keputusan AI mentah/i })).toBeVisible();
+
+  const width = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }));
+  expect(width.scroll).toBe(width.client);
+  await page.getByText("Menu", { exact: true }).click();
+  await expect(page.getByRole("navigation", { name: "Navigasi seluler" })).toBeVisible();
+});
+
+test("scanner can load every kind of synthetic fixture", async ({ page }) => {
+  await page.goto("/scan");
+
+  await page.getByRole("button", { name: /T2 · Ancaman/i }).click();
+  await expect(page.getByLabel("Tempel pesan yang ingin diperiksa")).toContainText("kode OTP");
+
+  await page.getByRole("tab", { name: "Tautan" }).click();
+  await page.getByRole("button", { name: /U2 · Host/i }).click();
+  await expect(page.getByLabel("Tautan yang ingin diperiksa")).toHaveValue("http://192.0.2.10/verify-account");
+
+  await page.getByRole("tab", { name: "Screenshot" }).click();
+  await page.getByRole("button", { name: /IMG_T1/i }).click();
+  await expect(page.getByAltText("Preview screenshot yang dipilih")).toBeVisible();
 });

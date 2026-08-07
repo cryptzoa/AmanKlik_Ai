@@ -4,10 +4,16 @@ import { analyzeUrl } from "@/server/url/analyzer";
 import { fuseRisk } from "@/server/risk/engine";
 import { aiSignalsFromResult, createResult, persistResult } from "@/server/scan/shared";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
+import { formatKnowledgeForPrompt, retrieveKnowledge } from "@/server/rag/retriever";
 
 export async function analyzeSubmittedUrl(input: { url: string; sessionId?: string }) {
   const urlAnalysis = analyzeUrl(input.url);
   const sessionId = input.sessionId ?? (await getAnonymousSessionId());
+  const knowledge = await retrieveKnowledge([
+    "tautan url domain phishing login",
+    urlAnalysis.displayUrl,
+    ...urlAnalysis.signals.map((signal) => signal.label),
+  ].join(" "));
   let aiAnalysis: AiAnalysis | null = null;
 
   try {
@@ -15,6 +21,7 @@ export async function analyzeSubmittedUrl(input: { url: string; sessionId?: stri
       normalizedText: urlAnalysis.displayUrl,
       deterministicSignals: urlAnalysis.signals,
       urlAnalysis,
+      knowledge: formatKnowledgeForPrompt(knowledge.matches),
     });
   } catch {
     aiAnalysis = null;
@@ -43,6 +50,7 @@ export async function analyzeSubmittedUrl(input: { url: string; sessionId?: stri
     indicators: fusion.indicators,
     urlAnalysis,
     actionTags: ["do_not_click", "verify_independently", ...(aiAnalysis?.result.recommendedActionTags ?? [])],
+    knowledge: knowledge.matches,
     uncertainty: aiAnalysis?.result.uncertainty ?? "Analisis AI tidak tersedia; hasil hanya berdasarkan struktur URL.",
   });
 

@@ -4,11 +4,14 @@ import { analyzeSubmittedUrl } from "@/server/scan/analyze-url";
 import { analyzeUrl } from "@/server/url/analyzer";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
 import { consumeRateLimit } from "@/server/rate-limit/limiter";
+import { assertJsonRequest, assertSameOrigin } from "@/lib/request-security";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
+    assertSameOrigin(request);
+    assertJsonRequest(request);
     const body = urlScanRequestSchema.parse(await request.json());
     analyzeUrl(body.url);
     const sessionId = await getAnonymousSessionId();

@@ -7,6 +7,7 @@ import { createScan, findCacheByHash, upsertCache } from "@/db/repositories/scan
 import type { AnalysisMode, AnalysisResult, InputType, RiskSignal, UrlAnalysis } from "@/types/analysis";
 import type { AiAnalysis } from "@/server/ai/client";
 import { actionPlanFor } from "@/server/scan/actions";
+import type { KnowledgeMatch } from "@/server/rag/types";
 
 export const DISCLAIMER = "Penilaian ini menunjukkan indikator risiko dan dapat keliru. Verifikasi melalui kanal resmi sebelum mengambil keputusan.";
 
@@ -45,6 +46,7 @@ export function createResult(input: {
   indicators: RiskSignal[];
   urlAnalysis?: UrlAnalysis | null;
   actionTags?: string[];
+  knowledge?: KnowledgeMatch[];
   uncertainty: string;
 }): AnalysisResult {
   return {
@@ -65,7 +67,7 @@ export function createResult(input: {
       evidence: signal.evidence ? redactEvidence(signal.evidence) : undefined,
     })),
     urlAnalysis: input.urlAnalysis ?? null,
-    actionPlan: actionPlanFor(input.actionTags),
+    actionPlan: actionPlanFor(input.actionTags, input.knowledge),
     uncertainty: input.uncertainty.trim(),
     disclaimer: DISCLAIMER,
     createdAt: new Date().toISOString(),

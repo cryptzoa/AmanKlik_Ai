@@ -79,8 +79,11 @@ export function fuseRisk(input: RiskFusionInput): RiskFusionOutput {
   const hasRemoteAccess = hasCategory(allSignals, "remote_access");
   const hasFinance = input.claimedFinanceContext || hasCategory(allSignals, "payment_request");
   const hasBrandMismatch = hasCategory(allSignals, "brand_domain_mismatch");
+  const hasThreat = hasCategory(allSignals, "threat");
+  const hasUrgency = hasCategory(allSignals, "urgency");
 
   if (hasOtp && input.claimedFinanceContext) finalScore = Math.max(finalScore, 60);
+  if (hasOtp && hasFinance && hasThreat && hasUrgency) finalScore = Math.max(finalScore, 80);
   if (hasRemoteAccess && hasFinance) finalScore = Math.max(finalScore, 70);
   if (hasBrandMismatch && hasCredentialRequest) finalScore = Math.max(finalScore, 70);
 

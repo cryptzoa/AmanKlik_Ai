@@ -34,6 +34,21 @@ describe("message rules and deterministic fusion", () => {
     expect(result.finalScore).toBeGreaterThanOrEqual(70);
   });
 
+  it("treats the compound OTP threat fixture as very high risk", () => {
+    const signals = detectMessageSignals(
+      "Akun Anda akan dibatasi hari ini. Balas pesan ini dengan kode OTP yang baru dikirim.",
+    );
+    const result = fuseRisk({
+      inputType: "text",
+      ruleSignals: signals,
+      aiAvailable: false,
+      claimedFinanceContext: true,
+    });
+
+    expect(result.finalScore).toBeGreaterThanOrEqual(80);
+    expect(result.riskLevel).toBe("VERY_HIGH");
+  });
+
   it("uses a normalized 50/50 screenshot fusion when no URL exists", () => {
     const result = fuseRisk({
       inputType: "image",

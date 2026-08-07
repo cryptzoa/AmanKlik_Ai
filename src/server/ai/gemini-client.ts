@@ -8,6 +8,7 @@ import { redactEvidence } from "@/lib/redaction";
 import { IMAGE_ANALYSIS_PROMPT, SYSTEM_INSTRUCTION, textAnalysisPrompt } from "@/server/ai/prompts";
 import { AiSemanticJsonSchema, AiSemanticResultSchema, type AiSemanticResult } from "@/server/ai/schemas";
 import type { AiAnalysis, AiClient, AnalyzeImageInput, AnalyzeTextInput } from "@/server/ai/client";
+import { withAiConcurrency } from "@/server/ai/concurrency";
 
 function parseResponse(raw: string | undefined): AiSemanticResult {
   if (!raw) throw new AiSchemaError("Gemini returned an empty response");
@@ -42,7 +43,11 @@ function retryable(error: unknown): boolean {
 export class GeminiAiClient implements AiClient {
   private readonly ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
 
-  private async generate(contents: Parameters<GoogleGenAI["models"]["generateContent"]>[0]["contents"]): Promise<AiAnalysis> {
+  private generate(contents: Parameters<GoogleGenAI["models"]["generateContent"]>[0]["contents"]): Promise<AiAnalysis> {
+    return withAiConcurrency(() => this.generateWithinLimit(contents));
+  }
+
+  private async generateWithinLimit(contents: Parameters<GoogleGenAI["models"]["generateContent"]>[0]["contents"]): Promise<AiAnalysis> {
     const startedAt = Date.now();
     let attemptedFallback = false;
     let lastError: unknown;

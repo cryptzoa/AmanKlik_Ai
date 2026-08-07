@@ -2,11 +2,10 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { DEMO_IMAGE_FIXTURES, DEMO_TEXT_FIXTURES, DEMO_URL_FIXTURES } from "@/lib/demo/scan-fixtures";
 
 type ScanMode = "text" | "image" | "url";
 type ScanStatus = "idle" | "loading" | "error";
-
-const textExample = "Bu, ini nomor baru aku. Nomor lama rusak. Aku lagi ada masalah dan butuh transfer sekarang. Tolong verifikasi lewat tautan ini.";
 
 const tabs: Array<{ id: ScanMode; label: string }> = [
   { id: "text", label: "Pesan" },
@@ -21,6 +20,7 @@ export function ScanClient() {
   const [url, setUrl] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<ScanStatus>("idle");
+  const [demoLoading, setDemoLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -33,6 +33,21 @@ export function ScanClient() {
   function selectMode(nextMode: ScanMode) {
     setMode(nextMode);
     setError(null);
+  }
+
+  async function selectImageDemo(path: string, title: string) {
+    setError(null);
+    setDemoLoading(true);
+    try {
+      const response = await fetch(path);
+      if (!response.ok) throw new Error("Fixture screenshot belum tersedia.");
+      const blob = await response.blob();
+      setFile(new File([blob], `${title.toLocaleLowerCase("id-ID").replace(/[^a-z0-9]+/g, "-")}.png`, { type: "image/png" }));
+    } catch (demoError) {
+      setError(demoError instanceof Error ? demoError.message : "Fixture screenshot belum tersedia.");
+    } finally {
+      setDemoLoading(false);
+    }
   }
 
   async function submit() {
@@ -72,7 +87,7 @@ export function ScanClient() {
     }
   }
 
-  const disabled = status === "loading";
+  const disabled = status === "loading" || demoLoading;
   const canSubmit = mode === "text" ? text.trim().length >= 8 : mode === "url" ? url.trim().length > 0 : Boolean(file);
 
   return (
@@ -164,11 +179,24 @@ export function ScanClient() {
 
       {status === "loading" ? <p className="mt-5 text-sm text-muted" role="status">Memvalidasi input dan menyusun penjelasan…</p> : null}
       {error ? <p className="mt-5 rounded-2xl border border-risk/30 bg-risk-soft px-4 py-3 text-sm text-ink" role="alert">{error}</p> : null}
-      {mode === "text" && !text ? (
-        <button type="button" className="mt-5 text-sm font-semibold text-ai underline underline-offset-4" onClick={() => setText(textExample)}>
-          Gunakan contoh sintetis
-        </button>
-      ) : null}
+      <div className="mt-6" aria-label="Fixture demo sintetis">
+        <p className="font-mono text-xs uppercase tracking-[0.16em] text-muted">Contoh sintetis · tanpa data nyata</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {mode === "text" ? DEMO_TEXT_FIXTURES.map((fixture) => (
+            <button key={fixture.id} type="button" className="rounded-full border border-line bg-surface px-4 py-2 text-sm font-semibold transition hover:border-ai hover:text-ai" onClick={() => setText(fixture.text)}>
+              {fixture.id} · {fixture.title}
+            </button>
+          )) : mode === "url" ? DEMO_URL_FIXTURES.map((fixture) => (
+            <button key={fixture.id} type="button" className="rounded-full border border-line bg-surface px-4 py-2 text-sm font-semibold transition hover:border-ai hover:text-ai" onClick={() => setUrl(fixture.url)}>
+              {fixture.id} · {fixture.title}
+            </button>
+          )) : DEMO_IMAGE_FIXTURES.map((fixture) => (
+            <button key={fixture.id} type="button" disabled={demoLoading} className="rounded-full border border-line bg-surface px-4 py-2 text-sm font-semibold transition hover:border-ai hover:text-ai disabled:opacity-50" onClick={() => selectImageDemo(fixture.path, fixture.title)}>
+              {fixture.id} · {fixture.title}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

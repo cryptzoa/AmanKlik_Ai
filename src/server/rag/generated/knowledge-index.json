@@ -1,0 +1,183 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-07T20:05:30.018Z",
+  "embeddingModel": null,
+  "embeddingDimension": null,
+  "chunks": [
+    {
+      "id": "iasc-after-transfer-1",
+      "documentId": "iasc-after-transfer",
+      "title": "Bertindak cepat dan simpan bukti",
+      "documentTitle": "Langkah segera setelah terlanjur transfer",
+      "publisher": "Indonesia Anti-Scam Centre (IASC)",
+      "sourceUrl": "https://iasc.ojk.go.id/",
+      "retrievedAt": "2026-08-08",
+      "language": "id",
+      "topics": [
+        "transfer",
+        "reporting",
+        "recovery",
+        "evidence"
+      ],
+      "actionTags": [
+        "contact_provider",
+        "preserve_evidence",
+        "report_officially"
+      ],
+      "keywords": [
+        "transfer",
+        "kirim uang",
+        "rekening",
+        "pembayaran",
+        "terlanjur",
+        "bukti transfer",
+        "lapor",
+        "penipuan",
+        "iasc",
+        "kronologi"
+      ],
+      "text": "Jika uang sudah terlanjur dikirim karena dugaan penipuan, segera hubungi penyedia layanan keuangan melalui kanal resminya. Laporkan kejadian melalui Indonesia Anti-Scam Centre dan kepada penegak hukum sesuai petunjuk resmi.\n\nSiapkan bukti transfer, data rekening tujuan, kronologi, dan screenshot percakapan. Jangan mengedit bukti asli; simpan salinan dan catat waktu kejadian agar proses pelaporan lebih jelas.",
+      "embedding": []
+    },
+    {
+      "id": "ojk-account-recovery-1",
+      "documentId": "ojk-account-recovery",
+      "title": "Putus akses dan periksa aktivitas",
+      "documentTitle": "Amankan akun setelah data terpapar",
+      "publisher": "Otoritas Jasa Keuangan",
+      "sourceUrl": "https://ojk.go.id/id/Publikasi/E-Magazine/Documents/Majalah%20Edukasi%20Konsumen%20Triwulan%20III%202023.pdf",
+      "retrievedAt": "2026-08-08",
+      "language": "id",
+      "topics": [
+        "recovery",
+        "password",
+        "pin",
+        "evidence",
+        "reporting"
+      ],
+      "actionTags": [
+        "secure_account",
+        "contact_provider",
+        "preserve_evidence",
+        "report_officially"
+      ],
+      "keywords": [
+        "data terlanjur",
+        "bocor akun",
+        "ambil alih akun",
+        "ganti password",
+        "ganti pin",
+        "blokir rekening",
+        "aktivitas akun",
+        "lapor bank"
+      ],
+      "text": "Jika data pribadi atau kredensial sudah terlanjur diberikan, hubungi penyedia layanan melalui kanal resmi, amankan akun, dan periksa transaksi atau aktivitas yang tidak dikenali. Ubah password atau PIN dari perangkat dan aplikasi yang dipercaya.\n\nSimpan bukti percakapan dan catatan tindakan yang sudah dilakukan. Gunakan kanal pengaduan resmi lembaga terkait; jangan mengikuti instruksi pemulihan yang datang dari pengirim mencurigakan.",
+      "embedding": []
+    },
+    {
+      "id": "ojk-credential-secrets-1",
+      "documentId": "ojk-credential-secrets",
+      "title": "Rahasia autentikasi tidak boleh dibagikan",
+      "documentTitle": "Lindungi OTP, PIN, dan password",
+      "publisher": "Otoritas Jasa Keuangan",
+      "sourceUrl": "https://www.ojk.go.id/id/Fungsi-Utama/ITSK/Informasi-IAKD/Digital-Financial-Literacy/Documents/2.%20Proteksi%20Diri%20dari%20Kejahatan%20Digital.pdf",
+      "retrievedAt": "2026-08-08",
+      "language": "id",
+      "topics": [
+        "otp",
+        "pin",
+        "password",
+        "kredensial",
+        "impersonation"
+      ],
+      "actionTags": [
+        "do_not_share_otp",
+        "do_not_share_credentials",
+        "secure_account"
+      ],
+      "keywords": [
+        "otp",
+        "kode otp",
+        "kode verifikasi",
+        "pin",
+        "password",
+        "kata sandi",
+        "kredensial",
+        "petugas bank",
+        "akun diblokir"
+      ],
+      "text": "OTP, PIN, password, dan kode verifikasi adalah rahasia autentikasi. Jangan memberikannya kepada siapa pun, termasuk orang yang mengaku sebagai pegawai bank, marketplace, kurir, atau layanan digital.\n\nPermintaan yang mendesak, ancaman pemblokiran akun, atau janji hadiah tidak mengubah aturan ini. Jika data sudah terlanjur diberikan, buka aplikasi resmi secara mandiri, ganti kredensial yang relevan, dan periksa aktivitas akun.",
+      "embedding": []
+    },
+    {
+      "id": "ojk-domain-caution-1",
+      "documentId": "ojk-domain-caution",
+      "title": "Baca domain dari kanan ke kiri",
+      "documentTitle": "Periksa alamat layanan sebelum membuka tautan",
+      "publisher": "Otoritas Jasa Keuangan",
+      "sourceUrl": "https://sikapiuangmu.ojk.go.id/FrontEnd/images/FileDownload/417_Perbankan-4a%20mudah%20dan%20aman%20dengan%20internet%20banking%20dan%20mobile%20banking_2018_small.pdf",
+      "retrievedAt": "2026-08-08",
+      "language": "id",
+      "topics": [
+        "url",
+        "domain",
+        "phishing",
+        "official-channel"
+      ],
+      "actionTags": [
+        "do_not_click",
+        "verify_independently"
+      ],
+      "keywords": [
+        "link",
+        "tautan",
+        "url",
+        "domain",
+        "subdomain",
+        "alamat situs",
+        "website",
+        "situs",
+        "login",
+        "https",
+        "ip address",
+        "alamat ip",
+        "phishing"
+      ],
+      "text": "Nama merek yang muncul di subdomain atau path belum membuktikan bahwa sebuah situs dikelola oleh merek tersebut. Fokus pada domain utama dan ejaannya; perbedaan satu karakter, susunan kata yang janggal, atau host berupa alamat IP patut dicurigai.\n\nUntuk membuka layanan keuangan atau akun penting, ketik alamat yang sudah dikenal atau gunakan aplikasi resmi. Jangan menjadikan tautan dari pesan mencurigakan sebagai rujukan resmi.",
+      "embedding": []
+    },
+    {
+      "id": "ojk-independent-verification-1",
+      "documentId": "ojk-independent-verification",
+      "title": "Pisahkan klaim dari kanal verifikasi",
+      "documentTitle": "Verifikasi melalui kanal resmi yang dicari sendiri",
+      "publisher": "Otoritas Jasa Keuangan",
+      "sourceUrl": "https://sikapiuangmu.ojk.go.id/FrontEnd/images/FileDownload/417_Perbankan-4a%20mudah%20dan%20aman%20dengan%20internet%20banking%20dan%20mobile%20banking_2018_small.pdf",
+      "retrievedAt": "2026-08-08",
+      "language": "id",
+      "topics": [
+        "verification",
+        "impersonation",
+        "official-channel"
+      ],
+      "actionTags": [
+        "verify_independently",
+        "contact_provider"
+      ],
+      "keywords": [
+        "verifikasi",
+        "nomor baru",
+        "ganti nomor",
+        "atasan",
+        "keluarga",
+        "petugas",
+        "cs bank",
+        "customer service",
+        "kanal resmi",
+        "hubungi bank"
+      ],
+      "text": "Jangan memverifikasi sebuah pesan dengan nomor telepon, tautan, atau kontak yang disediakan oleh pesan itu sendiri. Cari kanal resmi secara mandiri melalui aplikasi, kartu, dokumen, atau situs yang sudah dikenal.\n\nUntuk pesan yang mengaku berasal dari keluarga, atasan, bank, atau penyedia layanan, hubungi kembali lewat nomor atau akun yang sebelumnya sudah dipercaya. Perubahan nomor dan permintaan mendadak perlu dikonfirmasi sebelum bertindak.",
+      "embedding": []
+    }
+  ]
+}

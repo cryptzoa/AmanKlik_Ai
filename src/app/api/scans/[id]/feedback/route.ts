@@ -4,9 +4,12 @@ import { getScanForSession } from "@/db/repositories/scan-repository";
 import { createFeedback } from "@/db/repositories/feedback-repository";
 import { NotFoundError } from "@/lib/errors";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
+import { assertJsonRequest, assertSameOrigin } from "@/lib/request-security";
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    assertSameOrigin(request);
+    assertJsonRequest(request);
     const { id } = await params;
     scanIdSchema.parse(id);
     const sessionId = await getAnonymousSessionId({ create: false });

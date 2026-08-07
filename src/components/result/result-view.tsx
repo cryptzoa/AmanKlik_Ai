@@ -93,7 +93,15 @@ export function ResultView({ result }: { result: AnalysisResult }) {
             {result.actionPlan.map((action, index) => (
               <li key={action.id} className="grid gap-3 py-5 sm:grid-cols-[48px_1fr]">
                 <span className="font-mono text-sm text-muted">{String(index + 1).padStart(2, "0")}</span>
-                <div><h3 className="font-semibold">{action.title}</h3><p className="mt-2 leading-7 text-muted">{action.body}</p></div>
+                <div>
+                  <h3 className="font-semibold">{action.title}</h3>
+                  <p className="mt-2 leading-7 text-muted">{action.body}</p>
+                  {action.sourceTitle && action.sourceUrl ? (
+                    <a className="mt-3 inline-flex text-sm font-semibold text-ai underline decoration-ai/30 underline-offset-4 hover:decoration-ai" href={action.sourceUrl} rel="noreferrer" target="_blank">
+                      Sumber resmi: {action.sourceTitle}
+                    </a>
+                  ) : null}
+                </div>
               </li>
             ))}
           </ol>

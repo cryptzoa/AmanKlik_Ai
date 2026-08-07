@@ -24,7 +24,7 @@ export async function GET() {
     data: {
       status: database === "ok" ? "healthy" : "degraded",
       database,
-      version: process.env.BUILD_ID ?? "local",
+      version: process.env.RAILWAY_GIT_COMMIT_SHA ?? process.env.BUILD_ID ?? "local",
     },
   }, { status: healthy ? 200 : 503 });
 }

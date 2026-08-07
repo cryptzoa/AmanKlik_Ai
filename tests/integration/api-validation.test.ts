@@ -24,6 +24,32 @@ describe("API validation boundaries", () => {
     expect((await response.json()).error.code).toBe("INVALID_INPUT");
   });
 
+  it("rejects JSON endpoints with the wrong media type", async () => {
+    const response = await postText(new Request("http://localhost/api/scans/text", {
+      method: "POST",
+      body: JSON.stringify({ text: "Pesan ini cukup panjang untuk diperiksa." }),
+      headers: { "content-type": "text/plain" },
+    }));
+
+    expect(response.status).toBe(415);
+    expect((await response.json()).error.code).toBe("UNSUPPORTED_MEDIA_TYPE");
+  });
+
+  it("rejects cross-site browser submissions", async () => {
+    const response = await postText(new Request("http://localhost/api/scans/text", {
+      method: "POST",
+      body: JSON.stringify({ text: "Pesan ini cukup panjang untuk diperiksa." }),
+      headers: {
+        "content-type": "application/json",
+        origin: "https://attacker.example",
+        "sec-fetch-site": "cross-site",
+      },
+    }));
+
+    expect(response.status).toBe(403);
+    expect((await response.json()).error.code).toBe("FORBIDDEN");
+  });
+
   it("rejects non-http URL protocols", async () => {
     const response = await postUrl(new Request("http://localhost/api/scans/url", {
       method: "POST",

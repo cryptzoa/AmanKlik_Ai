@@ -1,4 +1,5 @@
 import type { ActionItem } from "@/types/analysis";
+import type { KnowledgeMatch } from "@/server/rag/types";
 
 const ACTIONS: Record<string, ActionItem> = {
   do_not_click: {
@@ -53,8 +54,18 @@ const ACTIONS: Record<string, ActionItem> = {
 
 const DEFAULT_ACTION_TAGS = ["verify_independently", "do_not_share_credentials", "contact_provider"];
 
-export function actionPlanFor(tags: string[] = []): ActionItem[] {
+export function actionPlanFor(tags: string[] = [], knowledge: KnowledgeMatch[] = []): ActionItem[] {
   const merged = [...tags, ...DEFAULT_ACTION_TAGS];
   const uniqueTags = [...new Set(merged)];
-  return uniqueTags.map((tag) => ACTIONS[tag]).filter((action): action is ActionItem => Boolean(action));
+  return uniqueTags.map((tag) => {
+    const action = ACTIONS[tag];
+    if (!action) return null;
+
+    const source = knowledge.find((match) => match.actionTags.includes(tag));
+    return source ? {
+      ...action,
+      sourceTitle: `${source.documentTitle} — ${source.publisher}`,
+      sourceUrl: source.sourceUrl,
+    } : { ...action };
+  }).filter((action): action is ActionItem => Boolean(action));
 }

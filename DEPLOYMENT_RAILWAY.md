@@ -45,11 +45,16 @@ Railway akan mendeteksi `package.json` dan memakai script berikut:
 ```json
 {
   "build": "next build",
-  "start": "node .next/standalone/server.js"
+  "start": "node scripts/start.mjs"
 }
 ```
 
 Service ini sebaiknya diberi nama `amanklik-web`. Node 26 yang sudah terpasang di mesin lokal kompatibel dengan requirement proyek (`Node >=24`). Railway menggunakan konfigurasi repository saat build; tidak perlu menambahkan Dockerfile.
+
+Repository juga menyimpan `railway.json`. File ini mengunci Railpack, build
+index RAG opsional, migration, start command, healthcheck, restart policy,
+serta waktu overlap/draining deployment. Nilai di file ini mengungguli
+pengaturan dashboard untuk deployment yang sama.
 
 ## 3. Tambahkan PostgreSQL Railway
 
@@ -161,6 +166,16 @@ Buka domain Railway, lalu tes:
 3. **Screenshot scan** menggunakan screenshot dummy.
 4. **History** untuk memastikan hasil tersimpan pada session.
 5. **Simulator** untuk memastikan demo tetap berjalan.
+
+Jika ingin mengisi cache hanya dengan fixture sintetis yang disetujui, jalankan
+dari lingkungan yang memiliki `APP_BASE_URL` production dan `AI_MODE=live`:
+
+```bash
+pnpm demo:prewarm -- --confirm-live T1 T2 U1 IMG_T2
+```
+
+Perintah menolak mode mock, menolak fixture ID yang tidak dikenal, dan hanya
+mencetak ID, route, serta status HTTP—bukan isi pesan atau respons AI.
 
 Pada hasil scan live, cek:
 

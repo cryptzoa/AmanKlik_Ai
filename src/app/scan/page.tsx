@@ -14,7 +14,7 @@ export default function ScanPage() {
             AmanKlik AI
           </Link>
           <nav className="flex items-center gap-4 text-sm text-muted">
-            <Link className="hover:text-ink" href="/history">History</Link>
+            <Link className="hover:text-ink" href="/history" prefetch={false}>History</Link>
             <Link className="rounded-full bg-ink px-4 py-2 font-semibold text-surface" href="/">Beranda</Link>
           </nav>
         </header>

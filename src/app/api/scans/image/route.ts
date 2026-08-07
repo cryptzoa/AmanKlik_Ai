@@ -5,11 +5,13 @@ import { analyzeImage } from "@/server/scan/analyze-image";
 import type { UploadFile } from "@/server/image/preprocess";
 import { consumeRateLimit } from "@/server/rate-limit/limiter";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
+import { assertSameOrigin } from "@/lib/request-security";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
+    assertSameOrigin(request);
     const contentType = request.headers.get("content-type") ?? "";
     if (!contentType.startsWith("multipart/form-data")) {
       throw new ValidationError("Pilih screenshot terlebih dahulu.");

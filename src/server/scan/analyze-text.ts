@@ -5,6 +5,7 @@ import { fuseRisk } from "@/server/risk/engine";
 import { detectMessageSignals, normalizeText } from "@/server/risk/signals";
 import { aiSignalsFromResult, createResult, extractUrls, persistResult } from "@/server/scan/shared";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
+import { formatKnowledgeForPrompt, retrieveKnowledge } from "@/server/rag/retriever";
 
 export async function analyzeText(input: { text: string; sessionId?: string }) {
   const normalizedText = normalizeText(input.text);
@@ -12,6 +13,7 @@ export async function analyzeText(input: { text: string; sessionId?: string }) {
   const ruleSignals = detectMessageSignals(normalizedText);
   const urls = extractUrls(normalizedText);
   const urlAnalysis = urls[0] ? analyzeUrl(urls[0]) : null;
+  const knowledge = await retrieveKnowledge(normalizedText);
 
   let aiAnalysis: AiAnalysis | null = null;
   try {
@@ -19,6 +21,7 @@ export async function analyzeText(input: { text: string; sessionId?: string }) {
       normalizedText,
       deterministicSignals: ruleSignals,
       urlAnalysis,
+      knowledge: formatKnowledgeForPrompt(knowledge.matches),
     });
   } catch {
     aiAnalysis = null;
@@ -48,6 +51,7 @@ export async function analyzeText(input: { text: string; sessionId?: string }) {
     indicators: fusion.indicators,
     urlAnalysis,
     actionTags: aiAnalysis?.result.recommendedActionTags,
+    knowledge: knowledge.matches,
     uncertainty: aiAnalysis?.result.uncertainty ?? "Analisis AI tidak tersedia; hasil hanya berdasarkan pola dan struktur yang terdeteksi.",
   });
 
