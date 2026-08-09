@@ -60,4 +60,11 @@ describe("message rules and deterministic fusion", () => {
     expect(result.finalScore).toBe(40);
     expect(result.analysisMode).toBe("hybrid");
   });
+
+  it("exposes qualitative score contributions without probability language", () => {
+    const result = fuseRisk({ inputType: "text", ruleSignals: detectMessageSignals("Balas dengan kode OTP sekarang."), aiAvailable: false });
+
+    expect(result.scoreExplanation.contributions[0]).toMatchObject({ source: "rule", band: "moderate" });
+    expect(result.scoreExplanation.explanation).not.toMatch(/%|probabilitas/i);
+  });
 });

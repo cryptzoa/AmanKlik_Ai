@@ -1,0 +1,108 @@
+import type { IncidentType, ResponseStep } from "@/lib/response/types";
+
+const IASC = "https://iasc.ojk.go.id/";
+const OJK_SECURITY = "https://www.ojk.go.id/id/Fungsi-Utama/ITSK/Informasi-IAKD/Digital-Financial-Literacy/Documents/2.%20Proteksi%20Diri%20dari%20Kejahatan%20Digital.pdf";
+const OJK_VERIFY = "https://sikapiuangmu.ojk.go.id/FrontEnd/images/FileDownload/417_Perbankan-4a%20mudah%20dan%20aman%20dengan%20internet%20banking%20dan%20mobile%20banking_2018_small.pdf";
+
+export const INCIDENT_LABELS: Record<IncidentType, string> = {
+  money_transferred: "Sudah transfer uang",
+  otp_or_pin_shared: "Sudah membagikan OTP atau PIN",
+  password_shared: "Sudah membagikan password",
+  link_opened: "Sudah membuka tautan",
+  personal_data_shared: "Sudah membagikan data pribadi",
+  remote_access_installed: "Sudah memasang aplikasi akses jarak jauh",
+  account_access_lost: "Akses akun sudah hilang",
+};
+
+export const RESPONSE_CATALOG: ResponseStep[] = [
+  {
+    id: "stop-contact-and-payment",
+    incidentTypes: ["money_transferred", "otp_or_pin_shared", "password_shared", "personal_data_shared", "account_access_lost"],
+    urgency: "immediate",
+    order: 10,
+    title: "Hentikan percakapan dan tindakan lanjutan",
+    body: "Jangan kirim uang, kode, data, atau balasan tambahan. Jangan mengikuti instruksi pemulihan dari pengirim yang sama.",
+    sourceTitle: "Lindungi OTP, PIN, dan password — OJK",
+    sourceUrl: OJK_SECURITY,
+  },
+  {
+    id: "contact-financial-provider",
+    incidentTypes: ["money_transferred"],
+    urgency: "immediate",
+    order: 20,
+    title: "Hubungi penyedia layanan keuangan",
+    body: "Cari nomor atau kanal resmi secara mandiri melalui aplikasi, kartu, atau situs yang sudah dikenal. Jelaskan waktu, jumlah, dan rekening tujuan transaksi.",
+    sourceTitle: "Indonesia Anti-Scam Centre (IASC)",
+    sourceUrl: IASC,
+  },
+  {
+    id: "secure-credentials",
+    incidentTypes: ["otp_or_pin_shared", "password_shared"],
+    urgency: "immediate",
+    order: 30,
+    title: "Amankan kredensial dari kanal resmi",
+    body: "Buka aplikasi resmi dari perangkat tepercaya, ganti kredensial yang terdampak, dan keluarkan sesi atau perangkat yang tidak dikenal jika tersedia.",
+    sourceTitle: "Lindungi OTP, PIN, dan password — OJK",
+    sourceUrl: OJK_SECURITY,
+  },
+  {
+    id: "independent-account-recovery",
+    incidentTypes: ["account_access_lost"],
+    urgency: "immediate",
+    order: 40,
+    title: "Mulai pemulihan akun melalui kanal mandiri",
+    body: "Gunakan aplikasi atau situs resmi yang kamu buka sendiri. Jika perlu bantuan, cari pusat bantuan resmi—jangan memakai tautan atau nomor dari pesan.",
+    sourceTitle: "Verifikasi melalui kanal resmi — OJK",
+    sourceUrl: OJK_VERIFY,
+  },
+  {
+    id: "contain-remote-access",
+    incidentTypes: ["remote_access_installed"],
+    urgency: "immediate",
+    order: 50,
+    title: "Putus akses aplikasi jarak jauh",
+    body: "Hentikan sesi akses, cabut izin aplikasi bila memungkinkan, dan minta bantuan teknis tepercaya dari perangkat yang aman. AmanKlik tidak dapat memastikan perangkat bersih dari malware.",
+    sourceTitle: "Verifikasi melalui kanal resmi — OJK",
+    sourceUrl: OJK_VERIFY,
+  },
+  {
+    id: "do-not-enter-after-open",
+    incidentTypes: ["link_opened"],
+    urgency: "immediate",
+    order: 60,
+    title: "Jangan masukkan data atau melanjutkan interaksi",
+    body: "Menutup tautan tidak membuktikan ada atau tidaknya dampak. Jika belum memasukkan data atau memasang aplikasi, hentikan interaksi dan lanjutkan verifikasi dari kanal resmi.",
+    sourceTitle: "Periksa alamat layanan sebelum membuka tautan — OJK",
+    sourceUrl: OJK_VERIFY,
+  },
+  {
+    id: "preserve-evidence",
+    incidentTypes: ["money_transferred", "otp_or_pin_shared", "password_shared", "personal_data_shared", "remote_access_installed", "account_access_lost"],
+    urgency: "soon",
+    order: 100,
+    title: "Simpan bukti dan kronologi",
+    body: "Simpan screenshot, waktu kejadian, detail transaksi, dan identitas rekening tujuan tanpa mengedit bukti asli. Jangan unggah bukti rahasia ke AmanKlik.",
+    sourceTitle: "Langkah segera setelah terlanjur transfer — IASC",
+    sourceUrl: IASC,
+  },
+  {
+    id: "check-account-activity",
+    incidentTypes: ["otp_or_pin_shared", "password_shared", "personal_data_shared", "account_access_lost"],
+    urgency: "soon",
+    order: 110,
+    title: "Periksa aktivitas akun",
+    body: "Periksa transaksi, sesi, perangkat, dan perubahan pengaturan yang tidak kamu kenali. Hubungi penyedia layanan melalui kanal resmi jika menemukan sesuatu.",
+    sourceTitle: "Amankan akun setelah data terpapar — OJK",
+    sourceUrl: OJK_SECURITY,
+  },
+  {
+    id: "monitor-follow-up",
+    incidentTypes: ["link_opened", "personal_data_shared", "remote_access_installed"],
+    urgency: "monitor",
+    order: 200,
+    title: "Pantau akun dan perangkat",
+    body: "Waspadai pesan lanjutan, login yang tidak dikenal, perubahan akun, atau permintaan baru. Verifikasi setiap tindak lanjut melalui kanal yang kamu cari sendiri.",
+    sourceTitle: "Verifikasi melalui kanal resmi — OJK",
+    sourceUrl: OJK_VERIFY,
+  },
+];

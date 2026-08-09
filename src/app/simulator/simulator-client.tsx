@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
 import { SIMULATOR_SCENARIOS, evaluateScenario } from "@/lib/simulator/scenarios";
+import type { PersonalizedPractice } from "@/lib/simulator/personalized";
 
 gsap.registerPlugin(useGSAP);
 
@@ -14,8 +15,22 @@ export function SimulatorClient() {
   const [stepIndex, setStepIndex] = useState(0);
   const [choiceIds, setChoiceIds] = useState<string[]>([]);
   const [result, setResult] = useState<ReturnType<typeof evaluateScenario>>(null);
-  const scenario = SIMULATOR_SCENARIOS[scenarioIndex];
+  const [practice, setPractice] = useState<PersonalizedPractice | null>(null);
+  const scenario = practice?.scenario ?? SIMULATOR_SCENARIOS[scenarioIndex];
   const step = scenario.steps[stepIndex];
+
+  useEffect(() => {
+    const sourceScanId = new URLSearchParams(window.location.search).get("from");
+    if (!sourceScanId) return;
+    let active = true;
+    void fetch(`/api/scans/${encodeURIComponent(sourceScanId)}/practice`)
+      .then((response) => response.ok ? response.json() : null)
+      .then((body: { ok?: boolean; data?: { practice: PersonalizedPractice } } | null) => {
+        if (active && body?.ok && body.data?.practice) setPractice(body.data.practice);
+      })
+      .catch(() => undefined);
+    return () => { active = false; };
+  }, []);
 
   useGSAP(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -34,6 +49,7 @@ export function SimulatorClient() {
   }
 
   function changeScenario(index: number) {
+    setPractice(null);
     setScenarioIndex(index);
     setStepIndex(0);
     setChoiceIds([]);
@@ -53,6 +69,7 @@ export function SimulatorClient() {
         </div>
       </aside>
       <section data-simulator-panel className="motion-surface p-5 sm:p-8">
+        {practice ? <div className="mb-6 border-l-4 border-ai bg-ai-soft p-4 text-sm leading-6"><strong>{practice.title}</strong><p className="mt-1 text-muted">{practice.learningObjective}</p></div> : null}
         <div className="flex items-start justify-between gap-5 border-b border-line pb-6">
           <div><p className="font-mono text-xs uppercase tracking-[0.16em] text-ai">Skenario sintetis</p><h2 className="mt-3 text-2xl font-semibold">{scenario.title}</h2><p className="mt-2 text-sm leading-6 text-muted">{scenario.description}</p></div>
           <span className="shrink-0 border border-line px-3 py-2 font-mono text-xs text-muted">{result ? "Selesai" : `${stepIndex + 1} / ${scenario.steps.length}`}</span>

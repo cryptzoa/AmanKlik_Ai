@@ -11,6 +11,7 @@ import { POST as postText } from "@/app/api/scans/text/route";
 import { POST as postUrl } from "@/app/api/scans/url/route";
 import { POST as postImage } from "@/app/api/scans/image/route";
 import { POST as postSimulator } from "@/app/api/simulator/evaluate/route";
+import { POST as postConversation } from "@/app/api/scans/conversation/route";
 
 describe("API validation boundaries", () => {
   it("rejects text that is too short before analysis", async () => {
@@ -89,5 +90,16 @@ describe("API validation boundaries", () => {
 
     expect(response.status).toBe(200);
     expect((await response.json()).data.score).toBe(100);
+  });
+
+  it("rejects conversations outside the bounded message contract", async () => {
+    const response = await postConversation(new Request("http://localhost/api/scans/conversation", {
+      method: "POST",
+      body: JSON.stringify({ messages: [{ id: "m1", speaker: "sender", text: "Satu pesan", order: 1 }] }),
+      headers: { "content-type": "application/json" },
+    }));
+
+    expect(response.status).toBe(400);
+    expect((await response.json()).error.code).toBe("INVALID_INPUT");
   });
 });

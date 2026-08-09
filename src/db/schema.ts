@@ -15,7 +15,7 @@ import { desc } from "drizzle-orm";
 
 import type { AnalysisResult } from "@/types/analysis";
 
-export const inputTypeEnum = pgEnum("input_type", ["text", "image", "url"]);
+export const inputTypeEnum = pgEnum("input_type", ["text", "image", "url", "conversation"]);
 export const riskLevelEnum = pgEnum("risk_level", ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"]);
 export const analysisModeEnum = pgEnum("analysis_mode", ["hybrid", "rules_only", "cached_hybrid"]);
 export const feedbackVerdictEnum = pgEnum("feedback_verdict", [

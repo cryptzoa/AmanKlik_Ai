@@ -1,4 +1,4 @@
-export type InputType = "text" | "image" | "url";
+export type InputType = "text" | "image" | "url" | "conversation";
 
 export type RiskLevel = "LOW" | "MEDIUM" | "HIGH" | "VERY_HIGH";
 
@@ -6,6 +6,7 @@ export type AnalysisMode = "hybrid" | "cached_hybrid" | "rules_only";
 
 export type SignalSource = "rule" | "url" | "ai";
 export type SignalSeverity = "low" | "medium" | "high";
+export type ContributionBand = "minor" | "moderate" | "major";
 
 export interface RiskSignal {
   id: string;
@@ -42,6 +43,35 @@ export interface ActionItem {
   sourceUrl?: string;
 }
 
+export interface ScoreContribution {
+  source: SignalSource;
+  band: ContributionBand;
+  label: string;
+  explanation: string;
+  signalCount: number;
+}
+
+export interface PublicScoreExplanation {
+  schemaVersion: 1;
+  engineVersion: string;
+  contributions: ScoreContribution[];
+  strongestSignalIds: string[];
+  adjustmentLabels: string[];
+  explanation: string;
+}
+
+export interface ConversationTimelineItem {
+  messageId: string;
+  redactedExcerpt?: string;
+  signalIds: string[];
+}
+
+export interface ConversationResultData {
+  messageCount: number;
+  progressionSummary: string;
+  timeline: ConversationTimelineItem[];
+}
+
 export interface AnalysisResult {
   schemaVersion: 1;
   scanId: string;
@@ -58,6 +88,8 @@ export interface AnalysisResult {
   indicators: RiskSignal[];
   urlAnalysis?: UrlAnalysis | null;
   actionPlan: ActionItem[];
+  scoreExplanation?: PublicScoreExplanation;
+  conversationAnalysis?: ConversationResultData;
   uncertainty: string;
   disclaimer: string;
   createdAt: string;

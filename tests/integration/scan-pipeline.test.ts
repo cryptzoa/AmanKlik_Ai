@@ -16,6 +16,7 @@ vi.mock("@/db/repositories/scan-repository", () => repositoryMocks);
 import { analyzeImage } from "@/server/scan/analyze-image";
 import { analyzeText } from "@/server/scan/analyze-text";
 import { analyzeSubmittedUrl } from "@/server/scan/analyze-url";
+import { analyzeConversation } from "@/server/scan/analyze-conversation";
 
 const sessionId = "38ddd831-6835-4621-84d4-8df06a00c3a4";
 
@@ -80,5 +81,21 @@ describe("mock scan pipeline", () => {
     expect(cached.result.cacheHit).toBe(true);
     expect(repositoryMocks.createScan).toHaveBeenCalledOnce();
     expect(repositoryMocks.upsertCache).not.toHaveBeenCalled();
+  });
+
+  it("analyzes conversation progression with mock AI and persists only the result contract", async () => {
+    const output = await analyzeConversation({
+      sessionId,
+      messages: [
+        { id: "m1", speaker: "sender", text: "Ini nomor baru aku, nomor lama rusak.", order: 1 },
+        { id: "m2", speaker: "sender", text: "Tolong transfer sekarang dan jangan telepon dulu.", order: 2 },
+      ],
+    });
+
+    expect(output.result.inputType).toBe("conversation");
+    expect(output.result.conversationAnalysis?.messageCount).toBe(2);
+    expect(output.result.conversationAnalysis?.progressionSummary).toContain("eskalasi");
+    expect(output.result.previewRedacted).toBeNull();
+    expect(repositoryMocks.createScan).toHaveBeenCalledOnce();
   });
 });

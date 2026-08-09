@@ -21,6 +21,10 @@
     "rag:index:keyword": "node scripts/build-knowledge-index.mjs --keyword-only",
     "demo:assets": "tsx scripts/generate-demo-assets.ts",
     "demo:prewarm": "tsx scripts/demo-prewarm.ts",
+    "eval:deterministic": "tsx scripts/evaluate-deterministic.ts",
+    "eval:mock": "tsx scripts/evaluate-deterministic.ts",
+    "eval:report": "tsx scripts/evaluate-deterministic.ts",
+    "eval:live": "tsx scripts/evaluate-live.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node scripts/migrate.mjs"
   },

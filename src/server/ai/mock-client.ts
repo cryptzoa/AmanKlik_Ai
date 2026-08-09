@@ -1,4 +1,4 @@
-import type { AiAnalysis, AiClient, AnalyzeImageInput, AnalyzeTextInput } from "@/server/ai/client";
+import type { AiAnalysis, AiClient, AnalyzeConversationInput, AnalyzeImageInput, AnalyzeTextInput, ConversationAiAnalysis } from "@/server/ai/client";
 import type { AiSemanticResult } from "@/server/ai/schemas";
 
 function resultForText(text: string): AiSemanticResult {
@@ -110,6 +110,23 @@ export class MockAiClient implements AiClient {
         latencyMs: 1,
         attemptedFallback: false,
       },
+    };
+  }
+
+  async analyzeConversation(input: AnalyzeConversationInput): Promise<ConversationAiAnalysis> {
+    const text = input.messages.map((message) => message.text).join(" ");
+    const base = resultForText(text);
+    return {
+      result: {
+        semanticRisk: base.semanticRisk,
+        confidence: base.confidence,
+        summary: base.summary,
+        indicators: base.indicators.map((indicator) => ({ ...indicator, messageIds: [input.messages[0]?.id ?? "m1"] })),
+        progressionSummary: input.progressionSummary,
+        uncertainty: "Analisis mock hanya digunakan untuk pengujian lokal dan bukan hasil Gemini live.",
+        recommendedActionTags: base.recommendedActionTags,
+      },
+      meta: { provider: "mock", modelId: "mock-fixture-v1", latencyMs: 1, attemptedFallback: false },
     };
   }
 }

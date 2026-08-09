@@ -71,6 +71,7 @@ export async function analyzeImage(input: { file: UploadFile; sessionId?: string
     actionTags: aiAnalysis.result.recommendedActionTags,
     knowledge: knowledge.matches,
     uncertainty: aiAnalysis.result.uncertainty,
+    scoreExplanation: fusion.scoreExplanation,
   });
 
   await persistResult({

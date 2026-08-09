@@ -65,6 +65,25 @@ export const AiSemanticResultSchema = z.object({
 
 export type AiSemanticResult = z.infer<typeof AiSemanticResultSchema>;
 
+export const ConversationAiSemanticResultSchema = z.object({
+  semanticRisk: z.number().int().min(0).max(100),
+  confidence: z.enum(["low", "medium", "high"]),
+  summary: z.string().trim().min(1).max(500),
+  indicators: z.array(z.object({
+    category: z.enum(["urgency", "credential_request", "otp_request", "payment_request", "impersonation", "threat", "prize", "investment", "remote_access", "brand_domain_mismatch", "url_obfuscation", "secrecy", "verification_link", "other"]),
+    label: z.string().trim().min(1).max(120),
+    severity: z.enum(["low", "medium", "high"]),
+    evidence: z.string().max(280),
+    explanation: z.string().trim().min(1).max(500),
+    messageIds: z.array(z.string().trim().min(1).max(80)).min(1).max(6),
+  })).max(12),
+  progressionSummary: z.string().trim().min(1).max(500),
+  uncertainty: z.string().trim().min(1).max(500),
+  recommendedActionTags: z.array(z.enum(["do_not_click", "do_not_share_credentials", "do_not_share_otp", "verify_independently", "contact_provider", "secure_account", "preserve_evidence", "report_officially"])).max(8),
+});
+
+export type ConversationAiSemanticResult = z.infer<typeof ConversationAiSemanticResultSchema>;
+
 export const AiSemanticJsonSchema = {
   type: "object",
   additionalProperties: false,
@@ -153,5 +172,36 @@ export const AiSemanticJsonSchema = {
         ],
       },
     },
+  },
+} as const;
+
+export const ConversationAiSemanticJsonSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["semanticRisk", "confidence", "summary", "indicators", "progressionSummary", "uncertainty", "recommendedActionTags"],
+  properties: {
+    semanticRisk: { type: "integer", minimum: 0, maximum: 100 },
+    confidence: { type: "string", enum: ["low", "medium", "high"] },
+    summary: { type: "string", minLength: 1, maxLength: 500 },
+    indicators: {
+      type: "array",
+      maxItems: 12,
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["category", "label", "severity", "evidence", "explanation", "messageIds"],
+        properties: {
+          category: { type: "string" },
+          label: { type: "string", minLength: 1, maxLength: 120 },
+          severity: { type: "string", enum: ["low", "medium", "high"] },
+          evidence: { type: "string", maxLength: 280 },
+          explanation: { type: "string", minLength: 1, maxLength: 500 },
+          messageIds: { type: "array", minItems: 1, maxItems: 6, items: { type: "string", minLength: 1, maxLength: 80 } },
+        },
+      },
+    },
+    progressionSummary: { type: "string", minLength: 1, maxLength: 500 },
+    uncertainty: { type: "string", minLength: 1, maxLength: 500 },
+    recommendedActionTags: { type: "array", maxItems: 8, items: { type: "string" } },
   },
 } as const;

@@ -1,5 +1,6 @@
 import { ScanClient } from "@/app/scan/scan-client";
 import { InteriorShell } from "@/components/site/interior-shell";
+import Link from "next/link";
 
 export const metadata = {
   title: "Periksa pesan — AmanKlik AI",
@@ -20,6 +21,7 @@ export default function ScanPage() {
           <p className="max-w-lg text-sm leading-7 text-muted lg:justify-self-end">Gunakan fixture sintetis untuk demo. Untuk data pribadi, hapus nama, nomor rekening, OTP, dan informasi sensitif lainnya.</p>
         </div>
           <ScanClient />
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-6"><p className="text-sm text-muted">Pesannya terdiri dari beberapa tahap?</p><Link className="text-sm font-semibold text-ai underline underline-offset-4" href="/scan/conversation">Periksa percakapan berurutan →</Link></div>
       </section>
     </InteriorShell>
   );

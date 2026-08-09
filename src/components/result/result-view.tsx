@@ -1,6 +1,9 @@
 import type { AnalysisResult, RiskSignal } from "@/types/analysis";
 import { RiskScore } from "@/components/result/risk-score";
 import { InteriorShell } from "@/components/site/interior-shell";
+import { ScoreBreakdown } from "@/components/result/score-breakdown";
+import { ReportActions } from "@/components/result/report-actions";
+import { ConversationTimeline } from "@/components/result/conversation-timeline";
 import Link from "next/link";
 
 const sourceLabels: Record<RiskSignal["source"], string> = {
@@ -17,7 +20,7 @@ const modeLabels: Record<AnalysisResult["analysisMode"], string> = {
 
 function SignalRow({ signal, index }: { signal: RiskSignal; index: number }) {
   return (
-    <article data-reveal-card className="group grid gap-4 border-t border-line py-7 transition-colors hover:bg-surface sm:grid-cols-[64px_1fr] sm:px-4">
+    <article id={`evidence-${signal.id}`} data-reveal-card className="group grid gap-4 border-t border-line py-7 transition-colors hover:bg-surface sm:grid-cols-[64px_1fr] sm:px-4">
       <span className="font-mono text-xs text-muted">{String(index + 1).padStart(2, "0")}</span>
       <div>
         <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em]">
@@ -54,7 +57,11 @@ export function ResultView({ result }: { result: AnalysisResult }) {
             </div>
             <h2 className="mt-5 max-w-3xl text-4xl font-semibold leading-[1.02] tracking-[-0.05em] sm:text-6xl">{result.summary}</h2>
             <p className="mt-5 max-w-2xl leading-7 text-muted">{result.uncertainty}</p>
-            <Link className="lift-link mt-8 inline-flex min-h-12 items-center rounded-full bg-ink px-6 font-semibold text-surface hover:bg-ai" href="/scan">Periksa pesan lain →</Link>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link className="lift-link inline-flex min-h-12 items-center rounded-full bg-ink px-6 font-semibold text-surface hover:bg-ai" href="/scan">Periksa pesan lain →</Link>
+              <Link className="lift-link inline-flex min-h-12 items-center rounded-full border border-line bg-surface px-6 font-semibold hover:border-ai hover:text-ai" href={`/respond?from=${result.scanId}`}>Sudah terlanjur?</Link>
+              <Link className="lift-link inline-flex min-h-12 items-center rounded-full border border-line bg-surface px-6 font-semibold hover:border-ai hover:text-ai" href={`/simulator?from=${result.scanId}`}>Latihan dari pola ini</Link>
+            </div>
           </div>
         </section>
 
@@ -63,6 +70,10 @@ export function ResultView({ result }: { result: AnalysisResult }) {
             <strong>Analisis AI sedang terbatas.</strong> AmanKlik tetap menjalankan pemeriksaan pola dan struktur secara deterministik.
           </div>
         ) : null}
+
+        <ScoreBreakdown explanation={result.scoreExplanation} signals={result.indicators} />
+
+        <ConversationTimeline analysis={result.conversationAnalysis} />
 
         <section data-reveal className="py-16" aria-labelledby="evidence-heading">
           <div className="grid gap-5 lg:grid-cols-[0.35fr_0.65fr]">
@@ -116,6 +127,8 @@ export function ResultView({ result }: { result: AnalysisResult }) {
             ))}
           </ol>
         </section>
+
+        <ReportActions result={result} />
 
         <footer data-reveal className="border-t border-line py-10 text-sm leading-6 text-muted">{result.disclaimer}</footer>
     </InteriorShell>

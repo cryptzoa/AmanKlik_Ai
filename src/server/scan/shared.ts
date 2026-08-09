@@ -4,8 +4,9 @@ import { env } from "@/lib/env";
 import { redactEvidence, redactText } from "@/lib/redaction";
 import { hmacInput } from "@/lib/crypto";
 import { createScan, findCacheByHash, upsertCache } from "@/db/repositories/scan-repository";
-import type { AnalysisMode, AnalysisResult, InputType, RiskSignal, UrlAnalysis } from "@/types/analysis";
+import type { AnalysisMode, AnalysisResult, InputType, PublicScoreExplanation, RiskSignal, UrlAnalysis } from "@/types/analysis";
 import type { AiAnalysis } from "@/server/ai/client";
+import type { ConversationAiAnalysis } from "@/server/ai/client";
 import { actionPlanFor } from "@/server/scan/actions";
 import type { KnowledgeMatch } from "@/server/rag/types";
 
@@ -42,6 +43,20 @@ export function aiSignalsFromResult(analysis: AiAnalysis | null): RiskSignal[] {
   }));
 }
 
+export function aiSignalsFromConversationResult(analysis: ConversationAiAnalysis | null): RiskSignal[] {
+  if (!analysis) return [];
+
+  return analysis.result.indicators.map((indicator, index) => ({
+    id: `ai-conversation-${indicator.category}-${index}`,
+    category: indicator.category,
+    source: "ai" as const,
+    label: indicator.label,
+    severity: indicator.severity,
+    evidence: redactEvidence(indicator.evidence),
+    explanation: indicator.explanation,
+  }));
+}
+
 export function createResult(input: {
   inputType: InputType;
   score: number;
@@ -58,6 +73,8 @@ export function createResult(input: {
   actionTags?: string[];
   knowledge?: KnowledgeMatch[];
   uncertainty: string;
+  scoreExplanation?: PublicScoreExplanation;
+  conversationAnalysis?: AnalysisResult["conversationAnalysis"];
 }): AnalysisResult {
   return {
     schemaVersion: 1,
@@ -78,6 +95,8 @@ export function createResult(input: {
     })),
     urlAnalysis: input.urlAnalysis ?? null,
     actionPlan: actionPlanFor(input.actionTags, input.knowledge),
+    scoreExplanation: input.scoreExplanation,
+    conversationAnalysis: input.conversationAnalysis,
     uncertainty: input.uncertainty.trim(),
     disclaimer: DISCLAIMER,
     createdAt: new Date().toISOString(),

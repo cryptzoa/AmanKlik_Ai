@@ -102,3 +102,22 @@ Use only synthetic fixtures: new-number impersonation, OTP verification, benign 
 - 20–24: synthetic fixtures, demo narrative, DoD, env, error copy.
 - 25–30: accessibility/performance, Git, references, components, types, pre-demo checks.
 - 31–32: prescriptive page blueprints and Gemini prompt/output contract.
+- 33–40: post-P0 feature expansion roadmap covering already-acted response, personalized practice, score explainability, privacy-safe reports, conversation analysis, synthetic evaluation, and the combined implementation plan.
+
+## Expansion planning record — 2026-08-09
+
+- Added implementation-ready specifications for six product expansions in `agents/33` through `agents/39`.
+- Added `agents/40_EXPANSION_IMPLEMENTATION_PLAN.md` with sequencing, suggested files, cross-feature security review, quality gates, Definition of Done, feature-freeze policy, and an updated competition demo outline.
+- Competition recommendation remains deliberately narrow: F1 Already-Acted Response, F3 Explainable Score Breakdown, minimal F2 Personalized Simulator, and F6 evaluation evidence. F4 follows only when complete; F5 Conversation Analysis remains post-competition due to its larger validation, privacy, scoring, cost, and testing surface.
+- No product code, database schema, deployment configuration, or production service was changed during this planning step.
+
+## Expansion implementation record — 2026-08-09
+
+- F6 baseline runner implemented in `src/lib/evaluation/runner.ts` and `scripts/evaluate-deterministic.ts`; the 33 curated text/URL cases pass with `0` URL network calls. Commands are available as `pnpm eval:deterministic`, `pnpm eval:mock`, and `pnpm eval:report`.
+- F1 Already-Acted Response implemented at `/respond` with seven incident categories, deterministic ordered guidance, curated official sources, safe checklist copying, and no sensitive input fields.
+- F3 Explainable Score Breakdown implemented through a versioned public contribution trace on new scan results. It exposes qualitative source bands, not probability, hidden weights, or provider chain-of-thought.
+- F2 Personalized Simulator implemented through `/api/scans/[id]/practice` and the result-to-`/simulator?from=<scanId>` path. Scenario selection is deterministic and session-owned; correctness does not depend on Gemini.
+- F4 Privacy-Safe Report implemented with an explicit allowlist mapper, clipboard summary, and browser print/save path. Raw/redacted preview, full submitted URL, identifiers, and internal trace are excluded.
+- F5 Conversation Analysis implemented as a bounded 2–12-message route at `/scan/conversation` and `/api/scans/conversation`, with ordered deterministic progression signals, optional structured Gemini analysis, redacted timeline output, session ownership, and a new `input_type` migration.
+- Verification after the expansion slice: `pnpm typecheck`, `pnpm lint`, `pnpm test` (48 tests), `pnpm build`, `pnpm test:e2e` (7 tests), `pnpm eval:deterministic`, and `pnpm db:generate` all pass. `pnpm eval:live -- --confirm-live` is available for an explicitly authorized synthetic Gemini smoke and was not run without live credentials. The only recurring warning is the agent shell's Node 22 versus the repository's Node >=24 requirement.
+- Live follow-up remains: apply migration on Railway, run a live synthetic text/screenshot/conversation smoke with Gemini quota, inspect the result/report UI on the user's Node 26 environment, and rehearse the narrowed competition demo. No deployment or push was performed.

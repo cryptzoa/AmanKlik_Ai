@@ -1,4 +1,4 @@
-import type { InputType, RiskSignal } from "@/types/analysis";
+import type { InputType, PublicScoreExplanation, RiskSignal } from "@/types/analysis";
 
 import { clampScore, riskLevelForScore } from "@/server/risk/thresholds";
 
@@ -20,7 +20,16 @@ export type RiskFusionOutput = {
   rulesScore: number;
   urlScore: number;
   analysisMode: "hybrid" | "rules_only";
+  scoreExplanation: PublicScoreExplanation;
 };
+
+const ENGINE_VERSION = "risk-v1";
+
+function contributionBand(score: number): "minor" | "moderate" | "major" {
+  if (score >= 60) return "major";
+  if (score >= 25) return "moderate";
+  return "minor";
+}
 
 function uniqueByCategory(signals: RiskSignal[]): RiskSignal[] {
   const byCategory = new Map<string, RiskSignal>();
@@ -87,6 +96,42 @@ export function fuseRisk(input: RiskFusionInput): RiskFusionOutput {
   if (hasRemoteAccess && hasFinance) finalScore = Math.max(finalScore, 70);
   if (hasBrandMismatch && hasCredentialRequest) finalScore = Math.max(finalScore, 70);
 
+  const contributions = [
+    rulesScore > 0 ? {
+      source: "rule" as const,
+      band: contributionBand(rulesScore),
+      label: "Pola pesan",
+      explanation: "Sinyal deterministik membaca kata, pola permintaan, dan tekanan di dalam input.",
+      signalCount: ruleSignals.length,
+    } : null,
+    urlScore > 0 ? {
+      source: "url" as const,
+      band: contributionBand(urlScore),
+      label: "Struktur tautan",
+      explanation: "Alamat diperiksa secara statis, termasuk domain utama, host, dan pola URL.",
+      signalCount: urlSignals.length,
+    } : null,
+    semanticRisk != null ? {
+      source: "ai" as const,
+      band: contributionBand(semanticRisk),
+      label: "Konteks AI",
+      explanation: "AI membantu membaca konteks sosial; skor akhir tetap dihitung oleh aplikasi.",
+      signalCount: aiSignals.length,
+    } : null,
+  ].filter((contribution): contribution is NonNullable<typeof contribution> => Boolean(contribution));
+
+  const adjustmentLabels = [
+    hasOtp && input.claimedFinanceContext ? "Permintaan OTP dalam konteks finansial" : null,
+    hasOtp && hasFinance && hasThreat && hasUrgency ? "OTP, ancaman, dan tekanan waktu muncul bersama" : null,
+    hasRemoteAccess && hasFinance ? "Akses jarak jauh disertai permintaan finansial" : null,
+    hasBrandMismatch && hasCredentialRequest ? "Ketidakcocokan domain disertai permintaan kredensial" : null,
+  ].filter((label): label is string => Boolean(label));
+
+  const strongestSignalIds = [...allSignals]
+    .sort((left, right) => (right.weight ?? 0) - (left.weight ?? 0) || left.id.localeCompare(right.id))
+    .slice(0, 3)
+    .map((signal) => signal.id);
+
   return {
     finalScore,
     riskLevel: riskLevelForScore(finalScore),
@@ -94,5 +139,15 @@ export function fuseRisk(input: RiskFusionInput): RiskFusionOutput {
     rulesScore,
     urlScore,
     analysisMode,
+    scoreExplanation: {
+      schemaVersion: 1,
+      engineVersion: ENGINE_VERSION,
+      contributions,
+      strongestSignalIds,
+      adjustmentLabels,
+      explanation: adjustmentLabels.length
+        ? "Beberapa sinyal muncul bersamaan sehingga aplikasi menerapkan kehati-hatian tambahan."
+        : "Hasil menggabungkan sinyal yang tersedia; ini bukan kepastian bahwa konten aman atau penipuan.",
+    },
   };
 }

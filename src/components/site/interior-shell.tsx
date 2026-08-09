@@ -11,6 +11,7 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const navigation = [
   ["/scan", "Scan"],
+  ["/respond", "Sudah terlanjur?"],
   ["/simulator", "Simulator"],
   ["/learn", "Learn"],
   ["/history", "History"],

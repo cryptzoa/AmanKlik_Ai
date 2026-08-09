@@ -132,3 +132,22 @@ textarea {
     display: none;
   }
 }
+
+@media print {
+  html,
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  [data-shell-header],
+  .landing-grain::before,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  .motion-surface {
+    border: 0;
+    box-shadow: none;
+  }
+}

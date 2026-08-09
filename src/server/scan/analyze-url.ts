@@ -69,6 +69,7 @@ export async function analyzeSubmittedUrl(input: { url: string; sessionId?: stri
     actionTags: ["do_not_click", "verify_independently", ...(aiAnalysis?.result.recommendedActionTags ?? [])],
     knowledge: knowledge.matches,
     uncertainty: aiAnalysis?.result.uncertainty ?? "Analisis AI tidak tersedia; hasil hanya berdasarkan struktur URL.",
+    scoreExplanation: fusion.scoreExplanation,
   });
 
   await persistResult({

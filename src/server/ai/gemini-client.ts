@@ -5,9 +5,9 @@ import { GoogleGenAI } from "@google/genai";
 import { env } from "@/lib/env";
 import { AiProviderError, AiSchemaError } from "@/lib/errors";
 import { redactEvidence } from "@/lib/redaction";
-import { IMAGE_ANALYSIS_PROMPT, SYSTEM_INSTRUCTION, textAnalysisPrompt } from "@/server/ai/prompts";
-import { AiSemanticJsonSchema, AiSemanticResultSchema, type AiSemanticResult } from "@/server/ai/schemas";
-import type { AiAnalysis, AiClient, AnalyzeImageInput, AnalyzeTextInput } from "@/server/ai/client";
+import { conversationAnalysisPrompt, IMAGE_ANALYSIS_PROMPT, SYSTEM_INSTRUCTION, textAnalysisPrompt } from "@/server/ai/prompts";
+import { AiSemanticJsonSchema, AiSemanticResultSchema, ConversationAiSemanticJsonSchema, ConversationAiSemanticResultSchema, type AiSemanticResult, type ConversationAiSemanticResult } from "@/server/ai/schemas";
+import type { AiAnalysis, AiClient, AnalyzeConversationInput, AnalyzeImageInput, AnalyzeTextInput, ConversationAiAnalysis } from "@/server/ai/client";
 import { withAiConcurrency } from "@/server/ai/concurrency";
 
 function parseResponse(raw: string | undefined): AiSemanticResult {
@@ -32,6 +32,25 @@ function parseResponse(raw: string | undefined): AiSemanticResult {
     };
   } catch (error) {
     throw new AiSchemaError(error instanceof Error ? error.message : "Invalid Gemini response");
+  }
+}
+
+function parseConversationResponse(raw: string | undefined): ConversationAiSemanticResult {
+  if (!raw) throw new AiSchemaError("Gemini returned an empty conversation response");
+  try {
+    const parsed = ConversationAiSemanticResultSchema.parse(JSON.parse(raw));
+    const seen = new Set<string>();
+    return {
+      ...parsed,
+      indicators: parsed.indicators.filter((indicator) => {
+        const key = indicator.category;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      }).map((indicator) => ({ ...indicator, evidence: redactEvidence(indicator.evidence, 120) })),
+    };
+  } catch (error) {
+    throw new AiSchemaError(error instanceof Error ? error.message : "Invalid Gemini conversation response");
   }
 }
 
@@ -117,5 +136,44 @@ export class GeminiAiClient implements AiClient {
         ],
       },
     ]);
+  }
+
+  private async generateConversation(input: AnalyzeConversationInput): Promise<ConversationAiAnalysis> {
+    return withAiConcurrency(async () => {
+      const startedAt = Date.now();
+      let attemptedFallback = false;
+      let lastError: unknown;
+      for (const [index, model] of [env.GEMINI_MODEL, env.GEMINI_FALLBACK_MODEL].entries()) {
+        if (index === 1) attemptedFallback = true;
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), env.AI_TIMEOUT_MS);
+        try {
+          const response = await this.ai.models.generateContent({
+            model,
+            contents: conversationAnalysisPrompt(input),
+            config: {
+              abortSignal: controller.signal,
+              systemInstruction: SYSTEM_INSTRUCTION,
+              responseMimeType: "application/json",
+              responseJsonSchema: ConversationAiSemanticJsonSchema,
+              temperature: 0.2,
+              maxOutputTokens: 2_500,
+            },
+          });
+          return { result: parseConversationResponse(response.text), meta: { provider: "google", modelId: model, latencyMs: Date.now() - startedAt, attemptedFallback } };
+        } catch (error) {
+          lastError = error;
+          if (index === 0 && retryable(error)) continue;
+          break;
+        } finally {
+          clearTimeout(timeout);
+        }
+      }
+      throw new AiProviderError(lastError instanceof Error ? lastError.message : "Gemini conversation analysis failed");
+    });
+  }
+
+  analyzeConversation(input: AnalyzeConversationInput): Promise<ConversationAiAnalysis> {
+    return this.generateConversation(input);
   }
 }

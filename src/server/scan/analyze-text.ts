@@ -69,6 +69,7 @@ export async function analyzeText(input: { text: string; sessionId?: string }) {
     actionTags: aiAnalysis?.result.recommendedActionTags,
     knowledge: knowledge.matches,
     uncertainty: aiAnalysis?.result.uncertainty ?? "Analisis AI tidak tersedia; hasil hanya berdasarkan pola dan struktur yang terdeteksi.",
+    scoreExplanation: fusion.scoreExplanation,
   });
 
   await persistResult({

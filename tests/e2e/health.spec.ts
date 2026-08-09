@@ -32,6 +32,15 @@ test("core product pages render and connect", async ({ page }) => {
   await page.goto("/simulator");
   await expect(page.getByRole("heading", { name: /Latih refleks amanmu/i })).toBeVisible();
   await expect(page.getByRole("button", { name: "Pemberitahuan OTP" })).toBeVisible();
+
+  await page.goto("/respond");
+  await expect(page.getByRole("heading", { name: /Sudah terlanjur/i })).toBeVisible();
+  await page.getByRole("button", { name: /Sudah transfer uang/i }).click();
+  await expect(page.getByRole("heading", { name: /Jaga jeda/i })).toBeVisible();
+
+  await page.goto("/scan/conversation");
+  await expect(page.getByRole("heading", { name: /Baca urutannya/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Analisis percakapan/i })).toBeVisible();
 });
 
 test("landing stays readable with reduced motion and on mobile", async ({ page }) => {
@@ -72,6 +81,8 @@ test("every product surface uses the animated interior system without horizontal
     ["/simulator", /Latih refleks amanmu/i],
     ["/learn", /Kenali polanya sendiri/i],
     ["/history", /Jejak pemeriksaanmu/i],
+    ["/respond", /Sudah terlanjur/i],
+    ["/scan/conversation", /Baca urutannya/i],
     ["/alamat-yang-tidak-ada", /Jalurnya berhenti di sini/i],
   ] as const;
 

@@ -6,6 +6,15 @@ import { SmoothScroll } from "@/components/site/smooth-scroll";
 export const metadata: Metadata = {
   title: "AmanKlik AI",
   description: "Pahami risikonya sebelum percaya pesannya.",
+  icons: {
+    icon: [
+      { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+      { url: "/icon.png", type: "image/png", sizes: "512x512" },
+    ],
+    apple: [{ url: "/apple-icon.png", type: "image/png", sizes: "180x180" }],
+  },
+  manifest: "/manifest.webmanifest",
+  other: { "theme-color": "#f3f1ea" },
 };
 
 export default function RootLayout({
