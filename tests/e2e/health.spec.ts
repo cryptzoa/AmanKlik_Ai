@@ -41,6 +41,12 @@ test("core product pages render and connect", async ({ page }) => {
   await page.goto("/scan/conversation");
   await expect(page.getByRole("heading", { name: /Baca urutannya/i })).toBeVisible();
   await expect(page.getByRole("button", { name: /Analisis percakapan/i })).toBeVisible();
+
+  await page.goto("/family");
+  await expect(page.getByRole("heading", { name: /Jalurnya berhenti di sini/i })).toBeVisible();
+
+  await page.goto("/benchmark");
+  await expect(page.getByRole("heading", { name: /Buktikan batasnya/i })).toBeVisible();
 });
 
 test("landing stays readable with reduced motion and on mobile", async ({ page }) => {
@@ -57,6 +63,7 @@ test("landing stays readable with reduced motion and on mobile", async ({ page }
   expect(width.scroll).toBe(width.client);
   await page.getByText("Menu", { exact: true }).click();
   await expect(page.getByRole("navigation", { name: "Navigasi seluler" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Family" })).toHaveCount(0);
 });
 
 test("scanner can load every kind of synthetic fixture", async ({ page }) => {
@@ -83,6 +90,10 @@ test("every product surface uses the animated interior system without horizontal
     ["/history", /Jejak pemeriksaanmu/i],
     ["/respond", /Sudah terlanjur/i],
     ["/scan/conversation", /Baca urutannya/i],
+    ["/investigate", /Satu kasus, banyak petunjuk/i],
+    ["/intelligence", /Lihat polanya, bukan orangnya/i],
+    ["/benchmark", /Buktikan batasnya/i],
+    ["/connect", /AmanKlik di tempat pesan datang/i],
     ["/alamat-yang-tidak-ada", /Jalurnya berhenti di sini/i],
   ] as const;
 

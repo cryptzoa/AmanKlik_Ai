@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "AmanKlik AI",
+  "version": "0.1.0",
+  "description": "Periksa teks dan tautan yang kamu pilih tanpa meninggalkan halaman.",
+  "minimum_chrome_version": "116",
+  "permissions": ["activeTab", "contextMenus", "scripting", "sidePanel", "storage"],
+  "optional_host_permissions": ["https://*/*", "http://localhost/*", "http://127.0.0.1/*"],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "action": {
+    "default_title": "Periksa dengan AmanKlik"
+  },
+  "side_panel": {
+    "default_path": "panel.html"
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  }
+}

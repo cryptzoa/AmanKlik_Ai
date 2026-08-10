@@ -25,6 +25,7 @@
     "eval:mock": "tsx scripts/evaluate-deterministic.ts",
     "eval:report": "tsx scripts/evaluate-deterministic.ts",
     "eval:live": "tsx scripts/evaluate-live.ts",
+    "eval:adversarial": "tsx scripts/evaluate-adversarial.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node scripts/migrate.mjs"
   },

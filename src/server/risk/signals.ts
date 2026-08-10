@@ -1,7 +1,7 @@
 import type { RiskSignal } from "@/types/analysis";
 
 export function normalizeText(input: string): string {
-  return input.normalize("NFKC").replace(/\s+/g, " ").trim();
+  return input.normalize("NFKC").replace(/\p{Cf}/gu, "").replace(/\s+/g, " ").trim();
 }
 
 type RuleDefinition = {
@@ -23,8 +23,8 @@ const RULES: RuleDefinition[] = [
     weight: 28,
     explanation: "Kode OTP adalah rahasia dan tidak seharusnya dikirimkan kepada pengirim pesan.",
     patterns: [
-      /\b(?:otp|kode\s+(?:verifikasi|keamanan))\b.{0,80}\b(?:balas|kirim|bagikan|berikan|sebutkan|share|masukkan)\b/i,
-      /\b(?:balas|kirim|bagikan|berikan|sebutkan|share)\b.{0,80}\b(?:otp|kode\s+(?:verifikasi|keamanan))\b/i,
+      /\b(?:otp|o[\s._-]*t[\s._-]*p|kode\s+(?:verifikasi|keamanan))\b.{0,80}\b(?:balas|kirim|bagikan|berikan|sebutkan|share|masukkan)\b/i,
+      /\b(?:balas|kirim|bagikan|berikan|sebutkan|share)\b.{0,80}\b(?:otp|o[\s._-]*t[\s._-]*p|kode\s+(?:verifikasi|keamanan))\b/i,
     ],
   },
   {
@@ -35,8 +35,8 @@ const RULES: RuleDefinition[] = [
     weight: 26,
     explanation: "Password dan PIN tidak boleh dibagikan melalui percakapan seperti ini.",
     patterns: [
-      /\b(?:password|kata\s+sandi|pin|passcode)\b.{0,70}\b(?:kirim|bagikan|berikan|balas|masukkan|sebutkan)\b/i,
-      /\b(?:kirim|bagikan|berikan|balas|masukkan|sebutkan)\b.{0,70}\b(?:password|kata\s+sandi|pin|passcode)\b/i,
+      /\b(?:password|p[a4]ssw[o0]rd|kata\s+sandi|pin|p[\s._-]*i[\s._-]*n|passcode)\b.{0,70}\b(?:kirim|bagikan|berikan|balas|masukkan|sebutkan)\b/i,
+      /\b(?:kirim|bagikan|berikan|balas|masukkan|sebutkan)\b.{0,70}\b(?:password|p[a4]ssw[o0]rd|kata\s+sandi|pin|p[\s._-]*i[\s._-]*n|passcode)\b/i,
     ],
   },
   {
@@ -47,7 +47,7 @@ const RULES: RuleDefinition[] = [
     weight: 30,
     explanation: "Aplikasi akses jarak jauh dapat memberi pihak lain kendali atas perangkat atau akun.",
     patterns: [
-      /\b(?:anydesk|teamviewer|rustdesk|remote\s+access|akses\s+jarak\s+jauh|kendali\s+jarak\s+jauh)\b/i,
+      /\b(?:any[\s._-]*desk|team[\s._-]*viewer|rust[\s._-]*desk|remote\s+access|akses\s+jarak\s+jauh|kendali\s+jarak\s+jauh)\b/i,
     ],
   },
   {
@@ -58,8 +58,8 @@ const RULES: RuleDefinition[] = [
     weight: 18,
     explanation: "Permintaan uang yang datang lewat pesan perlu diverifikasi melalui kanal yang sudah dipercaya.",
     patterns: [
-      /\b(?:transfer|kirim|bayar|rekening|nomor\s+rekening|uang|dana)\b.{0,80}\b(?:sekarang|segera|hari\s+ini|secepatnya|ini)\b/i,
-      /\b(?:transfer|kirim|bayar|isi\s+saldo)\b/i,
+      /\b(?:transfer|tr[a4]nsfer|kirim|bayar|rekening|nomor\s+rekening|uang|dana)\b.{0,80}\b(?:sekarang|segera|hari\s+ini|secepatnya|ini)\b/i,
+      /\b(?:transfer|tr[a4]nsfer|kirim|bayar|isi\s+saldo)\b/i,
     ],
   },
   {
@@ -70,8 +70,8 @@ const RULES: RuleDefinition[] = [
     weight: 18,
     explanation: "Janji keuntungan pasti, apalagi disertai tekanan waktu, adalah indikator risiko.",
     patterns: [
-      /\b(?:keuntungan|return|profit|cuan)\b.{0,70}\b(?:pasti|dijamin|tanpa\s+rugi|100%)\b/i,
-      /\b(?:pasti|dijamin|tanpa\s+rugi|100%)\b.{0,70}\b(?:untung|keuntungan|return|profit|cuan)\b/i,
+      /\b(?:keuntungan|return|profit|pr[o0]f[i1]t|cuan)\b.{0,70}\b(?:pasti|dijamin|tanpa\s+rugi|100%)\b/i,
+      /\b(?:pasti|dijamin|tanpa\s+rugi|100%)\b.{0,70}\b(?:untung|keuntungan|return|profit|pr[o0]f[i1]t|cuan)\b/i,
     ],
   },
   {
@@ -105,8 +105,8 @@ const RULES: RuleDefinition[] = [
     weight: 12,
     explanation: "Ancaman akun diblokir sering dipakai untuk mendorong keputusan tergesa-gesa.",
     patterns: [
-      /\b(?:akun|rekening)\b.{0,60}\b(?:blokir|dibatasi|ditutup|dinonaktifkan|terancam)\b/i,
-      /\b(?:blokir|dibatasi|ditutup|dinonaktifkan)\b.{0,60}\b(?:akun|rekening)\b/i,
+      /\b(?:akun|rekening)\b.{0,60}\b(?:(?:di)?bl[o0]kir|dibatasi|ditutup|dinonaktifkan|terancam)\b/i,
+      /\b(?:(?:di)?bl[o0]kir|dibatasi|ditutup|dinonaktifkan)\b.{0,60}\b(?:akun|rekening)\b/i,
     ],
   },
   {
@@ -140,8 +140,8 @@ const RULES: RuleDefinition[] = [
     weight: 10,
     explanation: "Larangan menghubungi pihak lain dapat mengisolasi pengguna dari verifikasi independen.",
     patterns: [
-      /\b(?:jangan|tidak\s+usah)\b.{0,50}\b(?:telepon|hubungi|bilang|cerita|beri\s+tahu|kasih\s+tahu)\b/i,
-      /\b(?:rahasia|jangan\s+telepon|jangan\s+bilang)\b/i,
+      /\b(?:jangan|j[a4]ngan|tidak\s+usah)\b.{0,50}\b(?:telepon|hubungi|bilang|cerita|beri\s+tahu|kasih\s+tahu)\b/i,
+      /\b(?:rahasia|jangan\s+telepon|j[a4]ngan\s+telepon|jangan\s+bilang)\b/i,
     ],
   },
   {

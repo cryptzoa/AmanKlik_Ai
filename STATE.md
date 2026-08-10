@@ -121,3 +121,16 @@ Use only synthetic fixtures: new-number impersonation, OTP verification, benign 
 - F5 Conversation Analysis implemented as a bounded 2–12-message route at `/scan/conversation` and `/api/scans/conversation`, with ordered deterministic progression signals, optional structured Gemini analysis, redacted timeline output, session ownership, and a new `input_type` migration.
 - Verification after the expansion slice: `pnpm typecheck`, `pnpm lint`, `pnpm test` (48 tests), `pnpm build`, `pnpm test:e2e` (7 tests), `pnpm eval:deterministic`, and `pnpm db:generate` all pass. `pnpm eval:live -- --confirm-live` is available for an explicitly authorized synthetic Gemini smoke and was not run without live credentials. The only recurring warning is the agent shell's Node 22 versus the repository's Node >=24 requirement.
 - Live follow-up remains: apply migration on Railway, run a live synthetic text/screenshot/conversation smoke with Gemini quota, inspect the result/report UI on the user's Node 26 environment, and rehearse the narrowed competition demo. No deployment or push was performed.
+
+## Protection platform expansion record — 2026-08-09
+
+- The previous expansion slice and generated AmanKlik favicon were committed and pushed as `e26f495` before this new working slice began.
+- Added implementation contracts `agents/41_PROTECTION_PLATFORM_EXPANSION.md` and `agents/42_BROWSER_SHARE_EXTENSION.md` for eight connected features.
+- Cross-source investigations now compose 2–8 session-owned scans without duplicating raw input, then render an interactive graph of sources, signal families, domains, and recommended actions.
+- Intelligence uses a 30-day, first-party aggregate with a minimum of three distinct anonymous sessions per visible pattern; repeated-input context uses the same threshold and all user-submitted URLs remain unfetched.
+- Result pages now include persistent Safe Action Center progress and categorical outcome feedback. Uncertain outcomes are excluded from verified-outcome counts.
+- Family Mode was deliberately removed before release because its relationship selector and guided script diluted the core product path without adding credible safety value.
+- Added a Manifest V3 browser side panel under `extension/`, revocable HMAC-hashed integration tokens, extension-only CORS, explicit-selection capture, and PWA POST share target support for text, URL, and validated screenshots.
+- Added adversarial evaluation for obfuscation, formatting, prompt injection, and false-positive pressure. Current synthetic suite is 12/12 with zero URL network calls; deterministic regression remains separate.
+- New database migration sequence is normalized to `0002_cloudy_mordo` for the existing conversation enum followed by `0003_regular_ultimates` for investigation, action progress, outcome, and integration-token tables. The original conversation migration timestamp/content remain unchanged for deployed migration compatibility.
+- This working slice has not been pushed. Required final gates remain production build, expanded E2E, diff/security audit, and Railway migration/live smoke after explicit deployment authorization.

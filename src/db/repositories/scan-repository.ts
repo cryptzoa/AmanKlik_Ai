@@ -86,6 +86,17 @@ export async function listScansForSession(sessionId: string, limit = 20) {
   }
 }
 
+export async function countDistinctSessionsForInputHash(inputHash: string, since: Date): Promise<number> {
+  try {
+    const [row] = await requireDb().select({ count: sql<number>`count(distinct ${scans.sessionId})::int` })
+      .from(scans)
+      .where(and(eq(scans.inputHash, inputHash), gt(scans.createdAt, since)));
+    return Number(row?.count ?? 0);
+  } catch (error) {
+    throw new DatabaseError(error instanceof Error ? error.message : "Failed to read intelligence match");
+  }
+}
+
 export async function findCacheByHash(inputHash: string) {
   const [row] = await requireDb()
     .select()

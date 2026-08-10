@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AmanKlik AI</title>
+    <link rel="stylesheet" href="panel.css" />
+  </head>
+  <body>
+    <header>
+      <img src="icons/icon-48.png" width="32" height="32" alt="" />
+      <div><strong>AmanKlik AI</strong><span>Jeda sebelum bertindak.</span></div>
+      <button id="settings-toggle" class="icon-button" type="button" aria-expanded="false" aria-controls="settings">⚙</button>
+    </header>
+
+    <main>
+      <section id="settings" class="settings" hidden>
+        <h1>Hubungkan AmanKlik</h1>
+        <label>Base URL<input id="base-url" type="url" placeholder="https://amanklik.example" /></label>
+        <label>Integration token<input id="token" type="password" autocomplete="off" placeholder="akx_…" /></label>
+        <button id="save-settings" class="primary" type="button">Simpan koneksi</button>
+        <p id="settings-status" class="status" role="status"></p>
+      </section>
+
+      <section id="scanner">
+        <div class="eyebrow">QUICK CHECK</div>
+        <h1>Periksa tanpa pindah konteks.</h1>
+        <div class="tabs" role="tablist" aria-label="Jenis input">
+          <button type="button" role="tab" aria-selected="true" data-mode="text">Teks</button>
+          <button type="button" role="tab" aria-selected="false" data-mode="url">URL</button>
+        </div>
+        <label id="input-label" for="scan-input">Pesan yang dipilih</label>
+        <textarea id="scan-input" rows="8" maxlength="8000" placeholder="Blok pesan di halaman, atau tempel di sini."></textarea>
+        <div class="input-actions">
+          <button id="capture-selection" class="secondary" type="button">Ambil pilihan</button>
+          <button id="use-page-url" class="secondary" type="button">Pakai URL tab</button>
+        </div>
+        <p class="privacy">Hanya isi kotak ini yang dikirim setelah kamu menekan Periksa.</p>
+        <button id="scan-button" class="primary" type="button">Periksa sekarang</button>
+        <p id="scan-status" class="status" role="status"></p>
+      </section>
+
+      <section id="result" class="result" hidden aria-live="polite">
+        <div class="risk-row"><span id="risk-label">HASIL</span><strong id="risk-score">0</strong></div>
+        <h2 id="result-summary"></h2>
+        <p id="result-uncertainty"></p>
+        <div id="indicator-list" class="indicator-list"></div>
+        <div id="action-list" class="action-list"></div>
+        <button id="open-result" class="primary" type="button">Buka analisis lengkap</button>
+        <button id="reset" class="secondary full" type="button">Periksa lagi</button>
+      </section>
+    </main>
+    <script src="panel.js"></script>
+  </body>
+</html>

@@ -17,7 +17,7 @@ const tabs: Array<{ id: ScanMode; label: string }> = [
   { id: "url", label: "Tautan" },
 ];
 
-export function ScanClient() {
+export function ScanClient({ initialError = null }: { initialError?: string | null }) {
   const root = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const [mode, setMode] = useState<ScanMode>("text");
@@ -26,7 +26,7 @@ export function ScanClient() {
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<ScanStatus>("idle");
   const [demoLoading, setDemoLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(initialError);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const previewUrl = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);

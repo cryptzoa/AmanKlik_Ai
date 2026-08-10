@@ -1,8 +1,10 @@
 import { ResultView } from "@/components/result/result-view";
-import { getScanForSession } from "@/db/repositories/scan-repository";
+import { countDistinctSessionsForInputHash, getScanForSession } from "@/db/repositories/scan-repository";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
 import { scanIdSchema } from "@/lib/validation";
 import { notFound } from "next/navigation";
+import { listActionProgress } from "@/db/repositories/action-progress-repository";
+import { getScanOutcome } from "@/db/repositories/outcome-repository";
 
 export const dynamic = "force-dynamic";
 
@@ -20,5 +22,9 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
   }
 
   if (!scan) notFound();
-  return <ResultView result={scan.resultJson} />;
+  let progress: Awaited<ReturnType<typeof listActionProgress>> = [];
+  let outcome: Awaited<ReturnType<typeof getScanOutcome>> = null;
+  let intelligenceMatchCount = 0;
+  try { [progress, outcome, intelligenceMatchCount] = await Promise.all([listActionProgress(scan.id, sessionId), getScanOutcome(scan.id, sessionId), countDistinctSessionsForInputHash(scan.inputHash, new Date(Date.now() - 30 * 24 * 60 * 60 * 1_000))]); } catch { /* Result remains usable without persistence extras. */ }
+  return <ResultView result={scan.resultJson} initialActionProgress={Object.fromEntries(progress.map((item) => [item.actionId, item.state]))} initialOutcome={outcome ? { verdict: outcome.verdict, impact: outcome.impact, updatedAt: outcome.updatedAt.toISOString() } : null} intelligenceMatchCount={intelligenceMatchCount} />;
 }

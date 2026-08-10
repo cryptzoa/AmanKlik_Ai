@@ -12,6 +12,8 @@ import { POST as postUrl } from "@/app/api/scans/url/route";
 import { POST as postImage } from "@/app/api/scans/image/route";
 import { POST as postSimulator } from "@/app/api/simulator/evaluate/route";
 import { POST as postConversation } from "@/app/api/scans/conversation/route";
+import { OPTIONS as optionsIntegration, POST as postIntegration } from "@/app/api/integrations/scan/route";
+import { POST as postShareTarget } from "@/app/api/share-target/route";
 
 describe("API validation boundaries", () => {
   it("rejects text that is too short before analysis", async () => {
@@ -101,5 +103,40 @@ describe("API validation boundaries", () => {
 
     expect(response.status).toBe(400);
     expect((await response.json()).error.code).toBe("INVALID_INPUT");
+  });
+
+  it("rejects integration requests from regular web origins", async () => {
+    const response = await optionsIntegration(new Request("http://localhost/api/integrations/scan", {
+      method: "OPTIONS",
+      headers: { origin: "https://attacker.example" },
+    }));
+    expect(response.status).toBe(403);
+  });
+
+  it("allows extension preflight but requires a valid revocable token", async () => {
+    const origin = "chrome-extension://abcdefghijklmnop";
+    const preflight = await optionsIntegration(new Request("http://localhost/api/integrations/scan", { method: "OPTIONS", headers: { origin } }));
+    expect(preflight.status).toBe(204);
+    expect(preflight.headers.get("access-control-allow-origin")).toBe(origin);
+
+    const response = await postIntegration(new Request("http://localhost/api/integrations/scan", {
+      method: "POST",
+      headers: { origin, "content-type": "application/json", authorization: "Bearer invalid" },
+      body: JSON.stringify({ mode: "text", text: "Pesan cukup panjang untuk diperiksa." }),
+    }));
+    expect(response.status).toBe(401);
+    expect((await response.json()).error.code).toBe("UNAUTHORIZED");
+  });
+
+  it("rejects regular cross-site form posts to the PWA share target", async () => {
+    const formData = new FormData();
+    formData.set("text", "Pesan yang cukup panjang untuk dianalisis.");
+    const response = await postShareTarget(new Request("http://localhost/api/share-target", {
+      method: "POST",
+      body: formData,
+      headers: { "sec-fetch-site": "cross-site" },
+    }));
+    expect(response.status).toBe(303);
+    expect(response.headers.get("location")).toContain("/scan?share=failed");
   });
 });

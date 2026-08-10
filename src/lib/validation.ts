@@ -30,6 +30,39 @@ export const feedbackSchema = z.object({
   comment: z.string().trim().max(500).optional(),
 });
 
+export const investigationCaseSchema = z.object({
+  title: z.string().trim().min(3).max(80),
+  scanIds: z.array(scanIdSchema).min(2).max(8),
+}).superRefine((value, context) => {
+  if (new Set(value.scanIds).size !== value.scanIds.length) {
+    context.addIssue({ code: "custom", path: ["scanIds"], message: "Hasil pemeriksaan harus unik." });
+  }
+});
+
+export const investigationAddScanSchema = z.object({ scanId: scanIdSchema });
+
+export const actionProgressSchema = z.object({
+  actionId: z.string().trim().min(1).max(120).regex(/^[a-z0-9_-]+$/i),
+  state: z.enum(["pending", "completed", "skipped"]),
+});
+
+export const outcomeSchema = z.object({
+  verdict: z.enum(["prevented", "confirmed_scam", "legitimate", "uncertain"]),
+  impact: z.enum(["none", "data_shared", "account_compromised", "money_lost"]),
+});
+
+export const integrationTokenSchema = z.object({
+  name: z.string().trim().min(3).max(60),
+});
+
+export const integrationTokenRevokeSchema = z.object({ id: z.string().uuid() });
+
+export const integrationScanSchema = z.discriminatedUnion("mode", [
+  z.object({ mode: z.literal("text"), text: z.string().trim().min(8).max(8_000) }),
+  z.object({ mode: z.literal("url"), url: z.string().trim().min(1).max(2_048) }),
+]);
+
 export type TextScanRequest = z.infer<typeof textScanRequestSchema>;
 export type UrlScanRequest = z.infer<typeof urlScanRequestSchema>;
 export type ConversationScanRequest = z.infer<typeof conversationScanRequestSchema>;
+export type InvestigationCaseRequest = z.infer<typeof investigationCaseSchema>;

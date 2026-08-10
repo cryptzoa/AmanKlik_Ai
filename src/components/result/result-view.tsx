@@ -4,6 +4,9 @@ import { InteriorShell } from "@/components/site/interior-shell";
 import { ScoreBreakdown } from "@/components/result/score-breakdown";
 import { ReportActions } from "@/components/result/report-actions";
 import { ConversationTimeline } from "@/components/result/conversation-timeline";
+import { ActionChecklist } from "@/components/result/action-checklist";
+import { OutcomeFeedback } from "@/components/result/outcome-feedback";
+import type { ActionProgressState, ScanOutcome } from "@/types/outcome";
 import Link from "next/link";
 
 const sourceLabels: Record<RiskSignal["source"], string> = {
@@ -35,7 +38,7 @@ function SignalRow({ signal, index }: { signal: RiskSignal; index: number }) {
   );
 }
 
-export function ResultView({ result }: { result: AnalysisResult }) {
+export function ResultView({ result, initialActionProgress = {}, initialOutcome = null, intelligenceMatchCount = 0 }: { result: AnalysisResult; initialActionProgress?: Record<string, ActionProgressState>; initialOutcome?: ScanOutcome | null; intelligenceMatchCount?: number }) {
   const isElevated = result.riskLevel === "HIGH" || result.riskLevel === "VERY_HIGH";
 
   return (
@@ -61,6 +64,7 @@ export function ResultView({ result }: { result: AnalysisResult }) {
               <Link className="lift-link inline-flex min-h-12 items-center rounded-full bg-ink px-6 font-semibold text-surface hover:bg-ai" href="/scan">Periksa pesan lain →</Link>
               <Link className="lift-link inline-flex min-h-12 items-center rounded-full border border-line bg-surface px-6 font-semibold hover:border-ai hover:text-ai" href={`/respond?from=${result.scanId}`}>Sudah terlanjur?</Link>
               <Link className="lift-link inline-flex min-h-12 items-center rounded-full border border-line bg-surface px-6 font-semibold hover:border-ai hover:text-ai" href={`/simulator?from=${result.scanId}`}>Latihan dari pola ini</Link>
+              <Link className="lift-link inline-flex min-h-12 items-center rounded-full border border-line bg-surface px-6 font-semibold hover:border-ai hover:text-ai" href={`/investigate?scan=${result.scanId}`}>Hubungkan ke kasus</Link>
             </div>
           </div>
         </section>
@@ -70,6 +74,8 @@ export function ResultView({ result }: { result: AnalysisResult }) {
             <strong>Analisis AI sedang terbatas.</strong> AmanKlik tetap menjalankan pemeriksaan pola dan struktur secara deterministik.
           </div>
         ) : null}
+
+        {intelligenceMatchCount >= 3 ? <aside data-reveal className="border-b border-line bg-ai-soft px-5 py-5 text-sm leading-7"><strong className="text-ai">Sinyal lintas sesi:</strong> fingerprint input yang sama muncul pada {intelligenceMatchCount} sesi anonim berbeda dalam 30 hari terakhir. Ini menambah konteks, tetapi tidak membuktikan bahwa pengirim atau konten pasti berbahaya.</aside> : null}
 
         <ScoreBreakdown explanation={result.scoreExplanation} signals={result.indicators} />
 
@@ -107,26 +113,9 @@ export function ResultView({ result }: { result: AnalysisResult }) {
           </section>
         ) : null}
 
-        <section data-reveal className="border-t border-line py-16" aria-labelledby="action-heading">
-          <p className="font-mono text-xs uppercase tracking-[0.18em] text-risk">04 / Action</p>
-          <h2 id="action-heading" className="mt-4 max-w-3xl text-4xl font-semibold tracking-[-0.05em] sm:text-6xl">Yang sebaiknya dilakukan sekarang</h2>
-          <ol className="mt-9 grid gap-px border border-line bg-line md:grid-cols-2">
-            {result.actionPlan.map((action, index) => (
-              <li key={action.id} data-reveal-card className="grid min-h-64 gap-3 bg-surface p-6 sm:grid-cols-[48px_1fr] sm:p-8">
-                <span className="font-mono text-sm text-muted">{String(index + 1).padStart(2, "0")}</span>
-                <div>
-                  <h3 className="font-semibold">{action.title}</h3>
-                  <p className="mt-2 leading-7 text-muted">{action.body}</p>
-                  {action.sourceTitle && action.sourceUrl ? (
-                    <a className="mt-3 inline-flex text-sm font-semibold text-ai underline decoration-ai/30 underline-offset-4 hover:decoration-ai" href={action.sourceUrl} rel="noreferrer" target="_blank">
-                      Sumber resmi: {action.sourceTitle}
-                    </a>
-                  ) : null}
-                </div>
-              </li>
-            ))}
-          </ol>
-        </section>
+        <ActionChecklist scanId={result.scanId} actions={result.actionPlan} initialProgress={initialActionProgress} />
+
+        <OutcomeFeedback scanId={result.scanId} initialOutcome={initialOutcome} />
 
         <ReportActions result={result} />
 
