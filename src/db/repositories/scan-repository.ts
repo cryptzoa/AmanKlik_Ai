@@ -5,6 +5,7 @@ import { and, desc, eq, gt, or, sql } from "drizzle-orm";
 import { requireDb } from "@/db/client";
 import { analysisCache, scans } from "@/db/schema";
 import { DatabaseError } from "@/lib/errors";
+import { sanitizeExtractedImageText, sanitizeStoredImageResult } from "@/server/image/extracted-text";
 import type { AnalysisMode, AnalysisResult, InputType, RiskLevel } from "@/types/analysis";
 
 export async function createScan(input: {
@@ -60,7 +61,11 @@ export async function getScanForSession(scanId: string, sessionId: string) {
       )
       .limit(1);
 
-    return row ?? null;
+    return row ? {
+      ...row,
+      previewRedacted: row.inputType === "image" && row.previewRedacted ? sanitizeExtractedImageText(row.previewRedacted) || null : row.previewRedacted,
+      resultJson: sanitizeStoredImageResult(row.resultJson),
+    } : null;
   } catch (error) {
     throw new DatabaseError(error instanceof Error ? error.message : "Failed to read scan");
   }
@@ -68,7 +73,7 @@ export async function getScanForSession(scanId: string, sessionId: string) {
 
 export async function listScansForSession(sessionId: string, limit = 20) {
   try {
-    return await requireDb()
+    const rows = await requireDb()
       .select({
         id: scans.id,
         inputHash: scans.inputHash,
@@ -82,6 +87,7 @@ export async function listScansForSession(sessionId: string, limit = 20) {
       .where(and(eq(scans.sessionId, sessionId), gt(scans.expiresAt, new Date())))
       .orderBy(desc(scans.createdAt))
       .limit(Math.min(Math.max(limit, 1), 50));
+    return rows.map((row) => row.inputType === "image" && row.previewRedacted ? { ...row, previewRedacted: sanitizeExtractedImageText(row.previewRedacted) || null } : row);
   } catch (error) {
     throw new DatabaseError(error instanceof Error ? error.message : "Failed to list scans");
   }

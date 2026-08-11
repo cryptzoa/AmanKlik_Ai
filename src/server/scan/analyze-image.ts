@@ -4,7 +4,8 @@ import { AiProviderError } from "@/lib/errors";
 import { preprocessImage, type UploadFile } from "@/server/image/preprocess";
 import { analyzeUrl } from "@/server/url/analyzer";
 import { fuseRisk } from "@/server/risk/engine";
-import { detectMessageSignals, normalizeText } from "@/server/risk/signals";
+import { detectMessageSignals } from "@/server/risk/signals";
+import { sanitizeExtractedImageText } from "@/server/image/extracted-text";
 import { aiSignalsFromResult, createResult, extractUrls, getCachedResult, materializeCachedResult, persistResult } from "@/server/scan/shared";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
 import { retrieveKnowledge } from "@/server/rag/retriever";
@@ -36,7 +37,7 @@ export async function analyzeImage(input: { file: UploadFile; sessionId?: string
     throw new AiProviderError("Image AI analysis unavailable", true);
   }
 
-  const extractedText = aiAnalysis.result.extractedText ? normalizeText(aiAnalysis.result.extractedText) : "";
+  const extractedText = aiAnalysis.result.extractedText ? sanitizeExtractedImageText(aiAnalysis.result.extractedText) : "";
   const ruleSignals = extractedText ? detectMessageSignals(extractedText) : [];
   const urls = extractUrls(extractedText);
   const urlAnalysis = urls[0] ? analyzeUrl(urls[0]) : null;

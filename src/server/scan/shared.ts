@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { env } from "@/lib/env";
 import { redactEvidence, redactText } from "@/lib/redaction";
 import { hmacInput } from "@/lib/crypto";
+import { sanitizeStoredImageResult } from "@/server/image/extracted-text";
 import { createScan, findCacheByHash, upsertCache } from "@/db/repositories/scan-repository";
 import type { AnalysisMode, AnalysisResult, InputType, PublicScoreExplanation, RiskSignal, UrlAnalysis } from "@/types/analysis";
 import type { AiAnalysis } from "@/server/ai/client";
@@ -104,8 +105,9 @@ export function createResult(input: {
 }
 
 export function materializeCachedResult(result: AnalysisResult): AnalysisResult {
+  const sanitized = sanitizeStoredImageResult(result);
   return {
-    ...result,
+    ...sanitized,
     scanId: randomUUID(),
     analysisMode: "cached_hybrid",
     cacheHit: true,

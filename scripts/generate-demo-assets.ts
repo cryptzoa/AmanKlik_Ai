@@ -28,9 +28,6 @@ function screenshotSvg(title: string, lines: string[], accent: string): string {
     <text x="836" y="718" font-family="Arial, sans-serif" font-size="20" fill="#727468">18.42</text>
     <rect x="96" y="830" width="888" height="116" rx="58" fill="#efefe8"/>
     <text x="148" y="900" font-family="Arial, sans-serif" font-size="27" fill="#8a8b82">Tulis balasan…</text>
-    <rect x="96" y="1045" width="888" height="132" rx="24" fill="#171913"/>
-    <text x="142" y="1101" font-family="Arial, sans-serif" font-size="20" letter-spacing="3" fill="#b8f05a">AMAN KLIK · DEMO</text>
-    <text x="142" y="1144" font-family="Arial, sans-serif" font-size="23" fill="#f9f8f2">Semua nama dan isi pesan bersifat fiktif.</text>
   </svg>`;
 }
 
