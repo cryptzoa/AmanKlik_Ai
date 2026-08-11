@@ -6,11 +6,14 @@ import {
   labelForAsset,
   labelForIncident,
 } from "@/lib/response/build-response-plan";
-import { AFFECTED_ASSET_LABELS, INCIDENT_LABELS } from "@/lib/response/catalog";
+import {
+  AFFECTED_ASSET_LABELS,
+  affectedAssetsForIncidents,
+  INCIDENT_LABELS,
+} from "@/lib/response/catalog";
 import type { AffectedAsset, IncidentType, ResponseStep } from "@/lib/response/types";
 
 const INCIDENTS = Object.keys(INCIDENT_LABELS) as IncidentType[];
-const AFFECTED_ASSETS = Object.keys(AFFECTED_ASSET_LABELS) as AffectedAsset[];
 
 function officialHost(url: string): string {
   try {
@@ -88,6 +91,10 @@ export function RespondClient() {
   const [selectedIncidents, setSelectedIncidents] = useState<IncidentType[]>([]);
   const [selectedAssets, setSelectedAssets] = useState<AffectedAsset[]>([]);
   const [copyStatus, setCopyStatus] = useState<string | null>(null);
+  const availableAssets = useMemo(
+    () => affectedAssetsForIncidents(selectedIncidents),
+    [selectedIncidents],
+  );
   const plan = useMemo(
     () => buildResponsePlan(selectedIncidents, selectedAssets),
     [selectedAssets, selectedIncidents],
@@ -99,9 +106,13 @@ export function RespondClient() {
 
   function toggleIncident(incident: IncidentType) {
     setCopyStatus(null);
-    setSelectedIncidents((current) => current.includes(incident)
-      ? current.filter((item) => item !== incident)
-      : [...current, incident]);
+    const nextIncidents = selectedIncidents.includes(incident)
+      ? selectedIncidents.filter((item) => item !== incident)
+      : [...selectedIncidents, incident];
+    const nextAvailableAssets = new Set(affectedAssetsForIncidents(nextIncidents));
+
+    setSelectedIncidents(nextIncidents);
+    setSelectedAssets((current) => current.filter((asset) => nextAvailableAssets.has(asset)));
   }
 
   function toggleAsset(asset: AffectedAsset) {
@@ -160,12 +171,12 @@ export function RespondClient() {
           </div>
         </fieldset>
 
-        {selectedIncidents.length ? (
+        {availableAssets.length ? (
           <fieldset className="mt-9 border-t border-line pt-8">
-            <legend className="text-xl font-semibold">2. Layanan apa yang terdampak?</legend>
-            <p className="mt-2 text-sm leading-6 text-muted">Opsional. Pilihan ini membuat langkah pemulihan lebih spesifik tanpa meminta nama akun atau detail pribadi.</p>
+            <legend className="text-xl font-semibold">2. Akun atau layanan mana yang terdampak?</legend>
+            <p className="mt-2 text-sm leading-6 text-muted">Opsional. AmanKlik hanya menampilkan pilihan yang relevan dengan kejadian di atas agar langkah pemulihan lebih spesifik.</p>
             <div className="mt-5 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
-              {AFFECTED_ASSETS.map((asset) => (
+              {availableAssets.map((asset) => (
                 <ChoiceButton
                   key={asset}
                   active={selectedAssets.includes(asset)}

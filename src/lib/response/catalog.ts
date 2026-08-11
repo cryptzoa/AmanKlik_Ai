@@ -34,6 +34,48 @@ export const AFFECTED_ASSET_LABELS: Record<AffectedAsset, string> = {
   device: "HP atau komputer",
 };
 
+export const INCIDENT_ASSET_OPTIONS: Record<IncidentType, AffectedAsset[]> = {
+  money_transferred: ["bank_or_wallet", "marketplace"],
+  unauthorized_transaction: ["bank_or_wallet", "marketplace"],
+  credential_or_card_shared: [
+    "bank_or_wallet",
+    "email",
+    "whatsapp",
+    "marketplace",
+    "social_media",
+    "phone_number",
+  ],
+  suspicious_app_installed: ["device", "bank_or_wallet", "email", "whatsapp", "phone_number"],
+  account_or_number_lost: [
+    "bank_or_wallet",
+    "email",
+    "whatsapp",
+    "marketplace",
+    "social_media",
+    "phone_number",
+    "device",
+  ],
+  identity_data_shared: [],
+  link_or_qr_opened: ["bank_or_wallet", "email", "marketplace", "social_media", "device"],
+  goods_released_fake_payment: ["bank_or_wallet", "marketplace"],
+  unsure: [
+    "bank_or_wallet",
+    "email",
+    "whatsapp",
+    "marketplace",
+    "social_media",
+    "phone_number",
+    "device",
+  ],
+};
+
+export function affectedAssetsForIncidents(incidents: IncidentType[]): AffectedAsset[] {
+  const relevantAssets = new Set(incidents.flatMap((incident) => INCIDENT_ASSET_OPTIONS[incident] ?? []));
+
+  return (Object.keys(AFFECTED_ASSET_LABELS) as AffectedAsset[])
+    .filter((asset) => relevantAssets.has(asset));
+}
+
 const ACCOUNT_OR_DEVICE_INCIDENTS: IncidentType[] = [
   "credential_or_card_shared",
   "account_or_number_lost",

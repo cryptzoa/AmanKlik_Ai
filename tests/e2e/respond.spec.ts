@@ -4,6 +4,11 @@ test("money transfer flow exposes bank, IASC, and police as the first three acti
   await page.goto("/respond");
   await page.getByRole("button", { name: /Uang sudah terkirim/i }).click();
 
+  await expect(page.getByRole("button", { name: /Bank, kartu, atau e-wallet/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Marketplace/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Email utama/i })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /WhatsApp/i })).toHaveCount(0);
+
   const response = page.getByRole("region", { name: /Hubungi bank atau e-wallet sekarang/i });
   await expect(response.getByRole("heading", { name: /Hubungi bank atau e-wallet sekarang/i })).toBeVisible();
   await expect(response.getByRole("heading", { name: /Laporkan segera melalui portal resmi IASC/i })).toBeVisible();

@@ -1,7 +1,11 @@
 import { afterEach, describe, expect, it } from "vitest";
 
 import { buildResponsePlan } from "@/lib/response/build-response-plan";
-import { OFFICIAL_SOURCE_HOSTS, RESPONSE_CATALOG } from "@/lib/response/catalog";
+import {
+  affectedAssetsForIncidents,
+  OFFICIAL_SOURCE_HOSTS,
+  RESPONSE_CATALOG,
+} from "@/lib/response/catalog";
 import type { IncidentType, ResponseStep } from "@/lib/response/types";
 
 const originalCatalogLength = RESPONSE_CATALOG.length;
@@ -36,6 +40,30 @@ describe("already-acted response planner", () => {
       "warn-after-account-takeover",
     ]);
     expect(plan.immediate.some((step) => step.id === "secure-account-fallback")).toBe(false);
+  });
+
+  it("only offers services relevant to the selected incidents", () => {
+    expect(affectedAssetsForIncidents(["money_transferred"])).toEqual([
+      "bank_or_wallet",
+      "marketplace",
+    ]);
+    expect(affectedAssetsForIncidents(["identity_data_shared"])).toEqual([]);
+    expect(affectedAssetsForIncidents(["money_transferred", "account_or_number_lost"]))
+      .toEqual([
+        "bank_or_wallet",
+        "email",
+        "whatsapp",
+        "marketplace",
+        "social_media",
+        "phone_number",
+        "device",
+      ]);
+  });
+
+  it("rejects an affected service that does not match the selected incident", () => {
+    const plan = buildResponsePlan(["money_transferred"], ["email", "bank_or_wallet"]);
+
+    expect(plan.selectedAssets).toEqual(["bank_or_wallet"]);
   });
 
   it("deduplicates shared actions and keeps ordering stable across repeated input", () => {

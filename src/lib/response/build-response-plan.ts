@@ -1,5 +1,6 @@
 import {
   AFFECTED_ASSET_LABELS,
+  affectedAssetsForIncidents,
   INCIDENT_LABELS,
   OFFICIAL_SOURCE_HOSTS,
   RESPONSE_CATALOG,
@@ -51,7 +52,8 @@ function deduplicateSteps(incidents: IncidentType[], assets: AffectedAsset[]): R
 
 export function buildResponsePlan(incidents: IncidentType[], assets: AffectedAsset[] = []): ResponsePlan {
   const selectedIncidents = uniqueIncidents(incidents);
-  const selectedAssets = uniqueAssets(assets);
+  const relevantAssets = new Set(affectedAssetsForIncidents(selectedIncidents));
+  const selectedAssets = uniqueAssets(assets).filter((asset) => relevantAssets.has(asset));
   const steps = deduplicateSteps(selectedIncidents, selectedAssets);
 
   return {

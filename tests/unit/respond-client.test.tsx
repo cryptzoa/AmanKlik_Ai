@@ -36,4 +36,28 @@ describe("RespondClient", () => {
     expect(screen.getByRole("heading", { name: /Hubungi operator seluler/i })).toBeVisible();
     expect(screen.queryByRole("heading", { name: /Amankan akun yang paling penting/i })).not.toBeInTheDocument();
   });
+
+  it("only shows relevant services and clears a stale selection", () => {
+    render(<RespondClient />);
+
+    const transfer = screen.getByRole("button", { name: /Uang sudah terkirim/i });
+    const takeover = screen.getByRole("button", { name: /Akun atau nomor HP sudah diambil alih/i });
+
+    fireEvent.click(transfer);
+    expect(screen.getByRole("button", { name: /Bank, kartu, atau e-wallet/i })).toBeVisible();
+    expect(screen.getByRole("button", { name: /Marketplace/i })).toBeVisible();
+    expect(screen.queryByRole("button", { name: /Email utama/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /WhatsApp/i })).not.toBeInTheDocument();
+
+    fireEvent.click(takeover);
+    const email = screen.getByRole("button", { name: /Email utama/i });
+    fireEvent.click(email);
+    expect(email).toHaveAttribute("aria-pressed", "true");
+
+    fireEvent.click(takeover);
+    expect(screen.queryByRole("button", { name: /Email utama/i })).not.toBeInTheDocument();
+
+    fireEvent.click(takeover);
+    expect(screen.getByRole("button", { name: /Email utama/i })).toHaveAttribute("aria-pressed", "false");
+  });
 });
