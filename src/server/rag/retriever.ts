@@ -10,6 +10,8 @@ import { withAiConcurrency } from "@/server/ai/concurrency";
 
 const index = rawIndex as KnowledgeIndex;
 const MAX_QUERY_CHARS = 1_500;
+const MIN_KEYWORD_SCORE = 5;
+const MIN_EMBEDDING_SIMILARITY = 0.45;
 const STOP_WORDS = new Set([
   "ada", "agar", "aku", "akan", "atau", "dari", "dan", "di", "dia", "ini", "itu", "jika", "ke", "kami",
   "kamu", "karena", "mau", "mereka", "pada", "saya", "sebagai", "sudah", "supaya", "yang", "untuk",
@@ -72,7 +74,7 @@ function keywordRetrieve(query: string, topK: number): KnowledgeRetrieval {
   const queryTokens = tokens(query);
   const matches = index.chunks
     .map((chunk) => ({ chunk, score: keywordScore(query, queryTokens, chunk) }))
-    .filter(({ score }) => score > 0)
+    .filter(({ score }) => score >= MIN_KEYWORD_SCORE)
     .sort((left, right) => right.score - left.score || left.chunk.id.localeCompare(right.chunk.id))
     .slice(0, topK)
     .map(({ chunk, score }) => toMatch(chunk, score, "keyword"));
@@ -134,7 +136,7 @@ export async function retrieveKnowledge(input: string, topK = env.RAG_TOP_K): Pr
       if (queryEmbedding.length === env.RAG_EMBEDDING_DIM) {
         const matches = index.chunks
           .map((chunk) => ({ chunk, score: cosineSimilarity(queryEmbedding, chunk.embedding) }))
-          .filter(({ score }) => score > 0)
+          .filter(({ score }) => score >= MIN_EMBEDDING_SIMILARITY)
           .sort((left, right) => right.score - left.score)
           .slice(0, topK)
           .map(({ chunk, score }) => toMatch(chunk, score, "embedding"));

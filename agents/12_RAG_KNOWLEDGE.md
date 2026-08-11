@@ -45,7 +45,13 @@ Initial topics:
 - preserving evidence;
 - official reporting direction;
 - link/domain caution;
-- impersonation.
+- impersonation;
+- malicious APK attachments;
+- part-time task and deposit scams;
+- investment legality and implausible returns;
+- QRIS/quishing destination verification;
+- marketplace transaction verification;
+- provider-specific account-alert verification.
 
 ## Generated index
 
@@ -80,7 +86,7 @@ May be committed because corpus is curated/non-sensitive and demo stability matt
 - one query embedding;
 - cosine similarity local;
 - top 3 default;
-- minimum similarity threshold;
+- minimum similarity threshold (`0.45` for embeddings, deterministic score `5` for keyword fallback);
 - cap retrieved text.
 
 ## Keyword fallback
@@ -115,6 +121,9 @@ No Pinecone/Qdrant/Weaviate/pgvector for MVP.
 - remove outdated claims;
 - human review every chunk;
 - avoid absolute institution-specific statements unless sourced.
+- add positive, near-miss, and irrelevant-query tests for every new topic family;
+- prefer a small actionable chunk over a broad article summary;
+- never use retrieval alone as evidence that submitted content is risky.
 
 ## Privacy
 

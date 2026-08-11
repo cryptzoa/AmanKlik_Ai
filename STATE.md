@@ -133,4 +133,12 @@ Use only synthetic fixtures: new-number impersonation, OTP verification, benign 
 - Added a Manifest V3 browser side panel under `extension/`, revocable HMAC-hashed integration tokens, extension-only CORS, explicit-selection capture, and PWA POST share target support for text, URL, and validated screenshots.
 - Added adversarial evaluation for obfuscation, formatting, prompt injection, and false-positive pressure. Current synthetic suite is 12/12 with zero URL network calls; deterministic regression remains separate.
 - New database migration sequence is normalized to `0002_cloudy_mordo` for the existing conversation enum followed by `0003_regular_ultimates` for investigation, action progress, outcome, and integration-token tables. The original conversation migration timestamp/content remain unchanged for deployed migration compatibility.
-- This working slice has not been pushed. Required final gates remain production build, expanded E2E, diff/security audit, and Railway migration/live smoke after explicit deployment authorization.
+- Protection platform expansion was pushed in `3b20cf2` after its quality gates passed. Railway migration and live smoke remain operational follow-ups.
+
+
+## RAG coverage hardening — 2026-08-11
+
+- Expanded the curated corpus beyond the original five chunks with official guidance for malicious APK attachments, part-time task/deposit scams, investment legality, QRIS/quishing, marketplace transaction fraud, and Google account-alert verification.
+- Retrieval remains advisory: knowledge matches enrich explanations and action sources but do not independently increase the risk score.
+- Keyword fallback now requires a deterministic relevance score of at least `5`; embedding retrieval requires cosine similarity of at least `0.45`, preventing incidental one-token overlap from forcing unrelated guidance into results.
+- Each new topic family must include positive retrieval coverage and irrelevant/near-miss guards before release. Raw user input and runtime query embeddings remain unpersisted.

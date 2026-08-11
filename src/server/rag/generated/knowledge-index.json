@@ -1,9 +1,86 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-07T20:05:30.018Z",
+  "generatedAt": "2026-08-11T15:42:15.177Z",
   "embeddingModel": null,
   "embeddingDimension": null,
   "chunks": [
+    {
+      "id": "bi-qris-quishing-1",
+      "documentId": "bi-qris-quishing",
+      "title": "Konfirmasi merchant sebelum menyetujui pembayaran",
+      "documentTitle": "Periksa tujuan pembayaran QRIS dan kode QR",
+      "publisher": "Bank Indonesia",
+      "sourceUrl": "https://www.bi.go.id/id/edukasi/Documents/Buku-Panduan-Modul-Edukasi-Keuangan-Digital-Tingkat-Dasar-Modul-3-Transaksi-Keuangan.pdf",
+      "retrievedAt": "2026-08-11",
+      "language": "id",
+      "topics": [
+        "qris",
+        "quishing",
+        "payment",
+        "phishing",
+        "merchant"
+      ],
+      "actionTags": [
+        "do_not_click",
+        "verify_independently",
+        "contact_provider",
+        "preserve_evidence"
+      ],
+      "keywords": [
+        "qris palsu",
+        "qr palsu",
+        "kode qr",
+        "quishing",
+        "nama merchant",
+        "scan qris",
+        "scan qr",
+        "barcode pembayaran",
+        "rekening penipu",
+        "aplikasi pembayaran resmi",
+        "qr dari pesan"
+      ],
+      "text": "Kode QR dapat mengarahkan pengguna ke halaman pencuri kredensial, aplikasi berbahaya, atau tujuan pembayaran yang bukan milik merchant. Hindari memindai QR dari pesan pribadi atau sumber yang tidak jelas dan gunakan aplikasi pembayaran resmi.\n\nSetelah memindai QRIS, cocokkan nama merchant dan nominal yang tampil di aplikasi sebelum menyetujui transaksi. Jika identitas tujuan berbeda atau QR terlihat ditimpa, batalkan pembayaran, beri tahu merchant, dan simpan bukti tanpa meneruskan QR tersebut.",
+      "embedding": []
+    },
+    {
+      "id": "google-security-alert-verification-1",
+      "documentId": "google-security-alert-verification",
+      "title": "Sebuah alert perlu diverifikasi, bukan langsung dipercaya atau diabaikan",
+      "documentTitle": "Periksa peringatan keamanan Google dari pengaturan akun",
+      "publisher": "Google Account Help",
+      "sourceUrl": "https://support.google.com/accounts/answer/6063333?hl=en",
+      "retrievedAt": "2026-08-11",
+      "language": "id",
+      "topics": [
+        "account-alert",
+        "google",
+        "impersonation",
+        "verification",
+        "recovery"
+      ],
+      "actionTags": [
+        "do_not_click",
+        "do_not_share_otp",
+        "do_not_share_credentials",
+        "verify_independently",
+        "secure_account"
+      ],
+      "keywords": [
+        "google security",
+        "google account",
+        "akun google",
+        "peringatan login",
+        "aktivitas login",
+        "suspicious sign in",
+        "login perangkat baru",
+        "kode verifikasi google",
+        "device prompt",
+        "security checkup",
+        "myaccount"
+      ],
+      "text": "Penyedia akun memang dapat mengirim peringatan ketika mendeteksi aktivitas login yang tidak biasa, tetapi penipu juga dapat meniru tampilannya. Jangan menentukan keaslian hanya dari logo, nama pengirim, nada mendesak, atau tautan di dalam pesan.\n\nBuka pengaturan keamanan akun Google secara mandiri untuk memeriksa aktivitas terbaru. Jangan membacakan kode verifikasi, membagikan password, atau menyetujui permintaan login yang tidak kamu mulai; jika ada aktivitas asing, amankan akun dari perangkat yang dipercaya.",
+      "embedding": []
+    },
     {
       "id": "iasc-after-transfer-1",
       "documentId": "iasc-after-transfer",
@@ -72,6 +149,45 @@
         "lapor bank"
       ],
       "text": "Jika data pribadi atau kredensial sudah terlanjur diberikan, hubungi penyedia layanan melalui kanal resmi, amankan akun, dan periksa transaksi atau aktivitas yang tidak dikenali. Ubah password atau PIN dari perangkat dan aplikasi yang dipercaya.\n\nSimpan bukti percakapan dan catatan tindakan yang sudah dilakukan. Gunakan kanal pengaduan resmi lembaga terkait; jangan mengikuti instruksi pemulihan yang datang dari pengirim mencurigakan.",
+      "embedding": []
+    },
+    {
+      "id": "ojk-apk-file-scam-1",
+      "documentId": "ojk-apk-file-scam",
+      "title": "Perlakukan lampiran aplikasi sebagai risiko perangkat",
+      "documentTitle": "Waspadai file APK yang menyamar sebagai dokumen",
+      "publisher": "Otoritas Jasa Keuangan",
+      "sourceUrl": "https://www.ojk.go.id/id/Publikasi/E-Magazine/Documents/Majalah%20Edukasi%20Konsumen%20Triwulan%20III%202023.pdf",
+      "retrievedAt": "2026-08-11",
+      "language": "id",
+      "topics": [
+        "apk",
+        "malware",
+        "account-takeover",
+        "courier",
+        "impersonation"
+      ],
+      "actionTags": [
+        "do_not_click",
+        "do_not_share_otp",
+        "secure_account",
+        "preserve_evidence"
+      ],
+      "keywords": [
+        "file apk",
+        "kirim apk",
+        "undangan pernikahan",
+        "resi paket",
+        "tagihan bpjs",
+        "surat tilang",
+        "install aplikasi",
+        "instal aplikasi",
+        "izin akses",
+        "baca sms",
+        "aplikasi berbahaya",
+        "malware"
+      ],
+      "text": "Pesan tentang paket, undangan, tagihan, atau layanan publik dapat menyamarkan aplikasi Android berbahaya sebagai dokumen. Jangan memasang APK dari percakapan atau memberi izin akses hanya karena nama dan ikon filenya terlihat meyakinkan.\n\nJika file sudah dipasang, putuskan interaksi dengan pengirim, hapus izin aplikasi yang mencurigakan dari perangkat tepercaya, amankan akun finansial melalui aplikasi resmi, dan periksa aktivitas transaksi. Simpan pesan serta detail kejadian untuk pelaporan tanpa meneruskan file berbahaya kepada orang lain.",
       "embedding": []
     },
     {
@@ -177,6 +293,124 @@
         "hubungi bank"
       ],
       "text": "Jangan memverifikasi sebuah pesan dengan nomor telepon, tautan, atau kontak yang disediakan oleh pesan itu sendiri. Cari kanal resmi secara mandiri melalui aplikasi, kartu, dokumen, atau situs yang sudah dikenal.\n\nUntuk pesan yang mengaku berasal dari keluarga, atasan, bank, atau penyedia layanan, hubungi kembali lewat nomor atau akun yang sebelumnya sudah dipercaya. Perubahan nomor dan permintaan mendadak perlu dikonfirmasi sebelum bertindak.",
+      "embedding": []
+    },
+    {
+      "id": "ojk-investment-legality-1",
+      "documentId": "ojk-investment-legality",
+      "title": "Nilai pihak, izin, dan cara keuntungannya",
+      "documentTitle": "Periksa legalitas dan kewajaran tawaran investasi",
+      "publisher": "Otoritas Jasa Keuangan — Satgas PASTI",
+      "sourceUrl": "https://www.ojk.go.id/waspada-investasi/id/FAQ.aspx",
+      "retrievedAt": "2026-08-11",
+      "language": "id",
+      "topics": [
+        "investment",
+        "crypto",
+        "trading",
+        "deposit",
+        "legality"
+      ],
+      "actionTags": [
+        "do_not_click",
+        "verify_independently",
+        "preserve_evidence",
+        "report_officially"
+      ],
+      "keywords": [
+        "investasi ilegal",
+        "profit pasti",
+        "keuntungan tinggi",
+        "tanpa risiko",
+        "robot trading",
+        "copy trading",
+        "legalitas investasi",
+        "izin investasi",
+        "member get member",
+        "rekrut anggota",
+        "deposit usdt",
+        "transfer crypto",
+        "bonus berjenjang"
+      ],
+      "text": "Nama perusahaan, aplikasi yang rapi, atau figur promosi tidak membuktikan suatu investasi berizin. Periksa siapa badan hukumnya, otoritas yang relevan, dan apakah kegiatan yang ditawarkan sesuai dengan izin tersebut melalui kanal regulator yang dicari secara mandiri.\n\nWaspadai keuntungan tinggi yang digambarkan pasti atau minim risiko, kewajiban deposit, serta bonus yang terutama bergantung pada perekrutan anggota. Jangan memindahkan dana atau aset kripto hanya karena saldo dan keuntungan terlihat di aplikasi milik pengirim.",
+      "embedding": []
+    },
+    {
+      "id": "ojk-marketplace-transaction-scam-1",
+      "documentId": "ojk-marketplace-transaction-scam",
+      "title": "Status di chat bukan bukti pembayaran atau pesanan",
+      "documentTitle": "Verifikasi transaksi marketplace tanpa keluar dari kanal resmi",
+      "publisher": "Otoritas Jasa Keuangan",
+      "sourceUrl": "https://www.ojk.go.id/id/Publikasi/E-Magazine/Documents/Majalah%20Edukasi%20Konsumen%20Triwulan%20IV%20-%202022.pdf",
+      "retrievedAt": "2026-08-11",
+      "language": "id",
+      "topics": [
+        "marketplace",
+        "courier",
+        "payment",
+        "impersonation",
+        "evidence"
+      ],
+      "actionTags": [
+        "do_not_click",
+        "verify_independently",
+        "contact_provider",
+        "preserve_evidence"
+      ],
+      "keywords": [
+        "marketplace",
+        "toko online palsu",
+        "bukti transfer palsu",
+        "barang tidak dikirim",
+        "harga terlalu murah",
+        "pembeli palsu",
+        "penjual palsu",
+        "pembayaran di luar aplikasi",
+        "refund pesanan",
+        "pesanan dibatalkan",
+        "biaya kurir",
+        "bea cukai paket"
+      ],
+      "text": "Penipu dapat memakai toko palsu, harga yang tidak wajar, bukti transfer yang diedit, atau alasan refund dan biaya pengiriman untuk memindahkan percakapan serta pembayaran ke luar marketplace. Periksa status pesanan dan dana masuk langsung di aplikasi atau rekening resmi, bukan dari screenshot pengirim.\n\nJangan membayar biaya tambahan ke rekening pribadi hanya untuk membuka pengiriman, refund, atau pencairan penjualan. Pertahankan percakapan di kanal platform, hubungi dukungan melalui aplikasi yang dibuka sendiri, dan simpan bukti jika transaksi bermasalah.",
+      "embedding": []
+    },
+    {
+      "id": "ojk-part-time-task-scam-1",
+      "documentId": "ojk-part-time-task-scam",
+      "title": "Bayaran awal tidak membuktikan pekerjaan itu sah",
+      "documentTitle": "Kenali penipuan kerja paruh waktu berbasis deposit",
+      "publisher": "Otoritas Jasa Keuangan — Satgas PASTI",
+      "sourceUrl": "https://ojk.go.id/id/berita-dan-kegiatan/siaran-pers/Documents/Pages/Satgas-Blokir-Situs-PT-Bingoby-Digital-Kreasi-%28Jombingo%29/SATGAS%20BLOKIR%20SITUS%20PT%20BINGOBY%20DIGITAL%20KREASI%20%28JOMBINGO%29.pdf",
+      "retrievedAt": "2026-08-11",
+      "language": "id",
+      "topics": [
+        "job-scam",
+        "task-scam",
+        "deposit",
+        "impersonation",
+        "investment"
+      ],
+      "actionTags": [
+        "do_not_click",
+        "verify_independently",
+        "preserve_evidence",
+        "report_officially"
+      ],
+      "keywords": [
+        "kerja paruh waktu",
+        "lowongan freelance",
+        "tugas like",
+        "tugas subscribe",
+        "pekerjaan online",
+        "deposit tugas",
+        "top up tugas",
+        "komisi tugas",
+        "bonus tugas",
+        "withdraw reward",
+        "like video",
+        "subscribe youtube"
+      ],
+      "text": "Modus kerja paruh waktu dapat dimulai dari tugas sederhana seperti menyukai atau mengikuti konten, lalu memberi bayaran kecil untuk membangun kepercayaan. Risiko meningkat ketika tugas berikutnya mewajibkan deposit atau top up dengan janji komisi dan pengembalian yang lebih besar.\n\nJangan mengirim deposit untuk membuka pekerjaan atau mencairkan komisi. Verifikasi perusahaan dan lowongan melalui kanal yang dicari sendiri, simpan percakapan serta bukti transaksi, dan gunakan kanal pelaporan resmi bila sudah dirugikan.",
       "embedding": []
     }
   ]
