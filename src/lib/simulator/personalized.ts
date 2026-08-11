@@ -8,10 +8,11 @@ export type PracticeFamily =
   | "urgency_resistance"
   | "claim_verification"
   | "domain_recognition"
-  | "remote_access_refusal";
+  | "remote_access_refusal"
+  | "identity_data_protection";
 
 export type PersonalizedPractice = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   templateId: string;
   family: PracticeFamily;
   matchedSignalIds: string[];
@@ -20,17 +21,65 @@ export type PersonalizedPractice = {
   scenario: SimulatorScenario;
 };
 
-const FAMILY_RULES: Array<{ categories: string[]; family: PracticeFamily; templateId: string; objective: string }> = [
-  { categories: ["remote_access"], family: "remote_access_refusal", templateId: "bank-otp", objective: "Rahasia akun dan kendali perangkat harus tetap berada di tanganmu." },
-  { categories: ["otp_request", "credential_request"], family: "credential_secrecy", templateId: "bank-otp", objective: "OTP, PIN, dan password tidak pernah menjadi bahan verifikasi lewat pesan." },
-  { categories: ["payment_request"], family: "payment_pause", templateId: "family-new-number", objective: "Permintaan uang perlu dikonfirmasi melalui kanal yang sudah dipercaya." },
-  { categories: ["impersonation", "secrecy"], family: "identity_verification", templateId: "family-new-number", objective: "Pergantian identitas atau nomor harus diuji lewat kanal independen." },
-  { categories: ["threat", "urgency"], family: "urgency_resistance", templateId: "bank-otp", objective: "Tekanan waktu bukan bukti; jeda memberi ruang untuk verifikasi." },
-  { categories: ["verification_link", "brand_domain_mismatch", "url_obfuscation"], family: "domain_recognition", templateId: "parcel-link", objective: "Baca domain utama dan gunakan aplikasi atau alamat resmi secara mandiri." },
-  { categories: ["prize", "investment"], family: "claim_verification", templateId: "parcel-link", objective: "Janji hadiah atau keuntungan perlu diperiksa, bukan dibayar untuk dibuktikan." },
+type FamilyRule = {
+  categories: string[];
+  family: PracticeFamily;
+  templateId: string;
+  objective: string;
+};
+
+const FAMILY_RULES: FamilyRule[] = [
+  {
+    categories: ["remote_access"],
+    family: "remote_access_refusal",
+    templateId: "apk-document",
+    objective: "Kendali perangkat dan izin sensitif harus tetap berada di tanganmu.",
+  },
+  {
+    categories: ["otp_request", "credential_request"],
+    family: "credential_secrecy",
+    templateId: "bank-otp",
+    objective: "OTP, PIN, password, dan data kartu bukan bahan verifikasi lewat telepon atau pesan.",
+  },
+  {
+    categories: ["identity_document"],
+    family: "identity_data_protection",
+    templateId: "part-time-task",
+    objective: "Data identitas hanya diberikan setelah tujuan, pihak, dan kanalnya terverifikasi.",
+  },
+  {
+    categories: ["verification_link", "brand_domain_mismatch", "url_obfuscation", "shortener", "excessive_subdomain", "plain_http", "ip_host"],
+    family: "domain_recognition",
+    templateId: "parcel-link",
+    objective: "Gunakan aplikasi resmi dan baca domain utama sebelum memasukkan data atau membayar.",
+  },
+  {
+    categories: ["prize", "investment"],
+    family: "claim_verification",
+    templateId: "investment-deepfake",
+    objective: "Uji legalitas dan kewajaran klaim; figur, testimoni, dan saldo aplikasi bukan bukti.",
+  },
+  {
+    categories: ["payment_request"],
+    family: "payment_pause",
+    templateId: "family-new-number",
+    objective: "Permintaan uang harus dihentikan sampai identitas dan tujuan pembayaran terverifikasi.",
+  },
+  {
+    categories: ["impersonation", "secrecy", "unexpected_channel"],
+    family: "identity_verification",
+    templateId: "family-new-number",
+    objective: "Identitas harus diuji melalui kanal lama atau pihak tepercaya lain.",
+  },
+  {
+    categories: ["threat", "urgency"],
+    family: "urgency_resistance",
+    templateId: "bank-otp",
+    objective: "Tekanan waktu bukan bukti; jeda memberi ruang untuk berpindah ke kanal resmi.",
+  },
 ];
 
-const FALLBACK = FAMILY_RULES[3];
+const FALLBACK = FAMILY_RULES[6];
 
 export function getPersonalizedPractice(result: AnalysisResult): PersonalizedPractice {
   const categories = new Set(result.indicators.map((signal) => signal.category));
@@ -42,7 +91,7 @@ export function getPersonalizedPractice(result: AnalysisResult): PersonalizedPra
   const scenario = SIMULATOR_SCENARIOS.find((item) => item.id === matched.templateId) ?? SIMULATOR_SCENARIOS[0];
 
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     templateId: scenario.id,
     family: matched.family,
     matchedSignalIds,

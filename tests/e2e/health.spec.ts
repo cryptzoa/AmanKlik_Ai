@@ -31,7 +31,7 @@ test("core product pages render and connect", async ({ page }) => {
 
   await page.goto("/simulator");
   await expect(page.getByRole("heading", { name: /Latih refleks amanmu/i })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Pemberitahuan OTP" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Keluarga, nomor baru, dan suara mirip" })).toBeVisible();
 
   await page.goto("/respond");
   await expect(page.getByRole("heading", { name: /Sudah terlanjur/i })).toBeVisible();

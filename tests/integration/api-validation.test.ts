@@ -86,7 +86,7 @@ describe("API validation boundaries", () => {
   it("recomputes simulator input on the server boundary", async () => {
     const response = await postSimulator(new Request("http://localhost/api/simulator/evaluate", {
       method: "POST",
-      body: JSON.stringify({ scenarioId: "family-new-number", choiceIds: ["known-channel", "wait-verify"] }),
+      body: JSON.stringify({ scenarioId: "family-new-number", choiceIds: ["call-known-number", "verify-family-channel", "stop-until-confirmed"] }),
       headers: { "content-type": "application/json" },
     }));
 

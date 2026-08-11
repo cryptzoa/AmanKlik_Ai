@@ -23,16 +23,37 @@ function result(categories: string[]): AnalysisResult {
 }
 
 describe("personalized simulator mapping", () => {
-  it("maps credential signals to the OTP practice", () => {
-    const practice = getPersonalizedPractice(result(["otp_request"]));
-    expect(practice.family).toBe("credential_secrecy");
-    expect(practice.templateId).toBe("bank-otp");
+  it.each([
+    ["remote_access", "remote_access_refusal", "apk-document"],
+    ["otp_request", "credential_secrecy", "bank-otp"],
+    ["credential_request", "credential_secrecy", "bank-otp"],
+    ["identity_document", "identity_data_protection", "part-time-task"],
+    ["verification_link", "domain_recognition", "parcel-link"],
+    ["brand_domain_mismatch", "domain_recognition", "parcel-link"],
+    ["investment", "claim_verification", "investment-deepfake"],
+    ["prize", "claim_verification", "investment-deepfake"],
+    ["payment_request", "payment_pause", "family-new-number"],
+    ["impersonation", "identity_verification", "family-new-number"],
+    ["urgency", "urgency_resistance", "bank-otp"],
+  ] as const)("maps %s to %s", (category, expectedFamily, expectedTemplate) => {
+    const practice = getPersonalizedPractice(result([category]));
+    expect(practice.schemaVersion).toBe(2);
+    expect(practice.family).toBe(expectedFamily);
+    expect(practice.templateId).toBe(expectedTemplate);
     expect(practice.matchedSignalIds).toEqual(["signal-0"]);
   });
 
-  it("falls back to independent identity verification", () => {
+  it("uses stable safety priority when several categories match", () => {
+    const practice = getPersonalizedPractice(result(["payment_request", "remote_access", "investment"]));
+    expect(practice.family).toBe("remote_access_refusal");
+    expect(practice.templateId).toBe("apk-document");
+    expect(practice.matchedSignalIds).toEqual(["signal-1"]);
+  });
+
+  it("falls back without copying scan content into the scenario", () => {
     const practice = getPersonalizedPractice(result([]));
     expect(practice.family).toBe("identity_verification");
     expect(practice.scenario.id).toBe("family-new-number");
+    expect(JSON.stringify(practice)).not.toContain("fixture");
   });
 });
