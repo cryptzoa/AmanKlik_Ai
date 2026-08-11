@@ -10,7 +10,7 @@ export async function GET() {
     return Response.json({ ok: true, data: { snapshot } }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     if (process.env.NODE_ENV !== "production") {
-      return Response.json({ ok: true, data: { snapshot: buildIntelligenceSnapshot([], 0) } }, { headers: { "Cache-Control": "no-store" } });
+      return Response.json({ ok: true, data: { snapshot: buildIntelligenceSnapshot([]) } }, { headers: { "Cache-Control": "no-store" } });
     }
     return publicErrorResponse(error);
   }

@@ -8,7 +8,7 @@ This document defines the implemented MVP contract for the focused expansion req
 
 The expanded journey is:
 
-**Capture → Analyze → Connect evidence → Act → Practice → Record outcome → Learn from aggregate patterns → Evaluate robustness**
+**Capture → Analyze → Connect evidence → Act → Practice → Learn from aggregate patterns → Evaluate robustness**
 
 The expansion must still avoid certainty claims, criminal identification, URL fetching, raw-message persistence, automatic reporting, or autonomous account actions.
 
@@ -19,7 +19,6 @@ The expansion must still avoid certainty claims, criminal identification, URL fe
 | Cross-source investigation | `/investigate`, `/investigate/[id]` | `investigation_cases`, `investigation_case_scans`, session-owned scan references |
 | Live scam intelligence | `/intelligence`, repeated-input note on results | 30-day aggregate, minimum three distinct anonymous sessions, curated advisory fallback |
 | Safe Action Center | persistent checklist inside `/result/[id]` | `scan_action_progress`, action IDs constrained to the result action plan |
-| Outcome feedback | outcome card inside `/result/[id]` | `scan_outcomes`, categorical verdict/impact only |
 | Browser/share extension | `extension/`, `/connect`, `/api/integrations/scan`, PWA share target | revocable HMAC-hashed integration token; explicit selection; no Gemini key in extension |
 | Interactive evidence graph | investigation detail | graph built from redacted result metadata; merged signal/action/domain nodes |
 | Adversarial benchmark | `/benchmark`, `pnpm eval:adversarial` | synthetic deterministic fixtures, zero URL network calls |
@@ -29,7 +28,6 @@ The expansion must still avoid certainty claims, criminal identification, URL fe
 - `investigation_cases`: session-owned case summary and aggregate risk.
 - `investigation_case_scans`: many-to-many references to existing session-owned scans.
 - `scan_action_progress`: checklist state for an action that already exists on a result.
-- `scan_outcomes`: categorical outcome and impact; no narrative field.
 - `integration_tokens`: token HMAC, device label, last-use timestamp, and revocation timestamp.
 
 No table stores extension selections, raw screenshots, full conversations, or public accusations.
@@ -43,7 +41,6 @@ Family Mode was removed before release. Its guided script and relationship selec
 - A trend counts a signal category at most once per anonymous session.
 - A trend is suppressed until it appears across at least three distinct sessions.
 - Repeated-input context on a result is shown only at the same three-session threshold.
-- `uncertain` outcomes are not counted as verified outcomes.
 - Raw URLs, phone numbers, account numbers, names, messages, and screenshots never enter the public snapshot.
 - Curated advisories are clearly separated from observed first-party trends.
 

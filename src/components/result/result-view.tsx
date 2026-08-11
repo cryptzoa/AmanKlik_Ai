@@ -5,8 +5,7 @@ import { ScoreBreakdown } from "@/components/result/score-breakdown";
 import { ReportActions } from "@/components/result/report-actions";
 import { ConversationTimeline } from "@/components/result/conversation-timeline";
 import { ActionChecklist } from "@/components/result/action-checklist";
-import { OutcomeFeedback } from "@/components/result/outcome-feedback";
-import type { ActionProgressState, ScanOutcome } from "@/types/outcome";
+import type { ActionProgressState } from "@/types/action-progress";
 import Link from "next/link";
 
 const sourceLabels: Record<RiskSignal["source"], string> = {
@@ -38,7 +37,7 @@ function SignalRow({ signal, index }: { signal: RiskSignal; index: number }) {
   );
 }
 
-export function ResultView({ result, initialActionProgress = {}, initialOutcome = null, intelligenceMatchCount = 0 }: { result: AnalysisResult; initialActionProgress?: Record<string, ActionProgressState>; initialOutcome?: ScanOutcome | null; intelligenceMatchCount?: number }) {
+export function ResultView({ result, initialActionProgress = {}, intelligenceMatchCount = 0 }: { result: AnalysisResult; initialActionProgress?: Record<string, ActionProgressState>; intelligenceMatchCount?: number }) {
   const isElevated = result.riskLevel === "HIGH" || result.riskLevel === "VERY_HIGH";
 
   return (
@@ -114,8 +113,6 @@ export function ResultView({ result, initialActionProgress = {}, initialOutcome 
         ) : null}
 
         <ActionChecklist scanId={result.scanId} actions={result.actionPlan} initialProgress={initialActionProgress} />
-
-        <OutcomeFeedback scanId={result.scanId} initialOutcome={initialOutcome} />
 
         <ReportActions result={result} />
 

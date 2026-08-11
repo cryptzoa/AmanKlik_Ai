@@ -13,7 +13,6 @@ const MINIMUM_GROUP_SIZE = 3;
 
 export function buildIntelligenceSnapshot(
   sources: IntelligenceSource[],
-  verifiedOutcomes: number,
   now = new Date(),
 ): IntelligenceSnapshot {
   const uniqueSessionCount = new Set(sources.map((source) => source.sessionId)).size;
@@ -54,7 +53,6 @@ export function buildIntelligenceSnapshot(
     windowDays: 30,
     minimumGroupSize: MINIMUM_GROUP_SIZE,
     observedScans: uniqueSessionCount >= MINIMUM_GROUP_SIZE ? sources.length : 0,
-    verifiedOutcomes: verifiedOutcomes >= MINIMUM_GROUP_SIZE ? verifiedOutcomes : 0,
     riskDistribution: [...riskSessions.entries()]
       .filter(([, sessions]) => sessions.size >= MINIMUM_GROUP_SIZE)
       .map(([riskLevel, sessions]) => ({ riskLevel, count: sessions.size })),

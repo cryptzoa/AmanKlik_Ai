@@ -22,7 +22,6 @@ export type IntelligenceSnapshot = {
   windowDays: number;
   minimumGroupSize: number;
   observedScans: number;
-  verifiedOutcomes: number;
   riskDistribution: Array<{ riskLevel: RiskLevel; count: number }>;
   inputDistribution: Array<{ inputType: InputType; count: number }>;
   trends: IntelligenceTrend[];

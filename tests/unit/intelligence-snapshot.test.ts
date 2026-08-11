@@ -14,14 +14,13 @@ function source(index: number) {
 
 describe("privacy-safe intelligence snapshot", () => {
   it("suppresses observations below the anonymity threshold", () => {
-    const snapshot = buildIntelligenceSnapshot([source(1), source(2)], 2, new Date(0));
+    const snapshot = buildIntelligenceSnapshot([source(1), source(2)], new Date(0));
     expect(snapshot.observedScans).toBe(0);
-    expect(snapshot.verifiedOutcomes).toBe(0);
     expect(snapshot.trends).toHaveLength(0);
   });
 
   it("publishes aggregate categories at the threshold without raw content", () => {
-    const snapshot = buildIntelligenceSnapshot([source(1), source(2), source(3)], 3, new Date(0));
+    const snapshot = buildIntelligenceSnapshot([source(1), source(2), source(3)], new Date(0));
     expect(snapshot.observedScans).toBe(3);
     expect(snapshot.trends[0]).toMatchObject({ id: "urgency", count: 3, share: 100 });
     expect(JSON.stringify(snapshot)).not.toContain("previewRedacted");

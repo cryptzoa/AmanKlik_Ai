@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 
 import type { ActionItem } from "@/types/analysis";
-import type { ActionProgressState } from "@/types/outcome";
+import type { ActionProgressState } from "@/types/action-progress";
 
 const priorityLabels: Record<ActionItem["priority"], string> = {
   now: "Sekarang",

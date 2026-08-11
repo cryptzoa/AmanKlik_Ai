@@ -46,11 +46,6 @@ export const actionProgressSchema = z.object({
   state: z.enum(["pending", "completed", "skipped"]),
 });
 
-export const outcomeSchema = z.object({
-  verdict: z.enum(["prevented", "confirmed_scam", "legitimate", "uncertain"]),
-  impact: z.enum(["none", "data_shared", "account_compromised", "money_lost"]),
-});
-
 export const integrationTokenSchema = z.object({
   name: z.string().trim().min(3).max(60),
 });

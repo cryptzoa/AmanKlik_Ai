@@ -31,18 +31,6 @@ export const investigationStatusEnum = pgEnum("investigation_status", [
   "archived",
 ]);
 export const actionStateEnum = pgEnum("action_state", ["pending", "completed", "skipped"]);
-export const outcomeVerdictEnum = pgEnum("outcome_verdict", [
-  "prevented",
-  "confirmed_scam",
-  "legitimate",
-  "uncertain",
-]);
-export const outcomeImpactEnum = pgEnum("outcome_impact", [
-  "none",
-  "data_shared",
-  "account_compromised",
-  "money_lost",
-]);
 
 export const scans = pgTable(
   "scans",
@@ -132,23 +120,6 @@ export const scanActionProgress = pgTable(
   (table) => [
     uniqueIndex("scan_action_progress_scan_action_idx").on(table.scanId, table.actionId),
     index("scan_action_progress_session_idx").on(table.sessionId),
-  ],
-);
-
-export const scanOutcomes = pgTable(
-  "scan_outcomes",
-  {
-    id: uuid("id").defaultRandom().primaryKey(),
-    scanId: uuid("scan_id").notNull().references(() => scans.id, { onDelete: "cascade" }),
-    sessionId: varchar("session_id", { length: 128 }).notNull(),
-    verdict: outcomeVerdictEnum("verdict").notNull(),
-    impact: outcomeImpactEnum("impact").notNull().default("none"),
-    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
-  },
-  (table) => [
-    uniqueIndex("scan_outcomes_scan_idx").on(table.scanId),
-    index("scan_outcomes_session_idx").on(table.sessionId),
   ],
 );
 

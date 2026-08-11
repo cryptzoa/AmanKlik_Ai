@@ -128,13 +128,18 @@ Use only synthetic fixtures: new-number impersonation, OTP verification, benign 
 - Added implementation contracts `agents/41_PROTECTION_PLATFORM_EXPANSION.md` and `agents/42_BROWSER_SHARE_EXTENSION.md` for eight connected features.
 - Cross-source investigations now compose 2–8 session-owned scans without duplicating raw input, then render an interactive graph of sources, signal families, domains, and recommended actions.
 - Intelligence uses a 30-day, first-party aggregate with a minimum of three distinct anonymous sessions per visible pattern; repeated-input context uses the same threshold and all user-submitted URLs remain unfetched.
-- Result pages now include persistent Safe Action Center progress and categorical outcome feedback. Uncertain outcomes are excluded from verified-outcome counts.
+- Result pages include persistent Safe Action Center progress. Outcome feedback was later removed because it did not serve the user-facing scan flow.
 - Family Mode was deliberately removed before release because its relationship selector and guided script diluted the core product path without adding credible safety value.
 - Added a Manifest V3 browser side panel under `extension/`, revocable HMAC-hashed integration tokens, extension-only CORS, explicit-selection capture, and PWA POST share target support for text, URL, and validated screenshots.
 - Added adversarial evaluation for obfuscation, formatting, prompt injection, and false-positive pressure. Current synthetic suite is 12/12 with zero URL network calls; deterministic regression remains separate.
-- New database migration sequence is normalized to `0002_cloudy_mordo` for the existing conversation enum followed by `0003_regular_ultimates` for investigation, action progress, outcome, and integration-token tables. The original conversation migration timestamp/content remain unchanged for deployed migration compatibility.
+- New database migration sequence is normalized to `0002_cloudy_mordo` for the existing conversation enum followed by `0003_regular_ultimates` for investigation, action progress, and integration-token tables. The original conversation migration timestamp/content remain unchanged for deployed migration compatibility.
 - Protection platform expansion was pushed in `3b20cf2` after its quality gates passed. Railway migration and live smoke remain operational follow-ups.
 
+
+## Outcome feature removal — 2026-08-12
+
+- Removed outcome feedback from Result and Intelligence because it added product telemetry work without helping a user respond to a suspicious message.
+- Deleted the outcome API, repository, type, UI component, validation schema, and active Drizzle schema definition. Migration 0004 drops scan_outcomes and its two exclusive enum types; existing outcome rows are intentionally deleted when it is applied.
 
 ## RAG coverage hardening — 2026-08-11
 
