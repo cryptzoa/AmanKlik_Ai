@@ -24,8 +24,8 @@ function result(scanId: string, score: number, category: string): AnalysisResult
 
 describe("investigation builder", () => {
   const sources = [
-    { id: "s1", inputType: "text" as const, createdAt: new Date(0), result: result("s1", 42, "urgency") },
-    { id: "s2", inputType: "conversation" as const, createdAt: new Date(1), result: { ...result("s2", 72, "urgency"), inputType: "conversation" as const } },
+    { id: "s1", fingerprint: "text-a", inputType: "text" as const, createdAt: new Date(0), result: result("s1", 42, "urgency") },
+    { id: "s2", fingerprint: "conversation-b", inputType: "conversation" as const, createdAt: new Date(1), result: { ...result("s2", 72, "urgency"), inputType: "conversation" as const } },
   ];
 
   it("keeps the highest source risk and merges repeated signal families", () => {
@@ -35,11 +35,24 @@ describe("investigation builder", () => {
     expect(summary.topCategories[0]).toMatchObject({ category: "urgency", count: 2 });
   });
 
-  it("builds one shared signal and action node without raw input", () => {
+  it("only includes evidence shared by unique artefacts and never adds action nodes", () => {
     const graph = buildInvestigationGraph("case-1", "Kasus demo", sources);
     expect(graph.nodes.filter((node) => node.kind === "scan")).toHaveLength(2);
     expect(graph.nodes.filter((node) => node.kind === "signal")).toHaveLength(1);
-    expect(graph.nodes.filter((node) => node.kind === "action")).toHaveLength(1);
+    expect(graph.nodes.map((node) => node.kind)).not.toContain("action");
+    expect(graph.nodes.find((node) => node.kind === "signal")).toMatchObject({ count: 2, sourceIds: ["scan-s1", "scan-s2"] });
     expect(JSON.stringify(graph)).not.toContain("previewRedacted");
+  });
+
+  it("collapses an identical re-scan so it cannot manufacture corroboration", () => {
+    const duplicate = { ...sources[0], id: "s1-retry", createdAt: new Date(2), result: result("s1-retry", 99, "urgency") };
+    const summary = summarizeInvestigation([sources[0], duplicate]);
+    const graph = buildInvestigationGraph("case-2", "Duplikat", [sources[0], duplicate]);
+
+    expect(summary.finalScore).toBe(99);
+    expect(summary.summary).toContain("1 artefak unik");
+    expect(summary.topCategories).toEqual([]);
+    expect(graph.nodes.filter((node) => node.kind === "scan")).toHaveLength(1);
+    expect(graph.nodes.filter((node) => node.kind === "signal")).toHaveLength(0);
   });
 });

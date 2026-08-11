@@ -1,104 +1,42 @@
-"use client";
-
-import { useMemo, useState } from "react";
-
 import type { EvidenceNode, InvestigationGraph } from "@/types/investigation";
 
 const kindLabels: Record<EvidenceNode["kind"], string> = {
   case: "Kasus",
-  scan: "Sumber",
-  signal: "Pola",
-  domain: "Domain",
-  action: "Aksi",
+  scan: "Artefak",
+  signal: "Pola berulang",
+  domain: "Domain berulang",
 };
 
-const kindColors: Record<EvidenceNode["kind"], string> = {
-  case: "#111111",
-  scan: "#635bff",
-  signal: "#ff4038",
-  domain: "#ffb224",
-  action: "#19a974",
-};
-
-type Position = { x: number; y: number };
-
-function positionsFor(nodes: EvidenceNode[]): Map<string, Position> {
-  const positions = new Map<string, Position>();
-  const center = { x: 480, y: 300 };
-  const groups: Array<{ kinds: EvidenceNode["kind"][]; radius: number; offset: number }> = [
-    { kinds: ["case"], radius: 0, offset: 0 },
-    { kinds: ["scan"], radius: 135, offset: -Math.PI / 2 },
-    { kinds: ["signal", "domain"], radius: 240, offset: Math.PI / 7 },
-    { kinds: ["action"], radius: 335, offset: Math.PI / 2 },
-  ];
-
-  for (const group of groups) {
-    const groupNodes = nodes.filter((node) => group.kinds.includes(node.kind));
-    groupNodes.forEach((node, index) => {
-      const angle = groupNodes.length === 1 ? group.offset : group.offset + (Math.PI * 2 * index) / groupNodes.length;
-      positions.set(node.id, { x: center.x + Math.cos(angle) * group.radius, y: center.y + Math.sin(angle) * group.radius });
-    });
-  }
-  return positions;
+function sourceLabels(node: EvidenceNode, sourceById: Map<string, EvidenceNode>): string {
+  const labels = (node.sourceIds ?? []).map((sourceId) => sourceById.get(sourceId)?.label).filter((label): label is string => Boolean(label));
+  return labels.join(" · ");
 }
 
 export function EvidenceGraph({ graph }: { graph: InvestigationGraph }) {
-  const [activeKinds, setActiveKinds] = useState<EvidenceNode["kind"][]>(["case", "scan", "signal", "domain", "action"]);
-  const [selectedId, setSelectedId] = useState(graph.nodes[0]?.id ?? "");
-  const visibleNodes = useMemo(() => graph.nodes.filter((node) => activeKinds.includes(node.kind)), [activeKinds, graph.nodes]);
-  const visibleIds = useMemo(() => new Set(visibleNodes.map((node) => node.id)), [visibleNodes]);
-  const visibleEdges = graph.edges.filter((edge) => visibleIds.has(edge.source) && visibleIds.has(edge.target));
-  const positions = useMemo(() => positionsFor(graph.nodes), [graph.nodes]);
-  const selected = graph.nodes.find((node) => node.id === selectedId) ?? visibleNodes[0];
-
-  function toggleKind(kind: EvidenceNode["kind"]) {
-    if (kind === "case") return;
-    setActiveKinds((current) => current.includes(kind) ? current.filter((item) => item !== kind) : [...current, kind]);
-  }
+  const sourceNodes = graph.nodes.filter((node) => node.kind === "scan");
+  const sharedNodes = graph.nodes.filter((node) => node.kind === "signal" || node.kind === "domain");
+  const sourceById = new Map(sourceNodes.map((node) => [node.id, node]));
 
   return (
     <section data-reveal className="border-y border-line py-10" aria-labelledby="evidence-graph-heading">
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <p className="font-mono text-xs uppercase tracking-[0.18em] text-ai">Evidence graph</p>
-          <h2 id="evidence-graph-heading" className="mt-3 text-3xl font-semibold tracking-[-0.04em] sm:text-5xl">Hubungan antar bukti</h2>
-          <p className="mt-3 max-w-2xl text-sm leading-7 text-muted">Pilih node untuk membaca konteks. Garis menunjukkan relasi, bukan bukti identitas atau kepastian pelaku.</p>
-        </div>
-        <div className="flex flex-wrap gap-2" aria-label="Filter jenis bukti">
-          {(Object.keys(kindLabels) as EvidenceNode["kind"][]).filter((kind) => kind !== "case").map((kind) => (
-            <button key={kind} type="button" aria-pressed={activeKinds.includes(kind)} className={`min-h-11 rounded-full border px-4 text-xs font-semibold ${activeKinds.includes(kind) ? "border-ink bg-ink text-surface" : "border-line bg-surface text-muted"}`} onClick={() => toggleKind(kind)}>{kindLabels[kind]}</button>
-          ))}
-        </div>
+      <div className="max-w-3xl">
+        <p className="font-mono text-xs uppercase tracking-[0.18em] text-ai">Bukti bersama</p>
+        <h2 id="evidence-graph-heading" className="mt-3 text-3xl font-semibold tracking-[-0.04em] sm:text-5xl">Apa yang benar-benar berulang?</h2>
+        <p className="mt-3 text-sm leading-7 text-muted">AmanKlik hanya menampilkan pola atau domain yang muncul pada minimal dua artefak unik. Kesamaan ini membantu verifikasi, tetapi bukan bukti identitas pelaku atau kepastian penipuan.</p>
       </div>
 
-      <div className="mt-8 grid gap-5 xl:grid-cols-[1fr_280px]">
-        <div className="overflow-hidden border border-line bg-surface">
-          <svg className="h-auto min-h-[420px] w-full" viewBox="0 0 960 600" role="img" aria-label="Graf hubungan kasus, sumber, pola, domain, dan tindakan">
-            <g aria-hidden="true">
-              {visibleEdges.map((edge) => {
-                const source = positions.get(edge.source);
-                const target = positions.get(edge.target);
-                if (!source || !target) return null;
-                return <line key={edge.id} x1={source.x} y1={source.y} x2={target.x} y2={target.y} stroke="rgba(17,17,17,.18)" strokeWidth="2" />;
-              })}
-            </g>
-            {visibleNodes.map((node) => {
-              const position = positions.get(node.id);
-              if (!position) return null;
-              const active = selected?.id === node.id;
-              return (
-                <g key={node.id} role="button" tabIndex={0} aria-label={`${kindLabels[node.kind]}: ${node.label}`} aria-pressed={active} className="cursor-pointer outline-none" transform={`translate(${position.x} ${position.y})`} onClick={() => setSelectedId(node.id)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setSelectedId(node.id); } }}>
-                  <circle r={active ? 27 : 21} fill={kindColors[node.kind]} stroke={active ? "#111111" : "#fffdf7"} strokeWidth={active ? 5 : 3} />
-                  {node.count && node.count > 1 ? <text x="0" y="5" textAnchor="middle" fill="white" fontSize="12" fontWeight="700">{node.count}</text> : null}
-                  <text x="0" y={active ? 46 : 40} textAnchor="middle" fill="#111111" fontSize="12" fontWeight="700">{node.label.length > 24 ? `${node.label.slice(0, 23)}…` : node.label}</text>
-                </g>
-              );
-            })}
-          </svg>
-        </div>
-        <aside className="border border-line bg-ink p-6 text-surface" aria-live="polite">
-          {selected ? <><p className="font-mono text-xs uppercase tracking-[0.16em] text-ai-soft">{kindLabels[selected.kind]}</p><h3 className="mt-4 text-2xl font-semibold tracking-[-0.03em]">{selected.label}</h3><p className="mt-4 text-sm leading-7 text-surface/70">{selected.detail}</p>{selected.count && selected.count > 1 ? <p className="mt-6 border-t border-white/20 pt-4 text-xs">Muncul pada {selected.count} sinyal.</p> : null}</> : <p>Pilih node untuk melihat detail.</p>}
-        </aside>
+      <div className="mt-8 grid gap-5 lg:grid-cols-2">
+        <article className="border border-line bg-surface p-5 sm:p-6">
+          <div className="flex items-baseline justify-between gap-4"><h3 className="text-xl font-semibold">Artefak yang dibandingkan</h3><span className="font-mono text-xs text-muted">{sourceNodes.length} unik</span></div>
+          <ul className="mt-5 grid gap-3" aria-label="Artefak unik dalam kasus">
+            {sourceNodes.map((node) => <li key={node.id} className="border-l-2 border-ai bg-ai-soft px-4 py-3"><p className="font-mono text-xs uppercase tracking-[0.12em] text-muted">{kindLabels[node.kind]} · {node.riskLevel?.replace("_", " ")}</p><p className="mt-1 text-sm font-semibold">{node.label}</p><p className="mt-2 text-sm leading-6 text-muted">{node.detail}</p></li>)}
+          </ul>
+        </article>
+
+        <article className="border border-line bg-ink p-5 text-surface sm:p-6">
+          <div className="flex items-baseline justify-between gap-4"><h3 className="text-xl font-semibold">Bukti yang saling menguatkan</h3><span className="font-mono text-xs text-ai-soft">{sharedNodes.length} ditemukan</span></div>
+          {sharedNodes.length ? <ul className="mt-5 grid gap-3" aria-label="Pola dan domain berulang">{sharedNodes.map((node) => <li key={node.id} className="border border-white/20 p-4"><div className="flex flex-wrap items-center justify-between gap-3"><p className="font-semibold">{node.label}</p><span className="rounded-full bg-ai px-3 py-1 font-mono text-xs text-ink">{node.count}/{sourceNodes.length} artefak</span></div><p className="mt-3 text-sm leading-6 text-surface/70">{node.detail}</p><p className="mt-4 border-t border-white/15 pt-3 font-mono text-xs uppercase tracking-[0.08em] text-ai-soft">Terlihat pada: {sourceLabels(node, sourceById)}</p></li>)}</ul> : <div className="mt-5 border border-dashed border-white/30 p-5"><p className="font-semibold">Belum ada bukti yang berulang.</p><p className="mt-2 text-sm leading-6 text-surface/70">Artefak tetap bisa diperiksa satu per satu. Tambahkan sumber yang berbeda bila ingin membandingkan pola, domain, atau permintaan yang sama.</p></div>}
+        </article>
       </div>
     </section>
   );

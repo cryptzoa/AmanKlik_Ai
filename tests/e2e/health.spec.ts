@@ -90,7 +90,7 @@ test("every product surface uses the animated interior system without horizontal
     ["/history", /Jejak pemeriksaanmu/i],
     ["/respond", /Sudah terlanjur/i],
     ["/scan/conversation", /Baca urutannya/i],
-    ["/investigate", /Satu kasus, banyak petunjuk/i],
+    ["/investigate", /Bandingkan bukti yang berbeda/i],
     ["/intelligence", /Lihat polanya, bukan orangnya/i],
     ["/benchmark", /Buktikan batasnya/i],
     ["/connect", /AmanKlik di tempat pesan datang/i],

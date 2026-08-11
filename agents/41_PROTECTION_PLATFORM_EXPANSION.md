@@ -20,7 +20,7 @@ The expansion must still avoid certainty claims, criminal identification, URL fe
 | Live scam intelligence | `/intelligence`, repeated-input note on results | 30-day aggregate, minimum three distinct anonymous sessions, curated advisory fallback |
 | Safe Action Center | persistent checklist inside `/result/[id]` | `scan_action_progress`, action IDs constrained to the result action plan |
 | Browser/share extension | `extension/`, `/connect`, `/api/integrations/scan`, PWA share target | revocable HMAC-hashed integration token; explicit selection; no Gemini key in extension |
-| Interactive evidence graph | investigation detail | graph built from redacted result metadata; merged signal/action/domain nodes |
+| Interactive evidence graph | investigation detail | graph built from redacted result metadata; shared signal/domain evidence across unique artefacts; action plan remains on the scan result |
 | Adversarial benchmark | `/benchmark`, `pnpm eval:adversarial` | synthetic deterministic fixtures, zero URL network calls |
 
 ## New persistence

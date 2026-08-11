@@ -11,12 +11,12 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const primaryNavigation = [
   ["/scan", "Scan"],
-  ["/investigate", "Investigate"],
   ["/respond", "Action"],
   ["/simulator", "Latihan"],
 ] as const;
 
 const secondaryNavigation = [
+  ["/investigate", "Kasus"],
   ["/learn", "Learn"],
   ["/history", "History"],
 ] as const;

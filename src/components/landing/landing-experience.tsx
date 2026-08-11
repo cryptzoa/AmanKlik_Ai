@@ -110,7 +110,6 @@ export function LandingExperience() {
           <Link className="font-mono text-sm font-bold uppercase tracking-[0.18em]" href="/">AmanKlik AI</Link>
           <nav className="hidden items-center gap-7 text-sm font-semibold text-muted md:flex" aria-label="Navigasi utama">
             <Link className="transition hover:text-ink" href="/scan">Scan</Link>
-            <Link className="transition hover:text-ink" href="/investigate">Investigate</Link>
             <Link className="transition hover:text-ink" href="/respond">Action</Link>
             <Link className="transition hover:text-ink" href="/simulator">Latihan</Link>
           </nav>
@@ -119,7 +118,6 @@ export function LandingExperience() {
               <summary className="flex min-h-11 cursor-pointer list-none items-center rounded-full border border-line bg-surface px-4 text-sm font-semibold [&::-webkit-details-marker]:hidden">Menu</summary>
               <nav className="absolute right-0 top-14 grid min-w-44 gap-1 border border-line bg-surface p-2 shadow-xl" aria-label="Navigasi seluler">
                 <Link className="min-h-11 px-3 py-3 text-sm font-semibold" href="/scan">Scan</Link>
-                <Link className="min-h-11 px-3 py-3 text-sm font-semibold" href="/investigate">Investigate</Link>
                 <Link className="min-h-11 px-3 py-3 text-sm font-semibold" href="/respond">Action</Link>
                 <Link className="min-h-11 px-3 py-3 text-sm font-semibold" href="/simulator">Latihan</Link>
               </nav>

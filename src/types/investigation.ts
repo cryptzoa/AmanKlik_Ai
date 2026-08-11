@@ -11,7 +11,7 @@ export type InvestigationScan = {
   result: AnalysisResult;
 };
 
-export type EvidenceNodeKind = "case" | "scan" | "signal" | "domain" | "action";
+export type EvidenceNodeKind = "case" | "scan" | "signal" | "domain";
 
 export type EvidenceNode = {
   id: string;
@@ -20,6 +20,7 @@ export type EvidenceNode = {
   detail: string;
   riskLevel?: RiskLevel;
   count?: number;
+  sourceIds?: string[];
 };
 
 export type EvidenceEdge = {

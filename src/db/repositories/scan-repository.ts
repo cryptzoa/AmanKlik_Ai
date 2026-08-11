@@ -71,6 +71,7 @@ export async function listScansForSession(sessionId: string, limit = 20) {
     return await requireDb()
       .select({
         id: scans.id,
+        inputHash: scans.inputHash,
         inputType: scans.inputType,
         previewRedacted: scans.previewRedacted,
         finalScore: scans.finalScore,

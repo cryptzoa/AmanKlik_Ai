@@ -63,7 +63,7 @@ export function ResultView({ result, initialActionProgress = {}, intelligenceMat
               <Link className="lift-link inline-flex min-h-12 items-center rounded-full bg-ink px-6 font-semibold text-surface hover:bg-ai" href="/scan">Periksa pesan lain →</Link>
               <Link className="lift-link inline-flex min-h-12 items-center rounded-full border border-line bg-surface px-6 font-semibold hover:border-ai hover:text-ai" href={`/respond?from=${result.scanId}`}>Sudah terlanjur?</Link>
               <Link className="lift-link inline-flex min-h-12 items-center rounded-full border border-line bg-surface px-6 font-semibold hover:border-ai hover:text-ai" href={`/simulator?from=${result.scanId}`}>Latihan dari pola ini</Link>
-              <Link className="lift-link inline-flex min-h-12 items-center rounded-full border border-line bg-surface px-6 font-semibold hover:border-ai hover:text-ai" href={`/investigate?scan=${result.scanId}`}>Hubungkan ke kasus</Link>
+              <Link className="lift-link inline-flex min-h-12 items-center rounded-full border border-line bg-surface px-6 font-semibold hover:border-ai hover:text-ai" href={`/investigate?scan=${result.scanId}`}>Bandingkan bukti lain</Link>
             </div>
           </div>
         </section>
