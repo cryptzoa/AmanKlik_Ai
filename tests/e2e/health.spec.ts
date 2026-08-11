@@ -35,8 +35,8 @@ test("core product pages render and connect", async ({ page }) => {
 
   await page.goto("/respond");
   await expect(page.getByRole("heading", { name: /Sudah terlanjur/i })).toBeVisible();
-  await page.getByRole("button", { name: /Sudah transfer uang/i }).click();
-  await expect(page.getByRole("heading", { name: /Jaga jeda/i })).toBeVisible();
+  await page.getByRole("button", { name: /Uang sudah terkirim/i }).click();
+  await expect(page.getByRole("heading", { name: /Hubungi bank atau e-wallet sekarang/i })).toBeVisible();
 
   await page.goto("/scan/conversation");
   await expect(page.getByRole("heading", { name: /Baca urutannya/i })).toBeVisible();
