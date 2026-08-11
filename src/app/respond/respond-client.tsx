@@ -106,9 +106,15 @@ export function RespondClient() {
 
   function toggleIncident(incident: IncidentType) {
     setCopyStatus(null);
-    const nextIncidents = selectedIncidents.includes(incident)
-      ? selectedIncidents.filter((item) => item !== incident)
-      : [...selectedIncidents, incident];
+    let nextIncidents: IncidentType[];
+
+    if (incident === "unsure") {
+      nextIncidents = selectedIncidents.includes("unsure") ? [] : ["unsure"];
+    } else if (selectedIncidents.includes(incident)) {
+      nextIncidents = selectedIncidents.filter((item) => item !== incident);
+    } else {
+      nextIncidents = [...selectedIncidents.filter((item) => item !== "unsure"), incident];
+    }
     const nextAvailableAssets = new Set(affectedAssetsForIncidents(nextIncidents));
 
     setSelectedIncidents(nextIncidents);

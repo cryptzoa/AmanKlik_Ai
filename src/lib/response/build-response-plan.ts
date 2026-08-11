@@ -10,7 +10,10 @@ import type { AffectedAsset, IncidentType, ResponsePlan, ResponseStep } from "@/
 const DISCLAIMER = "AmanKlik memberikan panduan awal, bukan layanan darurat, bank, penegak hukum, atau jaminan pemulihan. Hubungi penyedia terkait melalui kanal resmi yang kamu cari sendiri.";
 
 function uniqueIncidents(incidents: IncidentType[]): IncidentType[] {
-  return [...new Set(incidents)].filter((incident) => incident in INCIDENT_LABELS);
+  const unique = [...new Set(incidents)].filter((incident) => incident in INCIDENT_LABELS);
+  const concreteIncidents = unique.filter((incident) => incident !== "unsure");
+
+  return concreteIncidents.length ? concreteIncidents : unique;
 }
 
 function uniqueAssets(assets: AffectedAsset[]): AffectedAsset[] {

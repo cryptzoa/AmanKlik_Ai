@@ -60,4 +60,24 @@ describe("RespondClient", () => {
     fireEvent.click(takeover);
     expect(screen.getByRole("button", { name: /Email utama/i })).toHaveAttribute("aria-pressed", "false");
   });
+
+  it("keeps unsure exclusive from concrete incidents", () => {
+    render(<RespondClient />);
+
+    const unsure = screen.getByRole("button", { name: /Saya tidak yakin apa yang sudah terjadi/i });
+    const transfer = screen.getByRole("button", { name: /Uang sudah terkirim/i });
+    const credential = screen.getByRole("button", { name: /OTP, PIN, password/i });
+
+    fireEvent.click(transfer);
+    fireEvent.click(credential);
+    fireEvent.click(unsure);
+
+    expect(unsure).toHaveAttribute("aria-pressed", "true");
+    expect(transfer).toHaveAttribute("aria-pressed", "false");
+    expect(credential).toHaveAttribute("aria-pressed", "false");
+
+    fireEvent.click(transfer);
+    expect(unsure).toHaveAttribute("aria-pressed", "false");
+    expect(transfer).toHaveAttribute("aria-pressed", "true");
+  });
 });

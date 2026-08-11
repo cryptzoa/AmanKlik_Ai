@@ -40,3 +40,23 @@ test("credential flow can be refined and reset with keyboard on mobile", async (
   await expect(incident).toHaveAttribute("aria-pressed", "false");
   await expect(page.getByText(/Pilih situasi di atas/i)).toBeVisible();
 });
+
+test("unsure stays exclusive from concrete incidents", async ({ page }) => {
+  await page.goto("/respond");
+
+  const transfer = page.getByRole("button", { name: /Uang sudah terkirim/i });
+  const credential = page.getByRole("button", { name: /OTP, PIN, password/i });
+  const unsure = page.getByRole("button", { name: /Saya tidak yakin apa yang sudah terjadi/i });
+
+  await transfer.click();
+  await credential.click();
+  await unsure.click();
+
+  await expect(unsure).toHaveAttribute("aria-pressed", "true");
+  await expect(transfer).toHaveAttribute("aria-pressed", "false");
+  await expect(credential).toHaveAttribute("aria-pressed", "false");
+
+  await transfer.click();
+  await expect(unsure).toHaveAttribute("aria-pressed", "false");
+  await expect(transfer).toHaveAttribute("aria-pressed", "true");
+});

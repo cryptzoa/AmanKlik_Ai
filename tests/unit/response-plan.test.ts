@@ -66,6 +66,13 @@ describe("already-acted response planner", () => {
     expect(plan.selectedAssets).toEqual(["bank_or_wallet"]);
   });
 
+  it("drops unsure when a concrete incident is present", () => {
+    const plan = buildResponsePlan(["unsure", "money_transferred"]);
+
+    expect(plan.selectedIncidents).toEqual(["money_transferred"]);
+    expect(plan.immediate.some((step) => step.id === "pause-when-unsure")).toBe(false);
+  });
+
   it("deduplicates shared actions and keeps ordering stable across repeated input", () => {
     const plan = buildResponsePlan([
       "money_transferred",
