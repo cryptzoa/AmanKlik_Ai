@@ -23,6 +23,6 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
   if (!scan) notFound();
   let progress: Awaited<ReturnType<typeof listActionProgress>> = [];
   let intelligenceMatchCount = 0;
-  try { [progress, intelligenceMatchCount] = await Promise.all([listActionProgress(scan.id, sessionId), countDistinctSessionsForInputHash(scan.inputHash, new Date(Date.now() - 30 * 24 * 60 * 60 * 1_000))]); } catch { /* Result remains usable without persistence extras. */ }
+  try { [progress, intelligenceMatchCount] = await Promise.all([listActionProgress(scan.id, sessionId), countDistinctSessionsForInputHash(scan.inputHash, new Date(Date.now() - 30 * 24 * 60 * 60 * 1_000))]); } catch {}
   return <ResultView result={scan.resultJson} initialActionProgress={Object.fromEntries(progress.map((item) => [item.actionId, item.state]))} intelligenceMatchCount={intelligenceMatchCount} />;
 }

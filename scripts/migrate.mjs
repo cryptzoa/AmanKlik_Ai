@@ -9,7 +9,7 @@ function safeError(error) {
     return { message: String(error) };
   }
 
-  const source = /** @type {Record<string, unknown>} */ (error);
+  const source = error;
   return {
     name: typeof source.name === "string" ? source.name : undefined,
     code: typeof source.code === "string" ? source.code : undefined,
@@ -31,7 +31,6 @@ if (databaseUrl.includes("${{")) {
   process.exit(1);
 }
 
-/** @type {ReturnType<typeof postgres> | undefined} */
 let client;
 
 try {
@@ -44,7 +43,6 @@ try {
   await migrate(db, { migrationsFolder: "./drizzle" });
   console.log("[db:migrate] Migrations applied successfully.");
 } catch (error) {
-  // Keep the error useful for Railway logs without printing the connection URL.
   console.log(`[db:migrate] Failed: ${JSON.stringify(safeError(error))}`);
   process.exitCode = 1;
 } finally {

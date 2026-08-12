@@ -142,9 +142,7 @@ export async function retrieveKnowledge(input: string, topK = env.RAG_TOP_K): Pr
           .map(({ chunk, score }) => toMatch(chunk, score, "embedding"));
         if (matches.length) return { mode: "embedding", matches };
       }
-    } catch {
-      // Embedding retrieval is optional. Deterministic local retrieval remains available.
-    }
+    } catch {}
   }
 
   return keywordRetrieve(query, topK);

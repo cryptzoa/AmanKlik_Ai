@@ -12,7 +12,7 @@ export default async function InvestigatePage({ searchParams }: { searchParams: 
   let scans: Awaited<ReturnType<typeof listScansForSession>> = [];
   let cases: Awaited<ReturnType<typeof listInvestigationCases>> = [];
   if (sessionId) {
-    try { [scans, cases] = await Promise.all([listScansForSession(sessionId, 30), listInvestigationCases(sessionId)]); } catch { /* UI remains available with empty state. */ }
+    try { [scans, cases] = await Promise.all([listScansForSession(sessionId, 30), listInvestigationCases(sessionId)]); } catch {}
   }
 
   const selectedScan = scans.find((scan) => scan.id === requestedScanId);

@@ -10,3 +10,8 @@ test-results/
 *.log
 *.tsbuildinfo
 .DS_Store
+
+/AGENTS.md
+/CLAUDE.md
+/STATE.md
+/agents/
