@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SiteHeader } from "@/components/site/site-header";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -105,27 +106,7 @@ export function LandingExperience() {
 
   return (
     <main ref={root} className="landing-grain overflow-clip bg-canvas">
-      <header data-site-header className="fixed inset-x-0 top-0 z-50 border-b border-transparent px-4 py-4 sm:px-8 lg:px-12">
-        <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4">
-          <Link className="font-mono text-sm font-bold uppercase tracking-[0.18em]" href="/">AmanKlik AI</Link>
-          <nav className="hidden items-center gap-7 text-sm font-semibold text-muted md:flex" aria-label="Navigasi utama">
-            <Link className="transition hover:text-ink" href="/scan">Scan</Link>
-            <Link className="transition hover:text-ink" href="/respond">Action</Link>
-            <Link className="transition hover:text-ink" href="/simulator">Latihan</Link>
-          </nav>
-          <div className="flex items-center gap-2">
-            <details className="group relative md:hidden">
-              <summary className="flex min-h-11 cursor-pointer list-none items-center rounded-full border border-line bg-surface px-4 text-sm font-semibold [&::-webkit-details-marker]:hidden">Menu</summary>
-              <nav className="absolute right-0 top-14 grid min-w-44 gap-1 border border-line bg-surface p-2 shadow-xl" aria-label="Navigasi seluler">
-                <Link className="min-h-11 px-3 py-3 text-sm font-semibold" href="/scan">Scan</Link>
-                <Link className="min-h-11 px-3 py-3 text-sm font-semibold" href="/respond">Action</Link>
-                <Link className="min-h-11 px-3 py-3 text-sm font-semibold" href="/simulator">Latihan</Link>
-              </nav>
-            </details>
-            <Link className="hidden min-h-11 items-center rounded-full bg-ink px-5 text-sm font-semibold text-surface transition hover:bg-ai sm:inline-flex" href="/scan">Cek pesan</Link>
-          </div>
-        </div>
-      </header>
+      <SiteHeader variant="landing" />
 
       <section data-hero className="hero-grid relative min-h-[100svh] border-b border-line px-5 pb-14 pt-32 sm:px-10 sm:pb-20 sm:pt-40 lg:px-16">
         <div className="relative z-10 mx-auto flex min-h-[calc(100svh-12rem)] max-w-[1440px] flex-col justify-between">

@@ -62,8 +62,32 @@ test("landing stays readable with reduced motion and on mobile", async ({ page }
   const width = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }));
   expect(width.scroll).toBe(width.client);
   await page.getByText("Menu", { exact: true }).click();
-  await expect(page.getByRole("navigation", { name: "Navigasi seluler" })).toBeVisible();
+  const mobileNavigation = page.getByRole("navigation", { name: "Navigasi seluler" });
+  await expect(mobileNavigation).toBeVisible();
+  await expect(mobileNavigation.getByRole("link", { name: "Kasus", exact: true })).toBeVisible();
+  await expect(mobileNavigation.getByRole("link", { name: "Learn", exact: true })).toBeVisible();
+  await expect(mobileNavigation.getByRole("link", { name: "History", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Family" })).toHaveCount(0);
+});
+
+test("landing and interior pages share one complete navigation", async ({ page }) => {
+  for (const route of ["/", "/scan"]) {
+    await page.goto(route);
+
+    const primary = page.getByRole("navigation", { name: "Navigasi utama" });
+    await expect(primary.getByRole("link", { name: "Scan", exact: true })).toBeVisible();
+    await expect(primary.getByRole("link", { name: "Action", exact: true })).toBeVisible();
+    await expect(primary.getByRole("link", { name: "Latihan", exact: true })).toBeVisible();
+
+    await primary.getByText("Lainnya +", { exact: true }).click();
+    const secondary = page.getByRole("navigation", { name: "Navigasi tambahan" });
+    await expect(secondary.getByRole("link", { name: "Kasus", exact: true })).toBeVisible();
+    await expect(secondary.getByRole("link", { name: "Learn", exact: true })).toBeVisible();
+    await expect(secondary.getByRole("link", { name: "History", exact: true })).toBeVisible();
+  }
+
+  await expect(page.getByRole("navigation", { name: "Navigasi utama" }).getByRole("link", { name: "Scan", exact: true }))
+    .toHaveAttribute("aria-current", "page");
 });
 
 test("scanner can load every kind of synthetic fixture", async ({ page }) => {
