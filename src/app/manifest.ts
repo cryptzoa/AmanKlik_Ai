@@ -21,12 +21,22 @@ export default function manifest(): ShareTargetManifest {
     description: "Pahami risikonya sebelum percaya pesannya.",
     start_url: "/",
     display: "standalone",
-    background_color: "#f3f1ea",
-    theme_color: "#f3f1ea",
+    background_color: "#f7f6f2",
+    theme_color: "#f7f6f2",
     icons: [
       { src: "/icon.png", sizes: "512x512", type: "image/png", purpose: "any" },
-      { src: "/icon.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
-      { src: "/apple-icon.png", sizes: "180x180", type: "image/png", purpose: "any" },
+      {
+        src: "/icon.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable",
+      },
+      {
+        src: "/apple-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+        purpose: "any",
+      },
     ],
     share_target: {
       action: "/api/share-target",
@@ -36,7 +46,18 @@ export default function manifest(): ShareTargetManifest {
         title: "title",
         text: "text",
         url: "url",
-        files: [{ name: "image", accept: ["image/png", "image/jpeg", "image/webp", ".png", ".jpg", ".jpeg", ".webp"] }],
+        files: [{
+          name: "image",
+          accept: [
+            "image/png",
+            "image/jpeg",
+            "image/webp",
+            ".png",
+            ".jpg",
+            ".jpeg",
+            ".webp",
+          ],
+        }],
       },
     },
   };

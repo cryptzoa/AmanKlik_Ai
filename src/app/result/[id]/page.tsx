@@ -1,5 +1,8 @@
-import { ResultView } from "@/components/result/result-view";
-import { countDistinctSessionsForInputHash, getScanForSession } from "@/db/repositories/scan-repository";
+import { ResultView } from "@/app/result/[id]/_components/result-view";
+import {
+  countDistinctSessionsForInputHash,
+  getScanForSession,
+} from "@/db/repositories/scan-repository";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
 import { scanIdSchema } from "@/lib/validation";
 import { notFound } from "next/navigation";
@@ -7,7 +10,9 @@ import { listActionProgress } from "@/db/repositories/action-progress-repository
 
 export const dynamic = "force-dynamic";
 
-export default async function ResultPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ResultPage(
+  { params }: { params: Promise<{ id: string }> },
+) {
   const { id } = await params;
   if (!scanIdSchema.safeParse(id).success) notFound();
   const sessionId = await getAnonymousSessionId({ create: false });
@@ -23,6 +28,22 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
   if (!scan) notFound();
   let progress: Awaited<ReturnType<typeof listActionProgress>> = [];
   let intelligenceMatchCount = 0;
-  try { [progress, intelligenceMatchCount] = await Promise.all([listActionProgress(scan.id, sessionId), countDistinctSessionsForInputHash(scan.inputHash, new Date(Date.now() - 30 * 24 * 60 * 60 * 1_000))]); } catch {}
-  return <ResultView result={scan.resultJson} initialActionProgress={Object.fromEntries(progress.map((item) => [item.actionId, item.state]))} intelligenceMatchCount={intelligenceMatchCount} />;
+  try {
+    [progress, intelligenceMatchCount] = await Promise.all([
+      listActionProgress(scan.id, sessionId),
+      countDistinctSessionsForInputHash(
+        scan.inputHash,
+        new Date(Date.now() - 30 * 24 * 60 * 60 * 1_000),
+      ),
+    ]);
+  } catch {}
+  return (
+    <ResultView
+      result={scan.resultJson}
+      initialActionProgress={Object.fromEntries(
+        progress.map((item) => [item.actionId, item.state]),
+      )}
+      intelligenceMatchCount={intelligenceMatchCount}
+    />
+  );
 }

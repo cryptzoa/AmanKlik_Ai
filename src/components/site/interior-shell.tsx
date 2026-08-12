@@ -3,10 +3,13 @@
 import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
+import { usePreloader } from "@/components/site/preloader-context";
+import { useTransition } from "@/components/site/transition-context";
+import { useEffect } from "react";
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+gsap.registerPlugin(useGSAP);
 
 type InteriorShellProps = {
   eyebrow: string;
@@ -28,76 +31,114 @@ export function InteriorShell({
   compact = false,
 }: InteriorShellProps) {
   const root = useRef<HTMLElement>(null);
+  const { isLoaded } = usePreloader();
+  const { isTransitioning } = useTransition();
+  const isReady = isLoaded && !isTransitioning;
+  const timelineRef = useRef<gsap.core.Timeline | null>(null);
 
   useGSAP(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (
+      typeof window.matchMedia !== "function" ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) return;
 
-    const intro = gsap.timeline({ defaults: { ease: "power3.out" } });
+    const intro = gsap.timeline({
+      defaults: { ease: "power3.out" },
+      paused: !isReady
+    });
+    timelineRef.current = intro;
+
     intro
-      .from("[data-shell-header]", { autoAlpha: 0, y: -18, duration: 0.45 })
-      .from("[data-shell-eyebrow]", { autoAlpha: 0, y: 15, duration: 0.4 }, "-=0.15")
+      .from(
+        "[data-shell-eyebrow]",
+        { autoAlpha: 0, y: 15, duration: 0.4 },
+        "-=0.15",
+      )
       .from("[data-shell-title]", { yPercent: 112, duration: 0.75 }, "-=0.22")
-      .from("[data-shell-description]", { autoAlpha: 0, y: 22, duration: 0.5 }, "-=0.34")
-      .from("[data-shell-fragment]", { autoAlpha: 0, scale: 0.88, stagger: 0.07, duration: 0.4 }, "-=0.3");
+      .from(
+        "[data-shell-description]",
+        { autoAlpha: 0, y: 22, duration: 0.5 },
+        "-=0.34",
+      )
+      .from("[data-shell-fragment]", {
+        autoAlpha: 0,
+        scale: 0.88,
+        stagger: 0.07,
+        duration: 0.4,
+      }, "-=0.3");
 
-    gsap.utils.toArray<HTMLElement>("[data-shell-fragment]").forEach((fragment, index) => {
-      gsap.to(fragment, {
-        y: index % 2 ? 9 : -11,
-        rotation: index % 2 ? 1.5 : -1.5,
-        duration: 3.4 + index * 0.5,
-        ease: "sine.inOut",
-        repeat: -1,
-        yoyo: true,
-      });
-    });
-
-    gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((element) => {
-      gsap.from(element, {
-        opacity: 0,
-        y: 42,
-        duration: 0.7,
-        ease: "power3.out",
-        scrollTrigger: { trigger: element, start: "top 88%", once: true },
-      });
-    });
-
-    gsap.utils.toArray<HTMLElement>("[data-reveal-card]").forEach((card, index) => {
-      gsap.from(card, {
-        opacity: 0,
-        y: 34,
-        rotate: index % 2 ? 0.6 : -0.6,
-        duration: 0.62,
-        delay: (index % 4) * 0.055,
-        ease: "power2.out",
-        scrollTrigger: { trigger: card, start: "top 91%", once: true },
-      });
-    });
+    gsap.utils.toArray<HTMLElement>("[data-shell-fragment]").forEach(
+      (fragment, index) => {
+        gsap.to(fragment, {
+          y: index % 2 ? 9 : -11,
+          rotation: index % 2 ? 1.5 : -1.5,
+          duration: 3.4 + index * 0.5,
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true,
+        });
+      },
+    );
   }, { scope: root });
 
+  useEffect(() => {
+    if (isReady && timelineRef.current) {
+      timelineRef.current.play();
+    }
+  }, [isReady]);
+
   return (
-    <main ref={root} className="landing-grain min-h-screen overflow-clip bg-canvas">
+    <main
+      ref={root}
+      className="landing-grain min-h-screen overflow-clip bg-ink"
+    >
       <SiteHeader variant="interior" />
 
-      <section className={`hero-grid relative border-b border-line px-5 sm:px-10 lg:px-16 ${compact ? "py-16 sm:py-24" : "flex min-h-[68svh] items-end py-16 sm:py-24"}`}>
+      <section
+        className={`relative border-b border-white/15 bg-ink px-5 text-surface sm:px-10 lg:px-16 ${
+          compact ? "py-12 sm:py-16" : "py-16 sm:py-24"
+        }`}
+      >
         <div className="relative z-10 mx-auto w-full max-w-[1320px]">
-          <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_260px] lg:items-end">
             <div>
-              <p data-shell-eyebrow className="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-ai">{eyebrow}</p>
-              <div className="mt-6 overflow-hidden pb-[0.08em]">
-                <h1 data-shell-title className="max-w-5xl text-[clamp(3.4rem,8vw,7.8rem)] font-semibold uppercase leading-[0.82] tracking-[-0.072em]">{title}</h1>
+              <p data-shell-eyebrow className="eyebrow-label text-ai-soft">
+                {eyebrow}
+              </p>
+              <div className="mt-5 overflow-hidden pb-[0.1em]">
+                <h1
+                  data-shell-title
+                  className={`${
+                    compact ? "page-title max-w-5xl" : "display-title max-w-6xl"
+                  } text-balanced uppercase`}
+                >
+                  {title}
+                </h1>
               </div>
             </div>
-            <p className="hidden max-w-48 border-l border-line pl-5 font-mono text-xs uppercase leading-6 tracking-[0.14em] text-muted lg:block">{marker}</p>
+            <p className="hidden border-l-2 border-ai pl-5 font-mono text-xs uppercase leading-6 tracking-[0.14em] text-white/60 lg:block">
+              {marker}
+            </p>
           </div>
-          <p data-shell-description className="mt-8 max-w-2xl text-lg leading-8 text-muted sm:text-xl">{description}</p>
+          <p
+            data-shell-description
+            className="mt-8 max-w-2xl border-t border-white/20 pt-5 text-base leading-7 text-white/65 sm:text-lg sm:leading-8"
+          >
+            {description}
+          </p>
         </div>
 
-        <div className="pointer-events-none absolute inset-0 hidden lg:block" aria-hidden="true">
+        <div
+          className="mx-auto mt-8 hidden max-w-[1320px] flex-wrap gap-2 border-t border-white/20 pt-4 lg:flex"
+          aria-hidden="true"
+        >
           {fragments.slice(0, 3).map((fragment, index) => (
             <span
               key={`${fragment}-${index}`}
               data-shell-fragment
-              className={`absolute border border-line bg-surface px-4 py-3 font-mono text-xs font-bold uppercase tracking-[0.14em] shadow-[7px_7px_0_rgba(17,17,17,0.08)] ${index === 0 ? "right-[8%] top-[18%] -rotate-2 text-risk" : index === 1 ? "right-[21%] top-[33%] rotate-2 text-ai" : "right-[6%] top-[49%] -rotate-1"}`}
+              className={`${
+                index === 1 ? "bg-ai text-white" : "bg-white/10 text-white"
+              } border border-white/25 px-3 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.12em]`}
             >
               {fragment}
             </span>
@@ -105,16 +146,11 @@ export function InteriorShell({
         </div>
       </section>
 
-      <div className="px-5 py-16 sm:px-10 sm:py-24 lg:px-16">
+      <div className="bg-canvas px-5 py-14 text-ink sm:px-10 sm:py-20 lg:px-16">
         <div className="mx-auto max-w-[1320px]">{children}</div>
       </div>
 
-      <footer className="border-t border-white/15 bg-ink px-5 py-9 text-sm text-[#aaa9a2] sm:px-10 lg:px-16">
-        <div className="mx-auto flex max-w-[1320px] flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-mono uppercase tracking-[0.14em]">AmanKlik AI · 2026</p>
-          <p>Risiko rendah bukan jaminan aman. Verifikasi selalu melalui kanal resmi.</p>
-        </div>
-      </footer>
+      <SiteFooter variant="interior" />
     </main>
   );
 }

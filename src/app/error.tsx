@@ -17,7 +17,7 @@ export default function GlobalError({
       fragments={["AMAN", "TIDAK TERKIRIM", "RETRY"]}
       compact
     >
-      <div data-reveal className="motion-surface grid min-h-72 place-items-center p-8 text-center">
+      <div className="motion-surface grid min-h-72 place-items-center p-8 text-center">
         <div>
           <p className="font-mono text-xs uppercase tracking-[0.18em] text-risk">Terjadi kendala</p>
           <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em]">Halaman belum bisa ditampilkan.</h2>

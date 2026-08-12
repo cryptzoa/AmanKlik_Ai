@@ -11,7 +11,7 @@ export default function NotFound() {
       fragments={["404", "CEK URL", "KEMBALI"]}
       compact
     >
-      <div data-reveal className="motion-surface grid min-h-72 place-items-center p-8 text-center">
+      <div className="motion-surface grid min-h-72 place-items-center p-8 text-center">
         <div>
           <p className="font-mono text-xs uppercase tracking-[0.18em] text-risk">Alamat tidak dikenali</p>
           <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em]">Pilih jalur yang aman.</h2>

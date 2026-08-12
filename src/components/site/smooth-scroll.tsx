@@ -12,10 +12,14 @@ export function SmoothScroll() {
   const pathname = usePathname();
 
   useEffect(() => {
+    if (pathname !== "/") return;
+    if (typeof window.matchMedia !== "function") return;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (reducedMotion.matches) return;
 
-    const progress = document.querySelector<HTMLElement>("[data-scroll-progress-bar]");
+    const progress = document.querySelector<HTMLElement>(
+      "[data-scroll-progress-bar]",
+    );
     const lenis = new Lenis({
       autoRaf: false,
       duration: 1.05,
@@ -33,7 +37,9 @@ export function SmoothScroll() {
 
     lenis.on("scroll", syncScroll);
     gsap.ticker.add(update);
-    const refreshFrame = window.requestAnimationFrame(() => ScrollTrigger.refresh());
+    const refreshFrame = window.requestAnimationFrame(() =>
+      ScrollTrigger.refresh()
+    );
 
     return () => {
       window.cancelAnimationFrame(refreshFrame);
@@ -44,8 +50,14 @@ export function SmoothScroll() {
   }, [pathname]);
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 top-0 z-[100] h-0.5" aria-hidden="true">
-      <span data-scroll-progress-bar className="block h-full origin-left scale-x-0 bg-risk" />
+    <div
+      className="pointer-events-none fixed inset-x-0 top-0 z-[100] h-0.5"
+      aria-hidden="true"
+    >
+      <span
+        data-scroll-progress-bar
+        className="block h-full origin-left scale-x-0 bg-risk"
+      />
     </div>
   );
 }
