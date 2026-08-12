@@ -7,6 +7,7 @@ import { getAnonymousSessionId } from "@/server/session/anonymous-session";
 import { scanIdSchema } from "@/lib/validation";
 import { notFound } from "next/navigation";
 import { listActionProgress } from "@/db/repositories/action-progress-repository";
+import { reportServerError } from "@/server/observability/report-error";
 
 export const dynamic = "force-dynamic";
 
@@ -21,8 +22,9 @@ export default async function ResultPage(
   let scan;
   try {
     scan = await getScanForSession(id, sessionId);
-  } catch {
-    notFound();
+  } catch (error) {
+    reportServerError("result.load", error);
+    throw error;
   }
 
   if (!scan) notFound();
@@ -36,7 +38,9 @@ export default async function ResultPage(
         new Date(Date.now() - 30 * 24 * 60 * 60 * 1_000),
       ),
     ]);
-  } catch {}
+  } catch (error) {
+    reportServerError("result.enrichment", error);
+  }
   return (
     <ResultView
       result={scan.resultJson}

@@ -8,6 +8,7 @@ import { redactEvidence, redactText } from "@/lib/redaction";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
 import { retrieveKnowledge } from "@/server/rag/retriever";
 import type { ConversationMessageInput } from "@/types/conversation";
+import { reportServerError } from "@/server/observability/report-error";
 
 export async function analyzeConversation(input: { messages: ConversationMessageInput[]; sessionId?: string }) {
   const messages = normalizeConversation(input.messages);
@@ -29,7 +30,8 @@ export async function analyzeConversation(input: { messages: ConversationMessage
 
   try {
     aiAnalysis = await getAiClient().analyzeConversation({ messages, deterministicSignals: deterministic.signals, progressionSummary: deterministic.progressionSummary });
-  } catch {
+  } catch (error) {
+    reportServerError("scan.conversation.ai", error);
     aiAnalysis = null;
   }
 

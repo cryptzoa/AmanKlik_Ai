@@ -38,7 +38,7 @@ export async function preprocessImage(file: UploadFile): Promise<ProcessedImage>
   }
 
   try {
-    const image = sharp(originalBytes, { failOn: "error" });
+    const image = sharp(originalBytes, { failOn: "error", limitInputPixels: 40_000_000 });
     const metadata = await image.metadata();
 
     if (!metadata.width || !metadata.height || metadata.width * metadata.height > 40_000_000) {

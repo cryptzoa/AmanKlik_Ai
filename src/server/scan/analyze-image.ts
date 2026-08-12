@@ -9,6 +9,7 @@ import { sanitizeExtractedImageText } from "@/server/image/extracted-text";
 import { aiSignalsFromResult, createResult, extractUrls, getCachedResult, materializeCachedResult, persistResult } from "@/server/scan/shared";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
 import { retrieveKnowledge } from "@/server/rag/retriever";
+import { reportServerError } from "@/server/observability/report-error";
 
 export async function analyzeImage(input: { file: UploadFile; sessionId?: string }) {
   const processed = await preprocessImage(input.file);
@@ -33,7 +34,8 @@ export async function analyzeImage(input: { file: UploadFile; sessionId?: string
 
   try {
     aiAnalysis = await getAiClient().analyzeImage(processed);
-  } catch {
+  } catch (error) {
+    reportServerError("scan.image.ai", error);
     throw new AiProviderError("Image AI analysis unavailable", true);
   }
 

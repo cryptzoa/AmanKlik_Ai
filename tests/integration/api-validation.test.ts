@@ -14,6 +14,8 @@ import { POST as postSimulator } from "@/app/api/simulator/evaluate/route";
 import { POST as postConversation } from "@/app/api/scans/conversation/route";
 import { OPTIONS as optionsIntegration, POST as postIntegration } from "@/app/api/integrations/scan/route";
 import { POST as postShareTarget } from "@/app/api/share-target/route";
+import { publicErrorResponse } from "@/lib/api";
+import { AiProviderError } from "@/lib/errors";
 
 describe("API validation boundaries", () => {
   it("rejects text that is too short before analysis", async () => {
@@ -36,6 +38,28 @@ describe("API validation boundaries", () => {
 
     expect(response.status).toBe(415);
     expect((await response.json()).error.code).toBe("UNSUPPORTED_MEDIA_TYPE");
+  });
+
+  it("returns a validation response for malformed JSON", async () => {
+    const response = await postText(new Request("http://localhost/api/scans/text", {
+      method: "POST",
+      body: "{",
+      headers: { "content-type": "application/json" },
+    }));
+
+    expect(response.status).toBe(400);
+    expect((await response.json()).error.code).toBe("INVALID_INPUT");
+  });
+
+  it("stops oversized JSON before parsing it", async () => {
+    const response = await postText(new Request("http://localhost/api/scans/text", {
+      method: "POST",
+      body: JSON.stringify({ text: "x".repeat(70_000) }),
+      headers: { "content-type": "application/json" },
+    }));
+
+    expect(response.status).toBe(413);
+    expect((await response.json()).error.code).toBe("PAYLOAD_TOO_LARGE");
   });
 
   it("rejects cross-site browser submissions", async () => {
@@ -77,10 +101,32 @@ describe("API validation boundaries", () => {
     const response = await postImage(new Request("http://localhost/api/scans/image", {
       method: "POST",
       body: formData,
+      headers: { "content-length": "1024" },
     }));
 
     expect(response.status).toBe(415);
     expect((await response.json()).error.code).toBe("UNSUPPORTED_FILE");
+  });
+
+  it("rejects multipart uploads whose size cannot be verified", async () => {
+    const formData = new FormData();
+    formData.set("file", new Blob(["not an image"], { type: "image/png" }), "fake.png");
+    const response = await postImage(new Request("http://localhost/api/scans/image", {
+      method: "POST",
+      body: formData,
+    }));
+
+    expect(response.status).toBe(411);
+    expect((await response.json()).error.code).toBe("LENGTH_REQUIRED");
+  });
+
+  it("maps provider outages to a retryable service response", async () => {
+    const response = publicErrorResponse(new AiProviderError("provider failed"));
+    const body = await response.json();
+
+    expect(response.status).toBe(503);
+    expect(body.error.code).toBe("PROVIDER_UNAVAILABLE");
+    expect(body.error.retryable).toBe(true);
   });
 
   it("recomputes simulator input on the server boundary", async () => {

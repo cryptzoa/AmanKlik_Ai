@@ -3,7 +3,7 @@ import { textScanRequestSchema } from "@/lib/validation";
 import { analyzeText } from "@/server/scan/analyze-text";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
 import { consumeRateLimit } from "@/server/rate-limit/limiter";
-import { assertJsonRequest, assertSameOrigin } from "@/lib/request-security";
+import { assertJsonRequest, assertSameOrigin, readJsonBody } from "@/lib/request-security";
 
 export const dynamic = "force-dynamic";
 
@@ -11,9 +11,9 @@ export async function POST(request: Request) {
   try {
     assertSameOrigin(request);
     assertJsonRequest(request);
-    const body = textScanRequestSchema.parse(await request.json());
+    const body = textScanRequestSchema.parse(await readJsonBody(request));
     const sessionId = await getAnonymousSessionId();
-    consumeRateLimit(sessionId);
+    await consumeRateLimit(sessionId, 1, request);
     const result = await analyzeText({ text: body.text, sessionId });
 
     return Response.json(

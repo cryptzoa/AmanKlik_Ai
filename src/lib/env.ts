@@ -2,6 +2,8 @@ import "server-only";
 
 import { z } from "zod";
 
+const LOCAL_CACHE_SECRET = "local-development-secret-change-me";
+
 const rawEnvSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   DATABASE_URL: z.string().url().optional(),
@@ -10,15 +12,15 @@ const rawEnvSchema = z.object({
   GEMINI_FALLBACK_MODEL: z.string().default("gemini-3.5-flash-lite"),
   GEMINI_EMBEDDING_MODEL: z.string().default("gemini-embedding-2"),
   AI_MODE: z.enum(["live", "mock"]).default("mock"),
-  CACHE_HMAC_SECRET: z.string().min(16).default("local-development-secret-change-me"),
-  APP_BASE_URL: z.string().url().default("http://localhost:3000"),
+  CACHE_HMAC_SECRET: z.string().min(32).default(LOCAL_CACHE_SECRET),
+  APP_BASE_URL: z.string().url().refine((value) => ["http:", "https:"].includes(new URL(value).protocol), "APP_BASE_URL must use HTTP or HTTPS").default("http://localhost:3000"),
   SCAN_RATE_LIMIT: z.coerce.number().int().positive().default(10),
   SCAN_RATE_WINDOW_SECONDS: z.coerce.number().int().positive().default(600),
   ANALYSIS_CACHE_TTL_SECONDS: z.coerce.number().int().positive().default(86_400),
   MAX_UPLOAD_BYTES: z.coerce.number().int().positive().default(5_242_880),
-  MAX_TEXT_CHARS: z.coerce.number().int().positive().default(8_000),
   AI_TIMEOUT_MS: z.coerce.number().int().positive().default(25_000),
   AI_MAX_CONCURRENCY: z.coerce.number().int().positive().default(2),
+  AI_MAX_QUEUE: z.coerce.number().int().nonnegative().default(8),
   RAG_TOP_K: z.coerce.number().int().positive().default(3),
   RAG_EMBEDDING_DIM: z.coerce.number().int().positive().default(768),
 });
@@ -39,6 +41,22 @@ const parsedEnv = rawEnvSchema.superRefine((value, context) => {
       code: "custom",
       path: ["AI_MODE"],
       message: "AI_MODE=mock is not allowed in production",
+    });
+  }
+
+  if (value.NODE_ENV === "production" && value.CACHE_HMAC_SECRET === LOCAL_CACHE_SECRET && !isNextBuild) {
+    context.addIssue({
+      code: "custom",
+      path: ["CACHE_HMAC_SECRET"],
+      message: "CACHE_HMAC_SECRET must be replaced in production",
+    });
+  }
+
+  if (value.NODE_ENV === "production" && new URL(value.APP_BASE_URL).protocol !== "https:" && !isNextBuild) {
+    context.addIssue({
+      code: "custom",
+      path: ["APP_BASE_URL"],
+      message: "APP_BASE_URL must use HTTPS in production",
     });
   }
 

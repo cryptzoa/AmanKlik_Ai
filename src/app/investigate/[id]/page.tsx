@@ -7,6 +7,7 @@ import { InteriorShell } from "@/components/site/interior-shell";
 import { getInvestigationCase } from "@/db/repositories/investigation-repository";
 import { scanIdSchema } from "@/lib/validation";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
+import { reportServerError } from "@/server/observability/report-error";
 
 export const dynamic = "force-dynamic";
 
@@ -20,8 +21,9 @@ export default async function InvestigationDetailPage(
   let investigation;
   try {
     investigation = await getInvestigationCase(id, sessionId);
-  } catch {
-    notFound();
+  } catch (error) {
+    reportServerError("investigation.detail", error);
+    throw error;
   }
   if (!investigation) notFound();
 

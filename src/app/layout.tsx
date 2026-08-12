@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import "lenis/dist/lenis.css";
 import "./globals.css";
 import { ButtonMotion } from "@/components/ui/animated-button";
@@ -22,11 +23,12 @@ export const metadata: Metadata = {
   other: { "theme-color": "#f7f6f2" },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  await connection();
   return (
     <html lang="id">
       <body>

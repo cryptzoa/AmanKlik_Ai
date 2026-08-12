@@ -1,6 +1,6 @@
 import { publicErrorResponse } from "@/lib/api";
 import { env } from "@/lib/env";
-import { assertJsonRequest } from "@/lib/request-security";
+import { assertJsonRequest, readJsonBody } from "@/lib/request-security";
 import { integrationScanSchema } from "@/lib/validation";
 import { assertIntegrationOrigin, authenticateIntegrationRequest, integrationCorsHeaders } from "@/server/integrations/token";
 import { consumeRateLimit } from "@/server/rate-limit/limiter";
@@ -30,8 +30,8 @@ export async function POST(request: Request) {
     assertIntegrationOrigin(request);
     assertJsonRequest(request);
     const token = await authenticateIntegrationRequest(request);
-    const body = integrationScanSchema.parse(await request.json());
-    consumeRateLimit(`integration:${token.id}`);
+    const body = integrationScanSchema.parse(await readJsonBody(request));
+    await consumeRateLimit(`integration:${token.id}`, 1, request);
     let analysis;
     if (body.mode === "url") {
       analyzeUrl(body.url);

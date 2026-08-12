@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, desc, eq, gt, or, sql } from "drizzle-orm";
+import { and, desc, eq, gt, isNull, lte, or, sql } from "drizzle-orm";
 
 import { requireDb } from "@/db/client";
 import { analysisCache, scans } from "@/db/schema";
@@ -56,6 +56,7 @@ export async function getScanForSession(scanId: string, sessionId: string) {
       .where(
         and(
           eq(scans.sessionId, sessionId),
+          gt(scans.expiresAt, new Date()),
           or(eq(scans.id, scanId), sql`${scans.resultJson} ->> 'scanId' = ${scanId}`),
         ),
       )
@@ -64,7 +65,7 @@ export async function getScanForSession(scanId: string, sessionId: string) {
     return row ? {
       ...row,
       previewRedacted: row.inputType === "image" && row.previewRedacted ? sanitizeExtractedImageText(row.previewRedacted) || null : row.previewRedacted,
-      resultJson: sanitizeStoredImageResult(row.resultJson),
+      resultJson: { ...sanitizeStoredImageResult(row.resultJson), scanId: row.id },
     } : null;
   } catch (error) {
     throw new DatabaseError(error instanceof Error ? error.message : "Failed to read scan");
@@ -97,7 +98,7 @@ export async function countDistinctSessionsForInputHash(inputHash: string, since
   try {
     const [row] = await requireDb().select({ count: sql<number>`count(distinct ${scans.sessionId})::int` })
       .from(scans)
-      .where(and(eq(scans.inputHash, inputHash), gt(scans.createdAt, since)));
+      .where(and(eq(scans.inputHash, inputHash), gt(scans.createdAt, since), gt(scans.expiresAt, new Date())));
     return Number(row?.count ?? 0);
   } catch (error) {
     throw new DatabaseError(error instanceof Error ? error.message : "Failed to read intelligence match");
@@ -144,4 +145,20 @@ export async function upsertCache(input: {
     .returning({ id: analysisCache.id });
 
   return row;
+}
+
+export async function deleteExpiredAnalysisData(now = new Date()) {
+  try {
+    return await requireDb().transaction(async (transaction) => {
+      const deletedCache = await transaction.delete(analysisCache)
+        .where(or(isNull(analysisCache.expiresAt), lte(analysisCache.expiresAt, now)))
+        .returning({ id: analysisCache.id });
+      const deletedScans = await transaction.delete(scans)
+        .where(or(isNull(scans.expiresAt), lte(scans.expiresAt, now)))
+        .returning({ id: scans.id });
+      return { cacheEntries: deletedCache.length, scans: deletedScans.length };
+    });
+  } catch (error) {
+    throw new DatabaseError(error instanceof Error ? error.message : "Failed to delete expired analysis data");
+  }
 }

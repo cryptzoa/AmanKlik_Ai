@@ -3,6 +3,7 @@ import { listInvestigationCases } from "@/db/repositories/investigation-reposito
 import { listScansForSession } from "@/db/repositories/scan-repository";
 import { InteriorShell } from "@/components/site/interior-shell";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
+import { reportServerError } from "@/server/observability/report-error";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,9 @@ export default async function InvestigatePage(
         listScansForSession(sessionId, 30),
         listInvestigationCases(sessionId),
       ]);
-    } catch {}
+    } catch (error) {
+      reportServerError("investigation.list", error);
+    }
   }
 
   const selectedScan = scans.find((scan) => scan.id === requestedScanId);

@@ -13,7 +13,7 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import { desc } from "drizzle-orm";
+import { desc, sql } from "drizzle-orm";
 
 import type { AnalysisResult } from "@/types/analysis";
 
@@ -69,14 +69,18 @@ export const analysisCache = pgTable("analysis_cache", {
   expiresAt: timestamp("expires_at", { withTimezone: true }),
 });
 
-export const scanFeedback = pgTable("scan_feedback", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  scanId: uuid("scan_id").notNull().references(() => scans.id, { onDelete: "cascade" }),
-  sessionId: varchar("session_id", { length: 128 }).notNull(),
-  verdict: feedbackVerdictEnum("verdict").notNull(),
-  comment: varchar("comment", { length: 500 }),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-});
+export const scanFeedback = pgTable(
+  "scan_feedback",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    scanId: uuid("scan_id").notNull().references(() => scans.id, { onDelete: "cascade" }),
+    sessionId: varchar("session_id", { length: 128 }).notNull(),
+    verdict: feedbackVerdictEnum("verdict").notNull(),
+    comment: varchar("comment", { length: 500 }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [uniqueIndex("scan_feedback_scan_session_idx").on(table.scanId, table.sessionId)],
+);
 
 export const investigationCases = pgTable(
   "investigation_cases",
@@ -133,9 +137,20 @@ export const integrationTokens = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     lastUsedAt: timestamp("last_used_at", { withTimezone: true }),
     revokedAt: timestamp("revoked_at", { withTimezone: true }),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).default(sql`now() + interval '90 days'`).notNull(),
   },
   (table) => [
     uniqueIndex("integration_tokens_hash_idx").on(table.tokenHash),
     index("integration_tokens_session_idx").on(table.sessionId, desc(table.createdAt)),
   ],
+);
+
+export const rateLimitBuckets = pgTable(
+  "rate_limit_buckets",
+  {
+    keyHash: varchar("key_hash", { length: 64 }).primaryKey(),
+    windowStartedAt: timestamp("window_started_at", { withTimezone: true }).notNull(),
+    count: integer("count").notNull(),
+  },
+  (table) => [index("rate_limit_buckets_window_idx").on(table.windowStartedAt)],
 );

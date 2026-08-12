@@ -7,6 +7,7 @@ import { hmacInput } from "@/lib/crypto";
 import { DomainError } from "@/lib/errors";
 
 const TOKEN_PREFIX = "akx_";
+const MAX_ACTIVE_TOKENS = 5;
 
 function hashIntegrationToken(token: string): string {
   return hmacInput(`integration\0${token}`);
@@ -18,7 +19,7 @@ export async function issueIntegrationToken(input: { sessionId: string; name: st
     sessionId: input.sessionId,
     name: input.name,
     tokenHash: hashIntegrationToken(token),
-  });
+  }, MAX_ACTIVE_TOKENS);
   return { token, record };
 }
 

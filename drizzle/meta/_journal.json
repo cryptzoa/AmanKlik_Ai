@@ -36,6 +36,13 @@
       "when": 1786471335380,
       "tag": "0004_smart_vin_gonzales",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1786565443179,
+      "tag": "0005_wide_bill_hollister",
+      "breakpoints": true
     }
   ]
 }

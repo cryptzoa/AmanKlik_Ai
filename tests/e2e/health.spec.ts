@@ -24,6 +24,11 @@ test("public pages send the baseline browser security policy", async ({ request 
   expect(response.headers()["content-security-policy"]).toContain(
     "object-src 'none'",
   );
+  const scriptPolicy = response.headers()["content-security-policy"]
+    .split(";")
+    .find((directive) => directive.trim().startsWith("script-src "));
+  expect(scriptPolicy).toContain("'nonce-");
+  expect(scriptPolicy).not.toContain("'unsafe-inline'");
 });
 
 test("core product pages render and connect", async ({ page }) => {

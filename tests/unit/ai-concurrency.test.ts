@@ -21,4 +21,15 @@ describe("AI concurrency guard", () => {
     releaseFirstBatch?.();
     await Promise.all(operations);
   });
+
+  it("rejects work when the bounded queue is full", async () => {
+    let releaseOperations: (() => void) | undefined;
+    const gate = new Promise<void>((resolve) => { releaseOperations = resolve; });
+    const accepted = Array.from({ length: 10 }, () => withAiConcurrency(() => gate));
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    await expect(withAiConcurrency(() => Promise.resolve())).rejects.toMatchObject({ code: "RATE_LIMITED" });
+    releaseOperations?.();
+    await Promise.all(accepted);
+  });
 });

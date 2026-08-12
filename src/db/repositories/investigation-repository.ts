@@ -9,6 +9,7 @@ import { buildInvestigationGraph, summarizeInvestigation } from "@/lib/investiga
 import type { InvestigationCase } from "@/types/investigation";
 
 type ScanRow = typeof scans.$inferSelect;
+const MAX_SCANS_PER_CASE = 8;
 
 async function ownedScans(scanIds: string[], sessionId: string): Promise<ScanRow[]> {
   if (!scanIds.length) return [];
@@ -158,28 +159,44 @@ export async function listInvestigationCases(sessionId: string, limit = 20) {
 }
 
 export async function addScanToInvestigation(input: { caseId: string; sessionId: string; scanId: string }) {
-  const current = await getInvestigationCase(input.caseId, input.sessionId);
-  if (!current) throw new NotFoundError();
-  const [newScan] = await ownedScans([input.scanId], input.sessionId);
-  if (!newScan) throw new NotFoundError();
+  try {
+    return await requireDb().transaction(async (transaction) => {
+      const [caseRow] = await transaction.select().from(investigationCases)
+        .where(and(eq(investigationCases.id, input.caseId), eq(investigationCases.sessionId, input.sessionId)))
+        .for("update")
+        .limit(1);
+      if (!caseRow) throw new NotFoundError();
 
-  const links = await requireDb().select({ scanId: investigationCaseScans.scanId }).from(investigationCaseScans)
-    .where(eq(investigationCaseScans.caseId, input.caseId));
-  const existingRows = await ownedScans(links.map((link) => link.scanId), input.sessionId);
-  if (existingRows.some((scan) => scan.inputHash === newScan.inputHash)) {
-    throw new ValidationError("Pemeriksaan ini duplikat dari artefak yang sudah ada di kasus.");
+      const [newScan] = await transaction.select().from(scans)
+        .where(and(eq(scans.id, input.scanId), eq(scans.sessionId, input.sessionId), gt(scans.expiresAt, new Date())))
+        .limit(1);
+      if (!newScan) throw new NotFoundError();
+
+      const links = await transaction.select({ scanId: investigationCaseScans.scanId }).from(investigationCaseScans)
+        .where(eq(investigationCaseScans.caseId, input.caseId));
+      const existingRows = links.length ? await transaction.select().from(scans)
+        .where(and(eq(scans.sessionId, input.sessionId), inArray(scans.id, links.map((link) => link.scanId)), gt(scans.expiresAt, new Date()))) : [];
+      if (existingRows.length >= MAX_SCANS_PER_CASE) {
+        throw new ValidationError(`Maksimum ${MAX_SCANS_PER_CASE} artefak per kasus.`);
+      }
+      if (existingRows.some((scan) => scan.inputHash === newScan.inputHash)) {
+        throw new ValidationError("Pemeriksaan ini duplikat dari artefak yang sudah ada di kasus.");
+      }
+
+      await transaction.insert(investigationCaseScans).values({ caseId: input.caseId, scanId: newScan.id });
+      const updatedRows = [...existingRows, newScan];
+      const summary = summarizeInvestigation(sourcesFromRows(updatedRows));
+      const updatedAt = new Date();
+      await transaction.update(investigationCases).set({
+        finalScore: summary.finalScore,
+        riskLevel: summary.riskLevel,
+        summary: summary.summary,
+        updatedAt,
+      }).where(and(eq(investigationCases.id, input.caseId), eq(investigationCases.sessionId, input.sessionId)));
+      return materializeCase({ ...caseRow, ...summary, updatedAt }, updatedRows);
+    });
+  } catch (error) {
+    if (error instanceof NotFoundError || error instanceof ValidationError || error instanceof DatabaseError) throw error;
+    throw new DatabaseError(error instanceof Error ? error.message : "Failed to update investigation");
   }
-
-  await requireDb().insert(investigationCaseScans).values({ caseId: input.caseId, scanId: input.scanId }).onConflictDoNothing();
-  const updatedLinks = await requireDb().select({ scanId: investigationCaseScans.scanId }).from(investigationCaseScans)
-    .where(eq(investigationCaseScans.caseId, input.caseId));
-  const updatedRows = await ownedScans(updatedLinks.map((link) => link.scanId), input.sessionId);
-  const summary = summarizeInvestigation(sourcesFromRows(updatedRows));
-  await requireDb().update(investigationCases).set({
-    finalScore: summary.finalScore,
-    riskLevel: summary.riskLevel,
-    summary: summary.summary,
-    updatedAt: new Date(),
-  }).where(eq(investigationCases.id, input.caseId));
-  return getInvestigationCase(input.caseId, input.sessionId);
 }

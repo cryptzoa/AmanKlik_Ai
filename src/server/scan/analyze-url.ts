@@ -5,6 +5,7 @@ import { fuseRisk } from "@/server/risk/engine";
 import { aiSignalsFromResult, createResult, getCachedResult, materializeCachedResult, persistResult } from "@/server/scan/shared";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
 import { formatKnowledgeForPrompt, retrieveKnowledge } from "@/server/rag/retriever";
+import { reportServerError } from "@/server/observability/report-error";
 
 export async function analyzeSubmittedUrl(input: { url: string; sessionId?: string }) {
   const urlAnalysis = analyzeUrl(input.url);
@@ -40,7 +41,8 @@ export async function analyzeSubmittedUrl(input: { url: string; sessionId?: stri
       urlAnalysis,
       knowledge: formatKnowledgeForPrompt(knowledge.matches),
     });
-  } catch {
+  } catch (error) {
+    reportServerError("scan.url.ai", error);
     aiAnalysis = null;
   }
 

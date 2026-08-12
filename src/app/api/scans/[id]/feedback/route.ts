@@ -4,7 +4,8 @@ import { getScanForSession } from "@/db/repositories/scan-repository";
 import { createFeedback } from "@/db/repositories/feedback-repository";
 import { NotFoundError } from "@/lib/errors";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
-import { assertJsonRequest, assertSameOrigin } from "@/lib/request-security";
+import { assertJsonRequest, assertSameOrigin, readJsonBody } from "@/lib/request-security";
+import { consumeRateLimit } from "@/server/rate-limit/limiter";
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -13,11 +14,14 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     const { id } = await params;
     scanIdSchema.parse(id);
     const sessionId = await getAnonymousSessionId({ create: false });
-    if (!sessionId || !(await getScanForSession(id, sessionId))) throw new NotFoundError();
-    const body = feedbackSchema.parse(await request.json());
+    if (!sessionId) throw new NotFoundError();
+    const scan = await getScanForSession(id, sessionId);
+    if (!scan) throw new NotFoundError();
+    await consumeRateLimit(`feedback:${sessionId}`, 1, request);
+    const body = feedbackSchema.parse(await readJsonBody(request));
 
     const feedback = await createFeedback({
-      scanId: id,
+      scanId: scan.id,
       sessionId,
       verdict: body.verdict,
       comment: body.comment,

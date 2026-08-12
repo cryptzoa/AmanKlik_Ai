@@ -1,11 +1,11 @@
 import { publicErrorResponse } from "@/lib/api";
-import { DomainError, ValidationError } from "@/lib/errors";
+import { ValidationError } from "@/lib/errors";
 import { env } from "@/lib/env";
 import { analyzeImage } from "@/server/scan/analyze-image";
 import type { UploadFile } from "@/server/image/preprocess";
 import { consumeRateLimit } from "@/server/rate-limit/limiter";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
-import { assertSameOrigin } from "@/lib/request-security";
+import { assertMultipartBodySize, assertSameOrigin } from "@/lib/request-security";
 
 export const dynamic = "force-dynamic";
 
@@ -17,10 +17,10 @@ export async function POST(request: Request) {
       throw new ValidationError("Pilih screenshot terlebih dahulu.");
     }
 
-    const contentLength = Number(request.headers.get("content-length") ?? 0);
-    if (contentLength > env.MAX_UPLOAD_BYTES + 256_000) {
-      throw new DomainError("Image too large", "FILE_TOO_LARGE");
-    }
+    assertMultipartBodySize(request, env.MAX_UPLOAD_BYTES + 256_000);
+
+    const sessionId = await getAnonymousSessionId();
+    await consumeRateLimit(sessionId, 2, request);
 
     const formData = await request.formData();
     const file = formData.get("file");
@@ -29,8 +29,6 @@ export async function POST(request: Request) {
       return publicErrorResponse(new ValidationError("Pilih screenshot terlebih dahulu."));
     }
 
-    const sessionId = await getAnonymousSessionId();
-    consumeRateLimit(sessionId, 2);
     const result = await analyzeImage({ file: file as UploadFile, sessionId });
     return Response.json(
       { ok: true, data: { scanId: result.result.scanId, result: result.result, degraded: result.degraded } },

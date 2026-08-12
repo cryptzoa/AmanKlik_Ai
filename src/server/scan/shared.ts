@@ -4,14 +4,29 @@ import { env } from "@/lib/env";
 import { redactEvidence, redactText } from "@/lib/redaction";
 import { hmacInput } from "@/lib/crypto";
 import { sanitizeStoredImageResult } from "@/server/image/extracted-text";
-import { createScan, findCacheByHash, upsertCache } from "@/db/repositories/scan-repository";
+import { createScan, deleteExpiredAnalysisData, findCacheByHash, upsertCache } from "@/db/repositories/scan-repository";
 import type { AnalysisMode, AnalysisResult, InputType, PublicScoreExplanation, RiskSignal, UrlAnalysis } from "@/types/analysis";
 import type { AiAnalysis } from "@/server/ai/client";
 import type { ConversationAiAnalysis } from "@/server/ai/client";
 import { actionPlanFor } from "@/server/scan/actions";
 import type { KnowledgeMatch } from "@/server/rag/types";
+import { reportServerError } from "@/server/observability/report-error";
 
 export const DISCLAIMER = "Penilaian ini menunjukkan indikator risiko dan dapat keliru. Verifikasi melalui kanal resmi sebelum mengambil keputusan.";
+const RETENTION_CLEANUP_INTERVAL_MS = 900_000;
+let lastRetentionCleanup = 0;
+
+async function cleanupExpiredData(): Promise<void> {
+  const now = Date.now();
+  if (now - lastRetentionCleanup < RETENTION_CLEANUP_INTERVAL_MS) return;
+  lastRetentionCleanup = now;
+  try {
+    await deleteExpiredAnalysisData(new Date(now));
+  } catch (error) {
+    reportServerError("retention.cleanup", error);
+    lastRetentionCleanup = 0;
+  }
+}
 
 export function hashCanonicalInput(inputType: InputType, canonicalInput: string | Uint8Array): string {
   if (typeof canonicalInput === "string") return hmacInput(`${inputType}\0${canonicalInput}`);
@@ -89,7 +104,7 @@ export function createResult(input: {
     aiAvailable: input.aiAvailable,
     modelId: input.modelId ?? null,
     cacheHit: input.cacheHit ?? false,
-    previewRedacted: input.preview ? redactText(input.preview) : null,
+    previewRedacted: input.preview ? redactText(input.preview).slice(0, 280) : null,
     indicators: input.indicators.map((signal) => ({
       ...signal,
       evidence: signal.evidence ? redactEvidence(signal.evidence) : undefined,
@@ -128,6 +143,8 @@ export async function persistResult(input: {
 }) {
   const inputHash = hashCanonicalInput(input.inputType, input.canonicalInput);
   const expiresAt = new Date(Date.now() + env.ANALYSIS_CACHE_TTL_SECONDS * 1000);
+
+  await cleanupExpiredData();
 
   await createScan({
     sessionId: input.sessionId,

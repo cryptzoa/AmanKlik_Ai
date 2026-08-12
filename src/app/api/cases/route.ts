@@ -1,6 +1,6 @@
 import { listInvestigationCases, createInvestigationCase } from "@/db/repositories/investigation-repository";
 import { publicErrorResponse } from "@/lib/api";
-import { assertJsonRequest, assertSameOrigin } from "@/lib/request-security";
+import { assertJsonRequest, assertSameOrigin, readJsonBody } from "@/lib/request-security";
 import { investigationCaseSchema } from "@/lib/validation";
 import { consumeRateLimit } from "@/server/rate-limit/limiter";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
@@ -31,9 +31,9 @@ export async function POST(request: Request) {
   try {
     assertSameOrigin(request);
     assertJsonRequest(request);
-    const body = investigationCaseSchema.parse(await request.json());
+    const body = investigationCaseSchema.parse(await readJsonBody(request));
     const sessionId = await getAnonymousSessionId();
-    consumeRateLimit(sessionId);
+    await consumeRateLimit(`case:${sessionId}`, 1, request);
     const investigation = await createInvestigationCase({ sessionId, ...body });
     return Response.json({ ok: true, data: { investigation } }, { status: 201, headers: { "Cache-Control": "no-store" } });
   } catch (error) {

@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
+import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { usePreloader } from "./preloader-context";
 
 const CHARS = "!<>-_\\\\/[]{}—=+*^?#________";
@@ -9,18 +9,25 @@ const TARGET_TEXT = "AmanKlik";
 
 export function Preloader() {
   const { isLoaded, setIsLoaded } = usePreloader();
+  const pathname = usePathname();
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
 
-  const [scrambleText, setScrambleText] = useState("");
-
   useEffect(() => {
     if (isLoaded) return;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const alreadyShown = window.sessionStorage.getItem("amanklik-preloader") === "shown";
+    if (pathname !== "/" || reducedMotion || alreadyShown) {
+      setIsLoaded(true);
+      return;
+    }
 
     let frame = 0;
-    const duration = 60;
+    const duration = 36;
     let animationFrameId: number;
+    let cancelled = false;
+    let killTimeline: (() => void) | undefined;
 
     const animateText = () => {
       let result = "";
@@ -32,65 +39,54 @@ export function Preloader() {
           result += CHARS[Math.floor(Math.random() * CHARS.length)];
         }
       }
-      setScrambleText(result);
+      if (textRef.current) textRef.current.textContent = result;
 
       frame++;
       if (frame <= duration) {
         animationFrameId = requestAnimationFrame(animateText);
       } else {
-        setScrambleText(TARGET_TEXT);
+        if (textRef.current) textRef.current.textContent = TARGET_TEXT;
       }
     };
 
     animationFrameId = requestAnimationFrame(animateText);
-
-    const tl = gsap.timeline({
-      onComplete: () => {
-        setIsLoaded(true);
-      }
+    void import("gsap").then(({ default: gsap }) => {
+      if (cancelled) return;
+      const timeline = gsap.timeline({
+        onComplete: () => {
+          window.sessionStorage.setItem("amanklik-preloader", "shown");
+          setIsLoaded(true);
+        },
+      });
+      killTimeline = () => timeline.kill();
+      timeline.to(progressRef.current, { scaleX: 1, duration: 0.55, ease: "power2.inOut" }, 0);
+      timeline.to(textRef.current, { scale: 0.9, y: -12, opacity: 0, duration: 0.28, ease: "power3.in" }, 0.58);
+      timeline.to(containerRef.current, { clipPath: "inset(50% 0 50% 0)", duration: 0.42, ease: "expo.inOut" }, 0.7);
+    }).catch(() => {
+      setIsLoaded(true);
     });
 
-    tl.to(progressRef.current, {
-      scaleX: 1,
-      duration: 1.5,
-      ease: "power2.inOut"
-    }, 0);
-
-    tl.to(textRef.current, {
-      scale: 0.8,
-      y: -20,
-      opacity: 0,
-      duration: 0.6,
-      ease: "power3.in"
-    }, 1.6);
-
-    tl.to(containerRef.current, {
-      clipPath: "inset(50% 0 50% 0)",
-      duration: 0.8,
-      ease: "expo.inOut"
-    }, 1.8);
-
     return () => {
+      cancelled = true;
       cancelAnimationFrame(animationFrameId);
-      tl.kill();
+      killTimeline?.();
     };
-  }, [isLoaded, setIsLoaded]);
+  }, [isLoaded, pathname, setIsLoaded]);
 
   if (isLoaded) return null;
 
   return (
     <div
       ref={containerRef}
+      aria-hidden="true"
       className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-ink text-white"
       style={{ clipPath: "inset(0% 0 0% 0)" }}
     >
-      <div className="absolute inset-0 z-0 bg-[url('/noise.png')] opacity-10 pointer-events-none mix-blend-overlay"></div>
-
       <div
         ref={textRef}
         className="z-10 font-mono text-4xl font-bold tracking-wider sm:text-6xl"
       >
-        {scrambleText}
+        {TARGET_TEXT}
       </div>
 
       <div className="absolute bottom-12 left-1/2 h-[1px] w-48 -translate-x-1/2 overflow-hidden bg-white/20">

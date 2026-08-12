@@ -1,20 +1,30 @@
 import "server-only";
 
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { and, count, desc, eq, gt, isNull, sql } from "drizzle-orm";
 
 import { requireDb } from "@/db/client";
 import { integrationTokens } from "@/db/schema";
-import { DatabaseError } from "@/lib/errors";
+import { DatabaseError, ValidationError } from "@/lib/errors";
 
-export async function createIntegrationTokenRecord(input: { sessionId: string; name: string; tokenHash: string }) {
+export async function createIntegrationTokenRecord(input: { sessionId: string; name: string; tokenHash: string }, maxActive: number) {
   try {
-    const [row] = await requireDb().insert(integrationTokens).values(input).returning({
-      id: integrationTokens.id,
-      name: integrationTokens.name,
-      createdAt: integrationTokens.createdAt,
+    return await requireDb().transaction(async (transaction) => {
+      await transaction.execute(sql`select pg_advisory_xact_lock(hashtext(${input.sessionId}))`);
+      const [active] = await transaction.select({ count: count() }).from(integrationTokens)
+        .where(and(eq(integrationTokens.sessionId, input.sessionId), isNull(integrationTokens.revokedAt), gt(integrationTokens.expiresAt, new Date())));
+      if (Number(active?.count ?? 0) >= maxActive) {
+        throw new ValidationError(`Maksimum ${maxActive} token aktif per perangkat.`);
+      }
+      const [row] = await transaction.insert(integrationTokens).values(input).returning({
+        id: integrationTokens.id,
+        name: integrationTokens.name,
+        createdAt: integrationTokens.createdAt,
+        expiresAt: integrationTokens.expiresAt,
+      });
+      return row;
     });
-    return row;
   } catch (error) {
+    if (error instanceof ValidationError) throw error;
     throw new DatabaseError(error instanceof Error ? error.message : "Failed to create integration token");
   }
 }
@@ -26,7 +36,8 @@ export async function listIntegrationTokens(sessionId: string) {
       name: integrationTokens.name,
       createdAt: integrationTokens.createdAt,
       lastUsedAt: integrationTokens.lastUsedAt,
-    }).from(integrationTokens).where(and(eq(integrationTokens.sessionId, sessionId), isNull(integrationTokens.revokedAt)))
+      expiresAt: integrationTokens.expiresAt,
+    }).from(integrationTokens).where(and(eq(integrationTokens.sessionId, sessionId), isNull(integrationTokens.revokedAt), gt(integrationTokens.expiresAt, new Date())))
       .orderBy(desc(integrationTokens.createdAt));
   } catch (error) {
     throw new DatabaseError(error instanceof Error ? error.message : "Failed to list integration tokens");
@@ -36,7 +47,7 @@ export async function listIntegrationTokens(sessionId: string) {
 export async function resolveIntegrationToken(tokenHash: string) {
   try {
     const [row] = await requireDb().select().from(integrationTokens)
-      .where(and(eq(integrationTokens.tokenHash, tokenHash), isNull(integrationTokens.revokedAt))).limit(1);
+      .where(and(eq(integrationTokens.tokenHash, tokenHash), isNull(integrationTokens.revokedAt), gt(integrationTokens.expiresAt, new Date()))).limit(1);
     if (!row) return null;
     await requireDb().update(integrationTokens).set({ lastUsedAt: new Date() }).where(eq(integrationTokens.id, row.id));
     return row;

@@ -11,7 +11,14 @@ export async function createFeedback(input: {
   comment?: string;
 }) {
   try {
-    const [row] = await requireDb().insert(scanFeedback).values(input).returning({ id: scanFeedback.id });
+    const [row] = await requireDb().insert(scanFeedback).values(input).onConflictDoUpdate({
+      target: [scanFeedback.scanId, scanFeedback.sessionId],
+      set: {
+        verdict: input.verdict,
+        comment: input.comment,
+        createdAt: new Date(),
+      },
+    }).returning({ id: scanFeedback.id });
     return row;
   } catch (error) {
     throw new DatabaseError(error instanceof Error ? error.message : "Failed to create feedback");

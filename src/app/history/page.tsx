@@ -2,6 +2,7 @@ import { HistorySection } from "@/app/history/_components/history-section";
 import { listScansForSession } from "@/db/repositories/scan-repository";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
 import { InteriorShell } from "@/components/site/interior-shell";
+import { reportServerError } from "@/server/observability/report-error";
 
 export const dynamic = "force-dynamic";
 type HistoryRow = Awaited<ReturnType<typeof listScansForSession>>[number];
@@ -13,7 +14,8 @@ export default async function HistoryPage() {
   if (sessionId) {
     try {
       rows = await listScansForSession(sessionId);
-    } catch {
+    } catch (error) {
+      reportServerError("history.load", error);
       storageUnavailable = true;
     }
   }

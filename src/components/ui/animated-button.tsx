@@ -86,6 +86,7 @@ export function ButtonMotion() {
     ) return;
 
     const resetTimers = new WeakMap<HTMLElement, number>();
+    const boundsByButton = new WeakMap<HTMLElement, DOMRect>();
 
     const findButton = (target: EventTarget | null) => {
       return target instanceof Element
@@ -103,6 +104,7 @@ export function ButtonMotion() {
       if (timer) window.clearTimeout(timer);
       button.classList.remove("is-leaving");
       button.classList.add("is-hovering");
+      boundsByButton.set(button, button.getBoundingClientRect());
     };
 
     const handlePointerMove = (event: PointerEvent) => {
@@ -110,7 +112,7 @@ export function ButtonMotion() {
       const button = findButton(event.target);
       if (!button) return;
 
-      const bounds = button.getBoundingClientRect();
+      const bounds = boundsByButton.get(button) ?? button.getBoundingClientRect();
       const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 7;
       const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 5;
       button.style.setProperty("--button-magnet-x", `${x.toFixed(2)}px`);
@@ -127,6 +129,7 @@ export function ButtonMotion() {
       button.classList.add("is-leaving");
       button.style.setProperty("--button-magnet-x", "0px");
       button.style.setProperty("--button-magnet-y", "0px");
+      boundsByButton.delete(button);
 
       const timer = window.setTimeout(() => {
         button.classList.remove("is-leaving");

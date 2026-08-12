@@ -4,6 +4,7 @@ import { GoogleGenAI } from "@google/genai";
 
 import { env } from "@/lib/env";
 import { redactText } from "@/lib/redaction";
+import { reportServerError } from "@/server/observability/report-error";
 import rawIndex from "@/server/rag/generated/knowledge-index.json";
 import type { KnowledgeChunk, KnowledgeIndex, KnowledgeMatch, KnowledgeRetrieval } from "@/server/rag/types";
 import { withAiConcurrency } from "@/server/ai/concurrency";
@@ -142,7 +143,9 @@ export async function retrieveKnowledge(input: string, topK = env.RAG_TOP_K): Pr
           .map(({ chunk, score }) => toMatch(chunk, score, "embedding"));
         if (matches.length) return { mode: "embedding", matches };
       }
-    } catch {}
+    } catch (error) {
+      reportServerError("rag.embedding", error);
+    }
   }
 
   return keywordRetrieve(query, topK);

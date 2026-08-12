@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useRef, useState, useEffect, ReactNode } from "react";
+import { createContext, useCallback, useContext, useRef, useState, useEffect, ReactNode } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
 interface TransitionContextType {
@@ -18,11 +18,11 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
   const isAnimatingRef = useRef(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const registerAnimateOut = (fn: (href: string) => Promise<void>) => {
+  const registerAnimateOut = useCallback((fn: (href: string) => Promise<void>) => {
     animateOutRef.current = fn;
-  };
+  }, []);
 
-  const navigate = async (href: string) => {
+  const navigate = useCallback((href: string) => {
     if (isAnimatingRef.current) return;
     setIsTransitioning(true);
 
@@ -32,15 +32,20 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
     }
 
     isAnimatingRef.current = true;
-    try {
-      await animateOutRef.current(href);
-      router.push(href);
-    } finally {
-      setTimeout(() => {
-        isAnimatingRef.current = false;
-      }, 500);
-    }
-  };
+    void (async () => {
+      try {
+        await Promise.race([
+          animateOutRef.current?.(href),
+          new Promise<void>((resolve) => window.setTimeout(resolve, 1_000)),
+        ]);
+        router.push(href);
+      } finally {
+        window.setTimeout(() => {
+          isAnimatingRef.current = false;
+        }, 500);
+      }
+    })();
+  }, [router]);
 
   useEffect(() => {
     if (isTransitioning) {

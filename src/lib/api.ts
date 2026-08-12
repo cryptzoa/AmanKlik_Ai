@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { DomainError } from "@/lib/errors";
+import { reportServerError } from "@/server/observability/report-error";
 
 const PUBLIC_MESSAGES: Record<string, string> = {
   INVALID_INPUT: "Data yang dikirim belum valid.",
@@ -15,13 +16,32 @@ const PUBLIC_MESSAGES: Record<string, string> = {
   FORBIDDEN: "Permintaan lintas situs tidak diizinkan.",
   UNAUTHORIZED: "Token integrasi tidak valid atau sudah dicabut.",
   UNSUPPORTED_MEDIA_TYPE: "Format permintaan tidak didukung.",
+  PAYLOAD_TOO_LARGE: "Ukuran data yang dikirim terlalu besar.",
+  LENGTH_REQUIRED: "Ukuran unggahan tidak dapat diverifikasi.",
+};
+
+const STATUS_BY_CODE: Record<string, number> = {
+  INVALID_INPUT: 400,
+  LENGTH_REQUIRED: 411,
+  FILE_TOO_LARGE: 413,
+  PAYLOAD_TOO_LARGE: 413,
+  UNSUPPORTED_FILE: 415,
+  UNSUPPORTED_MEDIA_TYPE: 415,
+  FORBIDDEN: 403,
+  UNAUTHORIZED: 401,
+  NOT_FOUND: 404,
+  RATE_LIMITED: 429,
+  AI_IMAGE_ANALYSIS_UNAVAILABLE: 503,
+  PROVIDER_UNAVAILABLE: 503,
+  INTERNAL_ERROR: 503,
 };
 
 export function publicErrorResponse(error: unknown) {
   const domainError = error instanceof DomainError ? error : null;
-  const code = domainError?.code ?? (error instanceof z.ZodError ? "INVALID_INPUT" : "INTERNAL_ERROR");
+  const code = domainError?.code ?? (error instanceof z.ZodError || error instanceof SyntaxError ? "INVALID_INPUT" : "INTERNAL_ERROR");
   const retryable = domainError?.retryable ?? code === "INTERNAL_ERROR";
-  const status = code === "RATE_LIMITED" ? 429 : code === "FILE_TOO_LARGE" ? 413 : code === "UNSUPPORTED_FILE" || code === "UNSUPPORTED_MEDIA_TYPE" ? 415 : code === "FORBIDDEN" ? 403 : code === "UNAUTHORIZED" ? 401 : code === "NOT_FOUND" ? 404 : code === "AI_IMAGE_ANALYSIS_UNAVAILABLE" ? 503 : code === "INTERNAL_ERROR" ? 503 : 400;
+  const status = STATUS_BY_CODE[code] ?? 400;
+  if (status >= 500) reportServerError("api.request", error);
 
   return Response.json(
     {

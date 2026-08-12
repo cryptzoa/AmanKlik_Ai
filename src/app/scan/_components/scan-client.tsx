@@ -243,7 +243,6 @@ export function ScanClient(
                 >
                   {previewUrl
                     ? (
-                      // eslint-disable-next-line @next/next/no-img-element
                       <img
                         className="max-h-64 max-w-full object-contain shadow-[8px_8px_0_rgba(17,17,17,0.1)]"
                         src={previewUrl}

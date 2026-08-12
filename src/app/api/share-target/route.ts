@@ -6,6 +6,9 @@ import { consumeRateLimit } from "@/server/rate-limit/limiter";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
 import type { UploadFile } from "@/server/image/preprocess";
 import { textScanRequestSchema, urlScanRequestSchema } from "@/lib/validation";
+import { env } from "@/lib/env";
+import { assertMultipartBodySize } from "@/lib/request-security";
+import { reportServerError } from "@/server/observability/report-error";
 
 export const dynamic = "force-dynamic";
 
@@ -19,13 +22,14 @@ export async function POST(request: Request) {
     if (request.headers.get("sec-fetch-site") === "cross-site") throw new Error("Cross-site share rejected");
     const contentType = request.headers.get("content-type") ?? "";
     if (!contentType.startsWith("multipart/form-data")) throw new Error("Invalid share payload");
-    const formData = await request.formData();
+    assertMultipartBodySize(request, env.MAX_UPLOAD_BYTES + 256_000);
     const sessionId = await getAnonymousSessionId();
+    await consumeRateLimit(`share:${sessionId}`, 2, request);
+    const formData = await request.formData();
     const file = formData.get("image");
     let scanId: string;
 
     if (file && typeof file === "object" && "arrayBuffer" in file && "size" in file && Number(file.size) > 0) {
-      consumeRateLimit(sessionId, 2);
       scanId = (await analyzeImage({ file: file as UploadFile, sessionId })).result.scanId;
     } else {
       const title = textValue(formData, "title");
@@ -33,7 +37,6 @@ export async function POST(request: Request) {
       const sharedUrl = textValue(formData, "url");
       const combined = [title, sharedText].filter(Boolean).join("\n").slice(0, 8_000);
       const exactUrl = sharedUrl || (/^https?:\/\/\S+$/i.test(sharedText) ? sharedText : "");
-      consumeRateLimit(sessionId);
       if (exactUrl) {
         const parsed = urlScanRequestSchema.parse({ url: exactUrl });
         analyzeUrl(parsed.url);
@@ -45,7 +48,8 @@ export async function POST(request: Request) {
     }
 
     return Response.redirect(new URL(`/result/${scanId}`, request.url), 303);
-  } catch {
+  } catch (error) {
+    reportServerError("share-target.request", error);
     return Response.redirect(new URL("/scan?share=failed", request.url), 303);
   }
 }

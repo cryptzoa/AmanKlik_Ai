@@ -6,6 +6,7 @@ import { detectMessageSignals, normalizeText } from "@/server/risk/signals";
 import { aiSignalsFromResult, createResult, extractUrls, getCachedResult, materializeCachedResult, persistResult } from "@/server/scan/shared";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
 import { formatKnowledgeForPrompt, retrieveKnowledge } from "@/server/rag/retriever";
+import { reportServerError } from "@/server/observability/report-error";
 
 export async function analyzeText(input: { text: string; sessionId?: string }) {
   const normalizedText = normalizeText(input.text);
@@ -39,7 +40,8 @@ export async function analyzeText(input: { text: string; sessionId?: string }) {
       urlAnalysis,
       knowledge: formatKnowledgeForPrompt(knowledge.matches),
     });
-  } catch {
+  } catch (error) {
+    reportServerError("scan.text.ai", error);
     aiAnalysis = null;
   }
 
