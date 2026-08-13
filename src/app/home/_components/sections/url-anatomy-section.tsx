@@ -17,8 +17,6 @@ export function UrlAnatomySection() {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ) return;
 
-    // 1. Prepare Timelines (Paused)
-    // Entrance Animation (play once)
     const entranceTl = gsap.timeline({ paused: true });
     entranceTl.fromTo("[data-headline-line]", 
       { y: 80, opacity: 0, rotateZ: 2 }, 
@@ -29,7 +27,6 @@ export function UrlAnatomySection() {
       { y: 0, opacity: 1, scale: 1, stagger: 0.08, duration: 1, ease: "back.out(1.5)" }, 0.2
     );
 
-    // Breakout Scrollytelling Animation (Scrubbed)
     const isMobile = window.innerWidth < 768;
     const targetGap = isMobile ? "1rem" : "3rem";
 
@@ -43,7 +40,6 @@ export function UrlAnatomySection() {
       { y: 0, opacity: 1, stagger: 0.1, ease: "back.out(1.5)" }, 0
     );
 
-    // 2. Main Pin & ScrollTrigger
     const prevSection = root.current?.previousElementSibling;
     if (prevSection) {
       ScrollTrigger.create({
@@ -54,12 +50,10 @@ export function UrlAnatomySection() {
         pin: true,
         pinSpacing: false,
         onUpdate: (self) => {
-          // Play entrance when section starts sliding in (10% progress)
           if (self.progress > 0.1) {
             entranceTl.play();
           }
-          
-          // Scrub breakout animation between 45% and 85% of the slide
+
           const p = gsap.utils.clamp(0, 1, gsap.utils.mapRange(0.45, 0.85, 0, 1, self.progress));
           breakoutTl.progress(p);
         }
@@ -108,22 +102,18 @@ export function UrlAnatomySection() {
             className="flex flex-wrap items-center justify-start lg:justify-center font-mono text-[clamp(1.15rem,3.5vw,4rem)] tracking-tight leading-[1.2]"
             style={{ columnGap: "0px", rowGap: "64px" }}
           >
-            {/* Protocol */}
             <div className="relative flex flex-col items-center" data-url-group>
               <span data-url-part className="text-[#77776f]">https://</span>
               <span className="absolute top-[calc(100%+2rem)] whitespace-nowrap text-[10px] sm:text-xs text-white/40 uppercase tracking-[0.14em]" data-url-label>Protokol</span>
             </div>
 
-            {/* Subdomain */}
             <div className="relative flex flex-col items-center" data-url-group>
               <span data-url-part className="text-ai">brand.secure-login.</span>
               <span className="absolute top-[calc(100%+2rem)] whitespace-nowrap text-[10px] sm:text-xs text-ai uppercase tracking-[0.14em]" data-url-label>Subdomain / Hiasan</span>
             </div>
 
-            {/* Mobile/Tablet Break */}
             <div className="w-full lg:hidden" />
 
-            {/* Domain */}
             <div className="relative flex flex-col items-center" data-url-group>
               <span
                 data-url-part
@@ -135,7 +125,6 @@ export function UrlAnatomySection() {
               <span className="absolute top-[calc(100%+2rem)] whitespace-nowrap text-[10px] sm:text-xs text-white uppercase tracking-[0.14em]" data-url-label>Domain Sebenarnya ↑</span>
             </div>
 
-            {/* Path */}
             <div className="relative flex flex-col items-center" data-url-group>
               <span data-url-part className="text-[#77776f]">/account</span>
               <span className="absolute top-[calc(100%+2rem)] whitespace-nowrap text-[10px] sm:text-xs text-white/40 uppercase tracking-[0.14em]" data-url-label>Path</span>

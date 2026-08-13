@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import gsap from "gsap";
 import { usePreloader } from "./preloader-context";
 
 const CHARS = "!<>-_\\\\/[]{}—=+*^?#________";
@@ -17,17 +18,14 @@ export function Preloader() {
   useEffect(() => {
     if (isLoaded) return;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const alreadyShown = window.sessionStorage.getItem("amanklik-preloader") === "shown";
-    if (pathname !== "/" || reducedMotion || alreadyShown) {
+    if (pathname !== "/" || reducedMotion) {
       setIsLoaded(true);
       return;
     }
 
     let frame = 0;
-    const duration = 36;
+    const duration = 48;
     let animationFrameId: number;
-    let cancelled = false;
-    let killTimeline: (() => void) | undefined;
 
     const animateText = () => {
       let result = "";
@@ -50,35 +48,26 @@ export function Preloader() {
     };
 
     animationFrameId = requestAnimationFrame(animateText);
-    void import("gsap").then(({ default: gsap }) => {
-      if (cancelled) return;
-      const timeline = gsap.timeline({
-        onComplete: () => {
-          window.sessionStorage.setItem("amanklik-preloader", "shown");
-          setIsLoaded(true);
-        },
-      });
-      killTimeline = () => timeline.kill();
-      timeline.to(progressRef.current, { scaleX: 1, duration: 0.55, ease: "power2.inOut" }, 0);
-      timeline.to(textRef.current, { scale: 0.9, y: -12, opacity: 0, duration: 0.28, ease: "power3.in" }, 0.58);
-      timeline.to(containerRef.current, { clipPath: "inset(50% 0 50% 0)", duration: 0.42, ease: "expo.inOut" }, 0.7);
-    }).catch(() => {
-      setIsLoaded(true);
+    const timeline = gsap.timeline({
+      onComplete: () => setIsLoaded(true),
     });
+    timeline.to(progressRef.current, { scaleX: 1, duration: 0.8, ease: "power2.inOut" }, 0);
+    timeline.to(textRef.current, { scale: 0.9, y: -12, opacity: 0, duration: 0.28, ease: "power3.in" }, 0.82);
+    timeline.to(containerRef.current, { clipPath: "inset(50% 0 50% 0)", duration: 0.45, ease: "expo.inOut" }, 0.95);
 
     return () => {
-      cancelled = true;
       cancelAnimationFrame(animationFrameId);
-      killTimeline?.();
+      timeline.kill();
     };
   }, [isLoaded, pathname, setIsLoaded]);
 
-  if (isLoaded) return null;
+  if (pathname !== "/" || isLoaded) return null;
 
   return (
     <div
       ref={containerRef}
       aria-hidden="true"
+      data-site-preloader
       className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-ink text-white"
       style={{ clipPath: "inset(0% 0 0% 0)" }}
     >

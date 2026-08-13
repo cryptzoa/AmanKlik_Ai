@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import gsap from "gsap";
 import { useTransition } from "./transition-context";
 
 export function TransitionOverlay() {
@@ -16,9 +17,6 @@ export function TransitionOverlay() {
       if (!containerRef.current) return;
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-      const { default: gsap } = await import("gsap");
-      if (!containerRef.current) return;
-
       const layers = containerRef.current.querySelectorAll(".transition-layer");
 
       gsap.set(containerRef.current, { opacity: 1 });
@@ -27,9 +25,9 @@ export function TransitionOverlay() {
       await new Promise<void>((resolve) => {
         gsap.to(layers, {
           xPercent: 0,
-          duration: 0.65,
+          duration: 0.28,
           ease: "expo.inOut",
-          stagger: 0.08,
+          stagger: 0.035,
           onComplete: resolve
         });
       });
@@ -49,24 +47,16 @@ export function TransitionOverlay() {
     }
 
     const container = containerRef.current;
-    let cancelled = false;
-    let cleanup: (() => void) | undefined;
-    void import("gsap").then(({ default: gsap }) => {
-      if (cancelled) return;
-      const layers = container.querySelectorAll(".transition-layer");
-      gsap.to(layers, {
-        xPercent: 100,
-        duration: 0.65,
-        ease: "expo.inOut",
-        stagger: { each: 0.08, from: "end" },
-        delay: 0.1,
-        onComplete: () => gsap.set(container, { opacity: 0 }),
-      });
-      cleanup = () => gsap.killTweensOf(layers);
+    const layers = container.querySelectorAll(".transition-layer");
+    gsap.to(layers, {
+      xPercent: 100,
+      duration: 0.34,
+      ease: "expo.inOut",
+      stagger: { each: 0.035, from: "end" },
+      onComplete: () => gsap.set(container, { opacity: 0 }),
     });
     return () => {
-      cancelled = true;
-      cleanup?.();
+      gsap.killTweensOf(layers);
     };
   }, [pathname]);
 

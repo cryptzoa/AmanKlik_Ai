@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode } from "react";
+import { usePathname } from "next/navigation";
 
 interface PreloaderContextType {
   isLoaded: boolean;
@@ -10,7 +11,8 @@ interface PreloaderContextType {
 const PreloaderContext = createContext<PreloaderContextType | null>(null);
 
 export function PreloaderProvider({ children }: { children: ReactNode }) {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const pathname = usePathname();
+  const [isLoaded, setIsLoaded] = useState(() => pathname !== "/");
 
   return (
     <PreloaderContext.Provider value={{ isLoaded, setIsLoaded }}>

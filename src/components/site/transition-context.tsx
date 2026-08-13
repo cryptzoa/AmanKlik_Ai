@@ -16,7 +16,8 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const animateOutRef = useRef<((href: string) => Promise<void>) | null>(null);
   const isAnimatingRef = useRef(false);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [transitionOrigin, setTransitionOrigin] = useState<string | null>(null);
+  const isTransitioning = transitionOrigin === pathname;
 
   const registerAnimateOut = useCallback((fn: (href: string) => Promise<void>) => {
     animateOutRef.current = fn;
@@ -24,7 +25,8 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
 
   const navigate = useCallback((href: string) => {
     if (isAnimatingRef.current) return;
-    setIsTransitioning(true);
+    router.prefetch(href);
+    setTransitionOrigin(pathname);
 
     if (!animateOutRef.current) {
       router.push(href);
@@ -36,25 +38,29 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
       try {
         await Promise.race([
           animateOutRef.current?.(href),
-          new Promise<void>((resolve) => window.setTimeout(resolve, 1_000)),
+          new Promise<void>((resolve) => window.setTimeout(resolve, 450)),
         ]);
         router.push(href);
       } finally {
         window.setTimeout(() => {
           isAnimatingRef.current = false;
-        }, 500);
+        }, 450);
       }
     })();
-  }, [router]);
+  }, [pathname, router]);
 
   useEffect(() => {
-    if (isTransitioning) {
-      const timer = setTimeout(() => {
-        setIsTransitioning(false);
-      }, 750);
-      return () => clearTimeout(timer);
-    }
-  }, [pathname, isTransitioning]);
+    isAnimatingRef.current = false;
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!isTransitioning) return;
+    const timer = window.setTimeout(() => {
+      setTransitionOrigin(null);
+      isAnimatingRef.current = false;
+    }, 1_500);
+    return () => window.clearTimeout(timer);
+  }, [isTransitioning]);
 
   return (
     <TransitionContext.Provider value={{ navigate, registerAnimateOut, isTransitioning }}>

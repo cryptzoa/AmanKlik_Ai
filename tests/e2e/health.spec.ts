@@ -31,6 +31,22 @@ test("public pages send the baseline browser security policy", async ({ request 
   expect(scriptPolicy).not.toContain("'unsafe-inline'");
 });
 
+test("preloader stays on the landing entry and route transitions release promptly", async ({ page }) => {
+  await page.goto("/scan");
+  await expect(page.locator("[data-site-preloader]")).toHaveCount(0);
+
+  await page.goto("/");
+  await expect(page.locator("[data-site-preloader]")).toBeVisible();
+  await expect(page.locator("[data-site-preloader]")).toHaveCount(0, { timeout: 2_500 });
+
+  const transitionLink = page.getByRole("link", { name: /^Periksa/ }).first();
+  const transitionStartedAt = Date.now();
+  await transitionLink.evaluate((element) => element.click());
+  await page.waitForURL(/\/scan$/, { timeout: 1_200 });
+  expect(Date.now() - transitionStartedAt).toBeLessThan(1_200);
+  await expect(page.getByRole("tab", { name: "Pesan" })).toBeVisible();
+});
+
 test("core product pages render and connect", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: /Pesan mencurigakan/i }))
@@ -77,7 +93,7 @@ test("landing stays readable with reduced motion and on mobile", async ({ page }
   await expect(page.getByRole("heading", { name: /Nama merek bisa ditempel/i }))
     .toBeVisible();
   await expect(
-    page.getByRole("heading", { name: /Bukan keputusan AI mentah/i }),
+    page.getByRole("heading", { name: /Bukan sekadar tebakan AI mentah/i }),
   ).toBeVisible();
 
   const width = await page.evaluate(() => ({
@@ -319,7 +335,7 @@ test("scanner can load every kind of synthetic fixture", async ({ page }) => {
 
   await page.getByRole("button", { name: /T2 · Ancaman/i }).click();
   await expect(page.getByLabel("Tempel pesan yang ingin diperiksa"))
-    .toContainText("kode OTP");
+    .toHaveValue(/kode OTP/);
 
   await page.getByRole("tab", { name: "Tautan" }).click();
   await page.getByRole("button", { name: /U2 · Host/i }).click();
