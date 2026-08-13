@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useRef, useState, useEffect, ReactNode } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 type TransitionAnimator = {
   cover: () => Promise<void>;
@@ -19,10 +19,12 @@ const TransitionContext = createContext<TransitionContextType | null>(null);
 export function TransitionProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const routeKey = `${pathname}?${searchParams.toString()}`;
   const animatorRef = useRef<TransitionAnimator | null>(null);
   const isAnimatingRef = useRef(false);
   const [transitionOrigin, setTransitionOrigin] = useState<string | null>(null);
-  const isTransitioning = transitionOrigin === pathname;
+  const isTransitioning = transitionOrigin === routeKey;
 
   const registerAnimator = useCallback((animator: TransitionAnimator | null) => {
     animatorRef.current = animator;
@@ -31,7 +33,7 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
   const navigate = useCallback((href: string) => {
     if (isAnimatingRef.current) return;
     router.prefetch(href);
-    setTransitionOrigin(pathname);
+    setTransitionOrigin(routeKey);
     isAnimatingRef.current = true;
 
     if (!animatorRef.current) {
@@ -45,10 +47,10 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
       } catch {}
       router.push(href);
     })();
-  }, [pathname, router]);
+  }, [routeKey, router]);
 
   useEffect(() => {
-    if (!transitionOrigin || transitionOrigin === pathname) return;
+    if (!transitionOrigin || transitionOrigin === routeKey) return;
     let cancelled = false;
     const reveal = animatorRef.current?.reveal() ?? Promise.resolve();
 
@@ -61,7 +63,7 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [pathname, transitionOrigin]);
+  }, [routeKey, transitionOrigin]);
 
   useEffect(() => {
     if (!isTransitioning) return;

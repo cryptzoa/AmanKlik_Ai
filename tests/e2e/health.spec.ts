@@ -58,7 +58,7 @@ test("preloader stays on the landing entry and route transitions release promptl
   });
   const transitionLink = page.getByRole("link", { name: /^Periksa/ }).first();
   const transitionStartedAt = Date.now();
-  await transitionLink.evaluate((element) => (element as HTMLElement).click());
+  await transitionLink.click();
   await expect(overlay).toHaveAttribute("data-transition-state", "covering");
   await page.waitForTimeout(120);
   expect(new URL(page.url()).pathname).toBe("/");

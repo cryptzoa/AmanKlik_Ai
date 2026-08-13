@@ -34,10 +34,12 @@ export function TransitionOverlay() {
         },
       });
     });
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
   }, []);
 
   const reveal = useCallback(async () => {
     if (!containerRef.current || !isActiveRef.current) return;
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
     const container = containerRef.current;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {

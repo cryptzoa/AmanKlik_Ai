@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { ReactNode, MouseEvent, AnchorHTMLAttributes } from "react";
 import { useTransition } from "./transition-context";
 
@@ -20,11 +19,35 @@ interface TransitionLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
 
 export function TransitionLink({ children, href, onClick, prefetch, ...props }: TransitionLinkProps) {
   const { navigate } = useTransition();
-  const pathname = usePathname();
 
-  const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
-    if (onClick) onClick(e);
-    if (pathname === href) e.preventDefault();
+  const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    onClick?.(event);
+    if (event.defaultPrevented) return;
+    if (
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey ||
+      event.currentTarget.target === "_blank" ||
+      event.currentTarget.hasAttribute("download")
+    ) return;
+
+    const currentUrl = new URL(window.location.href);
+    const destinationUrl = new URL(event.currentTarget.href);
+    if (destinationUrl.origin !== currentUrl.origin) return;
+
+    const currentRoute = `${currentUrl.pathname}${currentUrl.search}`;
+    const destinationRoute = `${destinationUrl.pathname}${destinationUrl.search}`;
+    if (currentRoute === destinationRoute) {
+      if (!destinationUrl.hash || destinationUrl.hash === currentUrl.hash) {
+        event.preventDefault();
+      }
+      return;
+    }
+
+    event.preventDefault();
+    navigate(`${destinationRoute}${destinationUrl.hash}`);
   };
 
   return (
@@ -32,11 +55,6 @@ export function TransitionLink({ children, href, onClick, prefetch, ...props }: 
       href={href}
       prefetch={prefetch ?? true}
       onClick={handleClick}
-      onNavigate={(event) => {
-        if (pathname === href || href.startsWith("#")) return;
-        event.preventDefault();
-        navigate(href);
-      }}
       {...props}
     >
       {children}
