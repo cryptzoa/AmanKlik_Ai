@@ -247,7 +247,7 @@ button:not([role="tab"])::before {
   background: var(--ai);
   border-radius: inherit;
   content: "";
-  inset: 0;
+  inset: -2px;
   opacity: 0;
   pointer-events: none;
   position: absolute;
@@ -269,11 +269,8 @@ button:not([role="tab"]).is-leaving::before {
   opacity: 1;
 }
 .motion-button.is-hovering,
-.motion-button.is-leaving,
 .editorial-button.is-hovering,
-.editorial-button.is-leaving,
-button:not([role="tab"]).is-hovering,
-button:not([role="tab"]).is-leaving {
+button:not([role="tab"]).is-hovering {
   color: white !important;
   filter: none !important;
   box-shadow: none !important;

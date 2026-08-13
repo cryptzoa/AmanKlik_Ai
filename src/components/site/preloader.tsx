@@ -107,7 +107,7 @@ export function Preloader() {
       <div className="absolute bottom-12 left-1/2 h-[1px] w-48 -translate-x-1/2 overflow-hidden bg-white/20">
         <div
           ref={progressRef}
-          className="h-full w-full origin-left scale-x-0 bg-white"
+          className="h-full w-full origin-left scale-x-0 bg-ai"
         />
       </div>
     </div>

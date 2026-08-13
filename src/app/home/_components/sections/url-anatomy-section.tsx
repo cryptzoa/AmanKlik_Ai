@@ -90,8 +90,8 @@ export function UrlAnatomySection() {
           </div>
           <div className="lg:col-span-4 lg:col-start-9 lg:pb-3">
             <p className="text-lg leading-relaxed text-[#aaa9a2]">
-              Baca alamat dari kanan ke kiri. Kata “brand” atau “secure-login” di
-              subdomain belum menjadikannya situs resmi.
+              Baca alamat dari kanan ke kiri. Adanya kata “bri.co.id” di
+              subdomain belum menjadikannya situs resmi bank tersebut.
             </p>
           </div>
         </div>
@@ -104,12 +104,22 @@ export function UrlAnatomySection() {
           >
             <div className="relative flex flex-col items-center" data-url-group>
               <span data-url-part className="text-[#77776f]">https://</span>
-              <span className="absolute top-[calc(100%+2rem)] whitespace-nowrap text-[10px] sm:text-xs text-white/40 uppercase tracking-[0.14em]" data-url-label>Protokol</span>
+              <div className="absolute top-[calc(100%+0.5rem)] flex flex-col items-center z-10" data-url-label>
+                <div className="w-[1px] h-3 bg-white/20 mb-1.5"></div>
+                <div className="flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-md text-[10px] sm:text-[11px] leading-none">
+                  <span className="whitespace-nowrap font-mono text-[#aaa9a2] uppercase tracking-[0.2em] font-semibold">Protokol</span>
+                </div>
+              </div>
             </div>
 
             <div className="relative flex flex-col items-center" data-url-group>
-              <span data-url-part className="text-ai">brand.secure-login.</span>
-              <span className="absolute top-[calc(100%+2rem)] whitespace-nowrap text-[10px] sm:text-xs text-ai uppercase tracking-[0.14em]" data-url-label>Subdomain / Hiasan</span>
+              <span data-url-part className="text-ai">ib.bri.co.id.</span>
+              <div className="absolute top-[calc(100%+0.5rem)] flex flex-col items-center z-10" data-url-label>
+                <div className="w-[1px] h-3 bg-ai/40 mb-1.5"></div>
+                <div className="flex items-center justify-center rounded-full border border-ai/30 bg-ai/10 px-3 py-1.5 backdrop-blur-md shadow-[0_0_15px_rgba(99,91,255,0.15)] text-[10px] sm:text-[11px] leading-none">
+                  <span className="whitespace-nowrap font-mono text-ai uppercase tracking-[0.2em] font-semibold">Subdomain / Hiasan</span>
+                </div>
+              </div>
             </div>
 
             <div className="w-full lg:hidden" />
@@ -120,14 +130,24 @@ export function UrlAnatomySection() {
                 data-url-domain
                 className="relative inline-block rounded-xl bg-risk px-2 py-1 sm:px-4 sm:py-2 font-bold text-white shadow-[0_0_20px_rgba(255,51,51,0.2)]"
               >
-                example.net
+                layanan-pembaruan.com
               </span>
-              <span className="absolute top-[calc(100%+2rem)] whitespace-nowrap text-[10px] sm:text-xs text-white uppercase tracking-[0.14em]" data-url-label>Domain Sebenarnya ↑</span>
+              <div className="absolute top-[calc(100%+0.5rem)] flex flex-col items-center z-10" data-url-label>
+                <div className="w-[1px] h-3 bg-risk/50 mb-1.5"></div>
+                <div className="flex items-center justify-center rounded-full border border-risk/40 bg-risk/10 px-3 py-1.5 backdrop-blur-md shadow-[0_0_15px_rgba(255,51,51,0.2)] text-[10px] sm:text-[11px] leading-none">
+                  <span className="whitespace-nowrap font-mono text-risk uppercase tracking-[0.2em] font-bold">Domain Sebenarnya</span>
+                </div>
+              </div>
             </div>
 
             <div className="relative flex flex-col items-center" data-url-group>
-              <span data-url-part className="text-[#77776f]">/account</span>
-              <span className="absolute top-[calc(100%+2rem)] whitespace-nowrap text-[10px] sm:text-xs text-white/40 uppercase tracking-[0.14em]" data-url-label>Path</span>
+              <span data-url-part className="text-[#77776f]">/login</span>
+              <div className="absolute top-[calc(100%+0.5rem)] flex flex-col items-center z-10" data-url-label>
+                <div className="w-[1px] h-3 bg-white/20 mb-1.5"></div>
+                <div className="flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-md text-[10px] sm:text-[11px] leading-none">
+                  <span className="whitespace-nowrap font-mono text-[#aaa9a2] uppercase tracking-[0.2em] font-semibold">Path</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -1,33 +1,111 @@
+"use client";
+
+import { useRef } from "react";
+import Link from "next/link";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+
 type SiteFooterProps = {
-  variant: "landing" | "interior";
+  variant?: "landing" | "default";
 };
 
-function FooterContent() {
-  return (
-    <>
-      <p className="font-mono uppercase tracking-[0.14em]">
-        AmanKlik AI · 2026
-      </p>
-      <p>
-        Risiko rendah bukan jaminan aman. Verifikasi selalu melalui kanal resmi.
-      </p>
-    </>
-  );
-}
-
 export function SiteFooter({ variant }: SiteFooterProps) {
-  if (variant === "landing") {
-    return (
-      <footer className="relative z-20 flex flex-col gap-4 bg-ink px-5 py-9 text-sm text-[#aaa9a2] sm:flex-row sm:items-center sm:justify-between sm:px-10 lg:px-16">
-        <FooterContent />
-      </footer>
+  const container = useRef<HTMLElement>(null);
+  const inner = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (
+      typeof window.matchMedia !== "function" ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) return;
+
+    // Parallax Reveal
+    gsap.fromTo(
+      inner.current,
+      { yPercent: -40 },
+      {
+        yPercent: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: container.current,
+          start: "top bottom",
+          end: "bottom bottom",
+          scrub: true,
+        },
+      }
     );
-  }
+
+    // Stagger text reveal
+    gsap.fromTo(
+      ".footer-stagger",
+      { y: 30, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: container.current,
+          start: "top 80%",
+        },
+      }
+    );
+  }, { scope: container });
 
   return (
-    <footer className="border-t border-white/15 bg-ink px-5 py-9 text-sm text-[#aaa9a2] sm:px-10 lg:px-16">
-      <div className="mx-auto flex max-w-[1320px] flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <FooterContent />
+    <footer
+      ref={container}
+      className="relative z-30 overflow-hidden bg-ink pt-16 sm:pt-24 lg:pt-32 text-surface"
+    >
+      {/* Noise / Grain Overlay */}
+      <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.035]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
+
+      <div ref={inner} className="relative z-10 flex flex-col justify-between min-h-[500px]">
+        
+        {/* Top Section */}
+        <div className="mx-auto w-full max-w-[1320px] px-5 sm:px-10 lg:px-16 grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-24 mb-20">
+          <div className="footer-stagger">
+            <h3 className="text-2xl font-bold text-white mb-4">AmanKlik AI</h3>
+            <p className="max-w-sm text-[#aaa9a2] text-lg leading-relaxed">
+              Risiko rendah bukan jaminan aman. Verifikasi tautan dan pesan mencurigakan melalui analitik AI yang transparan.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:justify-items-end">
+            <div className="footer-stagger flex flex-col gap-3 md:justify-self-start">
+              <h4 className="font-mono text-xs uppercase tracking-widest text-[#aaa9a2] mb-2">Navigasi</h4>
+              <Link href="/" className="hover:text-white transition-colors duration-200">Beranda</Link>
+              <Link href="/scan" className="hover:text-white transition-colors duration-200">Periksa Tautan</Link>
+              <Link href="/investigate" className="hover:text-white transition-colors duration-200">Investigasi Lanjut</Link>
+              <Link href="/simulator" className="hover:text-white transition-colors duration-200">Simulator Phishing</Link>
+            </div>
+            <div className="footer-stagger flex flex-col gap-3">
+              <h4 className="font-mono text-xs uppercase tracking-widest text-[#aaa9a2] mb-2">Eksplorasi</h4>
+              <Link href="/learn" className="hover:text-white transition-colors duration-200">Pusat Edukasi</Link>
+              <Link href="/benchmark" className="hover:text-white transition-colors duration-200">Benchmark AI</Link>
+              <Link href="/history" className="hover:text-white transition-colors duration-200">Riwayat Anda</Link>
+            </div>
+            <div className="footer-stagger flex flex-col gap-3 col-span-2 md:col-span-1 mt-4 md:mt-0">
+              <h4 className="font-mono text-xs uppercase tracking-widest text-[#aaa9a2] mb-2">Legal</h4>
+              <Link href="/privacy" className="hover:text-white transition-colors duration-200">Privacy Policy</Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Massive Typography */}
+        <div className="mt-auto overflow-hidden w-full px-5 sm:px-10 lg:px-16 pb-6">
+          <h1 className="footer-stagger text-[15vw] leading-[0.75] font-extrabold tracking-[-0.04em] text-white/5 select-none text-center">
+            AMANKLIK
+          </h1>
+        </div>
+        
+        {/* Bottom Bar */}
+        <div className="border-t border-white/10 w-full">
+          <div className="mx-auto w-full max-w-[1320px] px-5 py-6 sm:px-10 lg:px-16 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-[#aaa9a2] font-mono uppercase tracking-widest">
+            <span>© {new Date().getFullYear()} AmanKlik AI</span>
+            <span>Made with precision</span>
+          </div>
+        </div>
       </div>
     </footer>
   );

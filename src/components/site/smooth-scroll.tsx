@@ -60,7 +60,7 @@ export function SmoothScroll() {
     >
       <span
         data-scroll-progress-bar
-        className="block h-full origin-left scale-x-0 bg-risk"
+        className="block h-full origin-left scale-x-0 bg-ai"
       />
     </div>
   );

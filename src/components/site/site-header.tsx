@@ -67,13 +67,9 @@ export function SiteHeader({ variant }: { variant: "landing" | "interior" }) {
 
       if (!header) return;
 
-      if (window.innerWidth < 1024) {
-        if (currentScrollY > lastScrollY && currentScrollY > 100) {
-          header.style.transform = "translateY(-100%)";
-        } else if (currentScrollY < lastScrollY) {
-          header.style.transform = "translateY(0)";
-        }
-      } else {
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        header.style.transform = "translateY(-100%)";
+      } else if (currentScrollY < lastScrollY) {
         header.style.transform = "translateY(0)";
       }
 
@@ -491,7 +487,7 @@ export function SiteHeader({ variant }: { variant: "landing" | "interior" }) {
         <div
           data-header-shell
           data-header-mode={variant === "landing" ? "top" : "scrolled"}
-          className="site-header-shell pointer-events-auto relative z-50 isolate mx-auto flex min-h-16 max-w-[1280px] items-center justify-between gap-3 rounded-full lg:border lg:border-black/[0.08] lg:bg-[rgba(255,254,250,0.88)] p-2 lg:shadow-[0_10px_36px_rgba(17,17,17,0.07)] lg:backdrop-blur-xl"
+          className="site-header-shell pointer-events-auto relative z-50 isolate mx-auto flex min-h-16 max-w-[900px] items-center justify-between gap-3 rounded-full lg:border lg:border-black/[0.08] lg:bg-[rgba(255,254,250,0.88)] p-2 lg:shadow-[0_10px_36px_rgba(17,17,17,0.07)] lg:backdrop-blur-xl"
         >
           <Link
             data-header-brand
