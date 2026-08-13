@@ -524,7 +524,7 @@ header details > summary {
   fill: rgba(17,17,17,.32);
 }
 .video-stage {
-  border-radius: clamp(12px, 1.5vw, 24px);
+  border-radius: clamp(16px, 2vw, 32px);
   box-shadow: 0 28px 70px rgba(17,17,17,.17);
 }
 .video-stage::before {
