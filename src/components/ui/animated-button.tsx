@@ -2,7 +2,7 @@
 
 import type { MouseEventHandler, ReactNode } from "react";
 import { useEffect } from "react";
-import Link from "next/link";
+import { TransitionLink as Link } from "@/components/site/transition-link";
 
 const BUTTON_SELECTOR =
   '.motion-button, .editorial-button, button:not([role="tab"])';

@@ -3,9 +3,14 @@
 import { createContext, useCallback, useContext, useRef, useState, useEffect, ReactNode } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
+type TransitionAnimator = {
+  cover: () => Promise<void>;
+  reveal: () => Promise<void>;
+};
+
 interface TransitionContextType {
   navigate: (href: string) => void;
-  registerAnimateOut: (fn: (href: string) => Promise<void>) => void;
+  registerAnimator: (animator: TransitionAnimator | null) => void;
   isTransitioning: boolean;
 }
 
@@ -14,56 +19,64 @@ const TransitionContext = createContext<TransitionContextType | null>(null);
 export function TransitionProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const animateOutRef = useRef<((href: string) => Promise<void>) | null>(null);
+  const animatorRef = useRef<TransitionAnimator | null>(null);
   const isAnimatingRef = useRef(false);
   const [transitionOrigin, setTransitionOrigin] = useState<string | null>(null);
   const isTransitioning = transitionOrigin === pathname;
 
-  const registerAnimateOut = useCallback((fn: (href: string) => Promise<void>) => {
-    animateOutRef.current = fn;
+  const registerAnimator = useCallback((animator: TransitionAnimator | null) => {
+    animatorRef.current = animator;
   }, []);
 
   const navigate = useCallback((href: string) => {
     if (isAnimatingRef.current) return;
     router.prefetch(href);
     setTransitionOrigin(pathname);
+    isAnimatingRef.current = true;
 
-    if (!animateOutRef.current) {
+    if (!animatorRef.current) {
       router.push(href);
       return;
     }
 
-    isAnimatingRef.current = true;
     void (async () => {
       try {
-        await Promise.race([
-          animateOutRef.current?.(href),
-          new Promise<void>((resolve) => window.setTimeout(resolve, 450)),
-        ]);
-        router.push(href);
-      } finally {
-        window.setTimeout(() => {
-          isAnimatingRef.current = false;
-        }, 450);
-      }
+        await animatorRef.current?.cover();
+      } catch {}
+      router.push(href);
     })();
   }, [pathname, router]);
 
   useEffect(() => {
-    isAnimatingRef.current = false;
-  }, [pathname]);
+    if (!transitionOrigin || transitionOrigin === pathname) return;
+    let cancelled = false;
+    const reveal = animatorRef.current?.reveal() ?? Promise.resolve();
+
+    void reveal.finally(() => {
+      if (cancelled) return;
+      setTransitionOrigin(null);
+      isAnimatingRef.current = false;
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [pathname, transitionOrigin]);
 
   useEffect(() => {
     if (!isTransitioning) return;
     const timer = window.setTimeout(() => {
-      setTransitionOrigin(null);
-      isAnimatingRef.current = false;
-    }, 1_500);
+      const reveal = animatorRef.current?.reveal() ?? Promise.resolve();
+      void reveal.finally(() => {
+        setTransitionOrigin(null);
+        isAnimatingRef.current = false;
+      });
+    }, 8_000);
     return () => window.clearTimeout(timer);
   }, [isTransitioning]);
 
   return (
-    <TransitionContext.Provider value={{ navigate, registerAnimateOut, isTransitioning }}>
+    <TransitionContext.Provider value={{ navigate, registerAnimator, isTransitioning }}>
       {children}
     </TransitionContext.Provider>
   );

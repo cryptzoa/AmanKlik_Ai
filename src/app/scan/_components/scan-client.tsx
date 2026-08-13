@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { usePreloader } from "@/components/site/preloader-context";
@@ -28,7 +27,6 @@ export function ScanClient(
   { initialError = null }: { initialError?: string | null },
 ) {
   const root = useRef<HTMLDivElement>(null);
-  const router = useRouter();
   const [mode, setMode] = useState<ScanMode>("text");
   const [text, setText] = useState("");
   const [url, setUrl] = useState("");
@@ -38,7 +36,7 @@ export function ScanClient(
   const [error, setError] = useState<string | null>(initialError);
   const inputRef = useRef<HTMLInputElement>(null);
   const { isLoaded } = usePreloader();
-  const { isTransitioning } = useTransition();
+  const { isTransitioning, navigate } = useTransition();
   const isReady = isLoaded && !isTransitioning;
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
 
@@ -143,7 +141,7 @@ export function ScanClient(
         throw new Error(body.error?.message ?? "Pemeriksaan belum berhasil.");
       }
 
-      router.push(`/result/${body.data.scanId}`);
+      navigate(`/result/${body.data.scanId}`);
     } catch (submissionError) {
       setStatus("error");
       setError(

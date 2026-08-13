@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import Link from "next/link";
+import { TransitionLink as Link } from "@/components/site/transition-link";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -53,6 +53,7 @@ export function ArtifactsSection({ artifacts }: { artifacts: CaseArtifact[] }) {
           <Link
             key={artifact.id}
             data-artifact
+            prefetch={false}
             href={`/result/${artifact.id}`}
             className="lift-link grid gap-3 border border-line bg-surface p-5 hover:border-ink sm:grid-cols-[110px_1fr_70px] sm:items-center"
           >

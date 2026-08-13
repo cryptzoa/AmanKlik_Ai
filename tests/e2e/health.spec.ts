@@ -37,13 +37,40 @@ test("preloader stays on the landing entry and route transitions release promptl
 
   await page.goto("/");
   await expect(page.locator("[data-site-preloader]")).toBeVisible();
-  await expect(page.locator("[data-site-preloader]")).toHaveCount(0, { timeout: 2_500 });
+  await expect(page.locator("[data-site-preloader]")).toHaveCount(0, { timeout: 4_000 });
 
+  const overlay = page.locator("[data-transition-overlay]");
+  await page.evaluate(() => {
+    const tracedWindow = window as Window & { __transitionTrace?: string[] };
+    const target = document.querySelector<HTMLElement>("[data-transition-overlay]");
+    tracedWindow.__transitionTrace = [];
+    if (!target) return;
+    const record = () => {
+      tracedWindow.__transitionTrace?.push(
+        `${target.dataset.transitionState}:${window.location.pathname}`,
+      );
+    };
+    record();
+    new MutationObserver(record).observe(target, {
+      attributes: true,
+      attributeFilter: ["data-transition-state"],
+    });
+  });
   const transitionLink = page.getByRole("link", { name: /^Periksa/ }).first();
   const transitionStartedAt = Date.now();
-  await transitionLink.evaluate((element) => element.click());
-  await page.waitForURL(/\/scan$/, { timeout: 1_200 });
-  expect(Date.now() - transitionStartedAt).toBeLessThan(1_200);
+  await transitionLink.evaluate((element) => (element as HTMLElement).click());
+  await expect(overlay).toHaveAttribute("data-transition-state", "covering");
+  await page.waitForTimeout(120);
+  expect(new URL(page.url()).pathname).toBe("/");
+  await page.waitForURL(/\/scan$/, { timeout: 1_500 });
+  expect(Date.now() - transitionStartedAt).toBeLessThan(1_500);
+  await expect(overlay).toHaveAttribute("data-transition-state", "idle");
+  const trace = await page.evaluate(() => (
+    (window as Window & { __transitionTrace?: string[] }).__transitionTrace ?? []
+  ));
+  expect(trace).toContain("covering:/");
+  expect(trace).toContain("covered:/");
+  expect(trace).toContain("revealing:/scan");
   await expect(page.getByRole("tab", { name: "Pesan" })).toBeVisible();
 });
 

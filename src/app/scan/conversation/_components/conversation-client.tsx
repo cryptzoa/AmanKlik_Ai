@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useTransition } from "@/components/site/transition-context";
 import type {
   ConversationMessageInput,
   ConversationSpeaker,
@@ -24,7 +24,7 @@ const initialMessages: ConversationMessageInput[] = [
 ];
 
 export function ConversationClient() {
-  const router = useRouter();
+  const { navigate } = useTransition();
   const [messages, setMessages] = useState(initialMessages);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,7 +71,7 @@ export function ConversationClient() {
           body.error?.message ?? "Percakapan belum bisa dianalisis.",
         );
       }
-      router.push(`/result/${body.data.scanId}`);
+      navigate(`/result/${body.data.scanId}`);
     } catch (submissionError) {
       setError(
         submissionError instanceof Error

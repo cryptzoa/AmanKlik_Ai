@@ -7,6 +7,8 @@ import { usePreloader } from "./preloader-context";
 
 const CHARS = "!<>-_\\\\/[]{}—=+*^?#________";
 const TARGET_TEXT = "AmanKlik";
+const SCRAMBLE_DURATION_MS = 1_300;
+const SCRAMBLE_FRAME_MS = 32;
 
 export function Preloader() {
   const { isLoaded, setIsLoaded } = usePreloader();
@@ -23,15 +25,26 @@ export function Preloader() {
       return;
     }
 
-    let frame = 0;
-    const duration = 48;
     let animationFrameId: number;
+    let previousFrameTime = 0;
+    const startedAt = performance.now();
 
-    const animateText = () => {
+    const animateText = (time: number) => {
+      const elapsed = time - startedAt;
+      if (
+        elapsed - previousFrameTime < SCRAMBLE_FRAME_MS &&
+        elapsed < SCRAMBLE_DURATION_MS
+      ) {
+        animationFrameId = requestAnimationFrame(animateText);
+        return;
+      }
+
+      previousFrameTime = elapsed;
+      const progress = Math.min(elapsed / SCRAMBLE_DURATION_MS, 1);
+      const resolvedCharacters = Math.floor(progress * TARGET_TEXT.length);
       let result = "";
       for (let i = 0; i < TARGET_TEXT.length; i++) {
-        const threshold = (i / TARGET_TEXT.length) * (duration - 20);
-        if (frame > threshold + 10) {
+        if (i < resolvedCharacters) {
           result += TARGET_TEXT[i];
         } else {
           result += CHARS[Math.floor(Math.random() * CHARS.length)];
@@ -39,8 +52,7 @@ export function Preloader() {
       }
       if (textRef.current) textRef.current.textContent = result;
 
-      frame++;
-      if (frame <= duration) {
+      if (progress < 1) {
         animationFrameId = requestAnimationFrame(animateText);
       } else {
         if (textRef.current) textRef.current.textContent = TARGET_TEXT;
@@ -51,9 +63,23 @@ export function Preloader() {
     const timeline = gsap.timeline({
       onComplete: () => setIsLoaded(true),
     });
-    timeline.to(progressRef.current, { scaleX: 1, duration: 0.8, ease: "power2.inOut" }, 0);
-    timeline.to(textRef.current, { scale: 0.9, y: -12, opacity: 0, duration: 0.28, ease: "power3.in" }, 0.82);
-    timeline.to(containerRef.current, { clipPath: "inset(50% 0 50% 0)", duration: 0.45, ease: "expo.inOut" }, 0.95);
+    timeline.to(progressRef.current, {
+      scaleX: 1,
+      duration: 1.35,
+      ease: "power2.inOut",
+    }, 0);
+    timeline.to(textRef.current, {
+      scale: 0.94,
+      y: -10,
+      opacity: 0,
+      duration: 0.42,
+      ease: "power3.inOut",
+    }, 1.48);
+    timeline.to(containerRef.current, {
+      clipPath: "inset(50% 0 50% 0)",
+      duration: 0.72,
+      ease: "expo.inOut",
+    }, 1.68);
 
     return () => {
       cancelAnimationFrame(animationFrameId);
@@ -69,7 +95,7 @@ export function Preloader() {
       aria-hidden="true"
       data-site-preloader
       className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-ink text-white"
-      style={{ clipPath: "inset(0% 0 0% 0)" }}
+      style={{ clipPath: "inset(0% 0 0% 0)", willChange: "clip-path" }}
     >
       <div
         ref={textRef}

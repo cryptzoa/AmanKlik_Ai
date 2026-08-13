@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { TransitionLink as Link } from "@/components/site/transition-link";
 import { InteriorShell } from "@/components/site/interior-shell";
 
 export default function NotFound() {

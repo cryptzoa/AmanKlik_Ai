@@ -2,7 +2,7 @@
 
 import { ComparisonBuilderSection } from "@/app/investigate/_components/comparison-builder-section";
 import { SavedCasesSection } from "@/app/investigate/_components/saved-cases-section";
-import { useRouter } from "next/navigation";
+import { useTransition } from "@/components/site/transition-context";
 import { useState } from "react";
 
 import type { CaseItem, ScanItem } from "@/app/investigate/_components/types";
@@ -14,7 +14,7 @@ export function InvestigationClient(
     initialScanId?: string;
   },
 ) {
-  const router = useRouter();
+  const { navigate } = useTransition();
   const [selected, setSelected] = useState<string[]>(
     initialScanId && scans.some((scan) => scan.id === initialScanId)
       ? [initialScanId]
@@ -47,7 +47,7 @@ export function InvestigationClient(
       if (!response.ok || !body.ok) {
         throw new Error(body.error?.message ?? "Kasus belum dapat dibuat.");
       }
-      router.push(`/investigate/${body.data.investigation.id}`);
+      navigate(`/investigate/${body.data.investigation.id}`);
     } catch (submissionError) {
       setError(
         submissionError instanceof Error

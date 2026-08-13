@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import Link from "next/link";
+import { TransitionLink as Link } from "@/components/site/transition-link";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -83,6 +83,7 @@ export function HistorySection(
               <Link
                 key={row.id}
                 data-history-card
+                prefetch={false}
                 href={`/result/${row.id}`}
                 className="editorial-row group grid gap-4 p-5 first:border-t-0 sm:grid-cols-[110px_1fr_100px] sm:items-center sm:p-6"
               >
