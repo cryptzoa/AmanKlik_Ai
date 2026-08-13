@@ -46,8 +46,18 @@ test("preloader stays on the landing entry and route transitions release promptl
     tracedWindow.__transitionTrace = [];
     if (!target) return;
     const record = () => {
+      const state = target.dataset.transitionState;
+      const layer = target.querySelector<HTMLElement>(".transition-layer:last-child");
+      const bounds = layer?.getBoundingClientRect();
+      const coversViewport = Boolean(
+        bounds &&
+        Math.abs(bounds.left) < 1 &&
+        Math.abs(bounds.top) < 1 &&
+        Math.abs(bounds.right - window.innerWidth) < 1 &&
+        Math.abs(bounds.bottom - window.innerHeight) < 1,
+      );
       tracedWindow.__transitionTrace?.push(
-        `${target.dataset.transitionState}:${window.location.pathname}`,
+        `${state}:${window.location.pathname}:${coversViewport}`,
       );
     };
     record();
@@ -68,9 +78,8 @@ test("preloader stays on the landing entry and route transitions release promptl
   const trace = await page.evaluate(() => (
     (window as Window & { __transitionTrace?: string[] }).__transitionTrace ?? []
   ));
-  expect(trace).toContain("covering:/");
-  expect(trace).toContain("covered:/");
-  expect(trace).toContain("revealing:/scan");
+  expect(trace).toContain("covered:/:true");
+  expect(trace).toContain("revealing:/scan:true");
   await expect(page.getByRole("tab", { name: "Pesan" })).toBeVisible();
 });
 
