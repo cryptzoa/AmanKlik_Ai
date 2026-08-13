@@ -18,7 +18,7 @@ function FooterContent() {
 export function SiteFooter({ variant }: SiteFooterProps) {
   if (variant === "landing") {
     return (
-      <footer className="flex flex-col gap-4 bg-ink px-5 py-9 text-sm text-[#aaa9a2] sm:flex-row sm:items-center sm:justify-between sm:px-10 lg:px-16">
+      <footer className="relative z-20 flex flex-col gap-4 bg-ink px-5 py-9 text-sm text-[#aaa9a2] sm:flex-row sm:items-center sm:justify-between sm:px-10 lg:px-16">
         <FooterContent />
       </footer>
     );
