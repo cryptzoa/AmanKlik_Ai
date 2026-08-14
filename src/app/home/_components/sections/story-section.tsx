@@ -211,7 +211,7 @@ export function LandingStorySection() {
     <section
       ref={root}
       data-story
-      className="bg-[#f7f5f2] border-b border-line px-5 sm:px-10 lg:px-16"
+      className="bg-canvas border-b border-line px-5 sm:px-10 lg:px-16"
     >
       <div className="mx-auto grid max-w-[1320px] gap-10 py-16 md:gap-14 md:py-24 md:grid-cols-[1fr_1fr] md:py-[15vh]">
 

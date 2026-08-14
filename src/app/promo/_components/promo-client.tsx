@@ -15,15 +15,15 @@ interface PromoClientProps {
 }
 
 export function PromoClient({ ratio, cut, mode }: PromoClientProps) {
-  const container = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [masterTl] = useState(() => gsap.timeline({ paused: true }));
-  
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [hasStarted, setHasStarted] = useState(false);
 
-  // Setup callbacks
+  // Setup GSAP timeline callbacks
   useEffect(() => {
     masterTl.eventCallback("onUpdate", () => {
       setProgress(masterTl.progress());
@@ -38,8 +38,7 @@ export function PromoClient({ ratio, cut, mode }: PromoClientProps) {
       masterTl.pause();
       setIsPlaying(false);
     } else {
-      // If we are at the end, restart
-      if (masterTl.progress() === 1) {
+      if (masterTl.progress() >= 1) {
         masterTl.restart();
       } else {
         masterTl.play();
@@ -49,10 +48,13 @@ export function PromoClient({ ratio, cut, mode }: PromoClientProps) {
     }
   }, [masterTl]);
 
-  const seek = useCallback((newProgress: number) => {
-    masterTl.progress(newProgress);
-    setProgress(newProgress);
-  }, [masterTl]);
+  const seek = useCallback(
+    (newProgress: number) => {
+      masterTl.progress(newProgress);
+      setProgress(newProgress);
+    },
+    [masterTl]
+  );
 
   const restart = useCallback(() => {
     masterTl.restart();
@@ -60,14 +62,39 @@ export function PromoClient({ ratio, cut, mode }: PromoClientProps) {
     setHasStarted(true);
   }, [masterTl]);
 
-  // Keyboard controls for record mode
+  const jumpToLabel = useCallback(
+    (label: string) => {
+      try {
+        masterTl.seek(label);
+        setProgress(masterTl.progress());
+      } catch {
+        // label seek fallback
+      }
+    },
+    [masterTl]
+  );
+
+  // Global Keyboard controls
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if typing in input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
       if (e.code === "Space") {
         e.preventDefault();
         togglePlay();
       } else if (e.code === "KeyR") {
+        e.preventDefault();
         restart();
+      } else if (e.code === "KeyF") {
+        e.preventDefault();
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen().catch(() => {});
+        }
       }
     };
 
@@ -75,39 +102,55 @@ export function PromoClient({ ratio, cut, mode }: PromoClientProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [togglePlay, restart]);
 
-  // Once the timeline is fully populated, we set ready state
   const handleStageReady = useCallback((tlDuration: number) => {
     setDuration(tlDuration);
   }, []);
 
   return (
-    <div ref={container} className="relative w-full h-screen bg-[#F3F1EA] flex items-center justify-center">
-      
-      {/* 
-        In record mode, we might want a black ready screen before playback starts 
-        as mentioned in the brief: "Optional clean black ready screen before playback" 
-      */}
+    <div
+      ref={containerRef}
+      className="relative w-full h-screen bg-[#F3F1EA] flex items-center justify-center overflow-hidden"
+    >
+      {/* RECORD MODE: Clean initial ready screen before capture */}
       {mode === "record" && !hasStarted && (
-        <div className="absolute inset-0 z-50 bg-black flex items-center justify-center text-[#635BFF]">
-          <p className="font-mono text-sm tracking-widest opacity-50">PRESS SPACE TO START RECORDING</p>
+        <div
+          onClick={togglePlay}
+          className="absolute inset-0 z-50 bg-[#111111] flex flex-col items-center justify-center text-center p-8 cursor-pointer select-none"
+        >
+          <div className="w-16 h-16 rounded-full bg-[#635BFF]/20 border border-[#635BFF] flex items-center justify-center mb-6 animate-pulse text-[#635BFF]">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+          </div>
+          <div className="font-mono text-sm tracking-[0.25em] text-[#F3F1EA] uppercase font-bold mb-2">
+            MODE REKAM SIAP
+          </div>
+          <p className="font-sans text-xs text-[#F3F1EA]/60 max-w-sm">
+            Tekan <kbd className="px-2 py-1 bg-white/10 rounded font-mono text-white">SPACE</kbd> atau klik di mana saja untuk memulai perekaman layar deterministik.
+          </p>
         </div>
       )}
 
-      <PromoStage 
-        timeline={masterTl} 
-        ratio={ratio} 
-        cut={cut} 
-        onReady={handleStageReady} 
+      {/* THE DETERMINISTIC PROMO STAGE */}
+      <PromoStage
+        timeline={masterTl}
+        ratio={ratio}
+        cut={cut}
+        onReady={handleStageReady}
       />
 
+      {/* PREVIEW CONTROLS (Only visible in Preview mode) */}
       {mode === "preview" && (
-        <PromoControls 
+        <PromoControls
           isPlaying={isPlaying}
           progress={progress}
           duration={duration}
+          ratio={ratio}
+          cut={cut}
           onTogglePlay={togglePlay}
           onSeek={seek}
           onRestart={restart}
+          onJumpToLabel={jumpToLabel}
         />
       )}
     </div>

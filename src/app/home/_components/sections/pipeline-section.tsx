@@ -147,7 +147,7 @@ export function LandingPipelineSection() {
     <section
       ref={root}
       data-pipeline
-      className="relative bg-[#f7f5f2]"
+      className="relative bg-canvas"
     >
       <svg
         data-network
