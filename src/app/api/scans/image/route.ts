@@ -10,8 +10,11 @@ import { assertMultipartBodySize, assertSameOrigin } from "@/lib/request-securit
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
+  let stage = "request-security";
+
   try {
     assertSameOrigin(request);
+    stage = "content-type";
     const contentType = request.headers.get("content-type") ?? "";
     if (!contentType.startsWith("multipart/form-data")) {
       throw new ValidationError("Pilih screenshot terlebih dahulu.");
@@ -19,9 +22,12 @@ export async function POST(request: Request) {
 
     assertMultipartBodySize(request, env.MAX_UPLOAD_BYTES + 256_000);
 
+    stage = "session";
     const sessionId = await getAnonymousSessionId();
+    stage = "rate-limit";
     await consumeRateLimit(sessionId, 2, request);
 
+    stage = "form-data";
     const formData = await request.formData();
     const file = formData.get("file");
 
@@ -29,12 +35,13 @@ export async function POST(request: Request) {
       return publicErrorResponse(new ValidationError("Pilih screenshot terlebih dahulu."));
     }
 
+    stage = "analysis";
     const result = await analyzeImage({ file: file as UploadFile, sessionId });
     return Response.json(
       { ok: true, data: { scanId: result.result.scanId, result: result.result, degraded: result.degraded } },
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch (error) {
-    return publicErrorResponse(error, "api.scan.image");
+    return publicErrorResponse(error, `api.scan.image.${stage}`);
   }
 }

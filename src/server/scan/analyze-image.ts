@@ -14,10 +14,12 @@ import { reportServerError } from "@/server/observability/report-error";
 export async function analyzeImage(input: { file: UploadFile; sessionId?: string }) {
   const processed = await preprocessImage(input.file);
   const sessionId = input.sessionId ?? (await getAnonymousSessionId());
-  const cached = await getCachedResult("image", processed.bytes);
+  const cached = await traceImageStorage("cache.read", () =>
+    getCachedResult("image", processed.bytes)
+  );
   if (cached) {
     const result = materializeCachedResult(cached.resultJson);
-    await persistResult({
+    await traceImageStorage("cache.persist", () => persistResult({
       sessionId,
       inputType: "image",
       canonicalInput: processed.bytes,
@@ -26,7 +28,7 @@ export async function analyzeImage(input: { file: UploadFile; sessionId?: string
       aiAvailable: true,
       cacheHit: true,
       modelId: cached.modelId,
-    });
+    }));
     return { result, degraded: false, sessionId };
   }
 
@@ -77,7 +79,7 @@ export async function analyzeImage(input: { file: UploadFile; sessionId?: string
     scoreExplanation: fusion.scoreExplanation,
   });
 
-  await persistResult({
+  await traceImageStorage("persist", () => persistResult({
     sessionId,
     inputType: "image",
     canonicalInput: processed.bytes,
@@ -87,7 +89,19 @@ export async function analyzeImage(input: { file: UploadFile; sessionId?: string
     cacheHit: false,
     modelId: aiAnalysis.meta.modelId,
     providerLatencyMs: aiAnalysis.meta.latencyMs,
-  });
+  }));
 
   return { result, degraded: false, sessionId };
+}
+
+async function traceImageStorage<T>(
+  stage: "cache.read" | "cache.persist" | "persist",
+  operation: () => Promise<T>,
+): Promise<T> {
+  try {
+    return await operation();
+  } catch (error) {
+    reportServerError(`scan.image.${stage}`, error);
+    throw error;
+  }
 }
