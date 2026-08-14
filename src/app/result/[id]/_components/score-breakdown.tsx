@@ -1,11 +1,3 @@
-"use client";
-
-import { useRef } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(useGSAP, ScrollTrigger);
 import type { PublicScoreExplanation, RiskSignal } from "@/types/analysis";
 
 const sourceLabels = {
@@ -26,26 +18,10 @@ export function ScoreBreakdown(
     signals?: RiskSignal[];
   },
 ) {
-  const root = useRef<HTMLElement>(null);
-  useGSAP(() => {
-    if (
-      !explanation ||
-      typeof window.matchMedia !== "function" ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) return;
-    gsap.from(root.current, {
-      opacity: 0.82,
-      duration: 0.7,
-      ease: "power3.out",
-      scrollTrigger: { trigger: root.current, start: "top 88%", once: true },
-    });
-  }, { scope: root, dependencies: [explanation] });
-
   if (!explanation) return null;
 
   return (
     <section
-      ref={root}
       className="border-b border-line py-16"
       aria-labelledby="score-breakdown-heading"
     >
@@ -66,11 +42,11 @@ export function ScoreBreakdown(
           </p>
         </div>
         <div>
-          <ul className="divide-y divide-line border-y border-line">
+          <ul className="grid gap-3">
             {explanation.contributions.map((contribution) => (
               <li
                 key={contribution.source}
-                className="grid gap-2 py-5 sm:grid-cols-[160px_1fr_auto] sm:items-start sm:gap-5"
+                className="grid gap-2 rounded-[16px] border border-line bg-surface p-5 sm:grid-cols-[160px_1fr_auto] sm:items-start sm:gap-5"
               >
                 <span className="text-sm font-semibold">
                   {sourceLabels[contribution.source]}
@@ -89,7 +65,7 @@ export function ScoreBreakdown(
           </ul>
           {explanation.adjustmentLabels.length
             ? (
-              <div className="mt-5 border-l-4 border-ai bg-ai-soft p-5 text-sm leading-6">
+              <div className="mt-5 rounded-[18px] border-l-4 border-ai bg-ai-soft p-5 text-sm leading-6">
                 <strong>Perhatian tambahan:</strong>
                 <ul className="mt-2 list-disc pl-5">
                   {explanation.adjustmentLabels.map((label) => (

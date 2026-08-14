@@ -1,15 +1,23 @@
 import { ArtifactsSection } from "@/app/investigate/[id]/_components/artifacts-section";
 import { CaseScoreSection } from "@/app/investigate/[id]/_components/case-score-section";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { EvidenceGraph } from "@/app/investigate/[id]/_components/evidence-graph";
-import { InteriorShell } from "@/components/site/interior-shell";
+import { PageFrame } from "@/components/product/page-frame";
+import { RouteIntro } from "@/components/product/route-intro";
 import { getInvestigationCase } from "@/db/repositories/investigation-repository";
 import { scanIdSchema } from "@/lib/validation";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
 import { reportServerError } from "@/server/observability/report-error";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Detail investigasi | AmanKlik",
+  description: "Bandingkan artefak dan pola berulang dalam kasus AmanKlik.",
+  robots: { index: false, follow: false },
+};
 
 export default async function InvestigationDetailPage(
   { params }: { params: Promise<{ id: string }> },
@@ -27,23 +35,45 @@ export default async function InvestigationDetailPage(
   }
   if (!investigation) notFound();
 
+  const sharedPatternCount = investigation.graph.nodes.filter((node) =>
+    node.kind === "signal" || node.kind === "domain"
+  ).length;
+
   return (
-    <InteriorShell
-      eyebrow="07 / Case"
-      title={investigation.title}
-      description={investigation.summary}
-      marker="ARTEFAK UNIK / POLA BERSAMA"
-      fragments={[
-        investigation.riskLevel.replace("_", " "),
-        `${investigation.scans.length} ARTEFAK`,
-        `${
-          investigation.graph.nodes.filter((node) =>
-            node.kind === "signal" || node.kind === "domain"
-          ).length
-        } POLA`,
-      ]}
-      compact
-    >
+    <PageFrame>
+      <RouteIntro
+        eyebrow="07 / Detail investigasi"
+        title={investigation.title}
+        description={investigation.summary}
+        pattern="analysis"
+        annotation={
+          <dl className="investigation-case-facts">
+            <div>
+              <dt>Tingkat kasus</dt>
+              <dd>{investigation.riskLevel.replaceAll("_", " ")}</dd>
+            </div>
+            <div>
+              <dt>Ruang banding</dt>
+              <dd>{investigation.scans.length} artefak</dd>
+            </div>
+            <div>
+              <dt>Pola bersama</dt>
+              <dd>{sharedPatternCount}</dd>
+            </div>
+          </dl>
+        }
+      >
+        <p>
+          Diperbarui{" "}
+          <time dateTime={investigation.updatedAt}>
+            {new Intl.DateTimeFormat("id-ID", {
+              dateStyle: "medium",
+              timeStyle: "short",
+              timeZone: "Asia/Jakarta",
+            }).format(new Date(investigation.updatedAt))}
+          </time>
+        </p>
+      </RouteIntro>
       <CaseScoreSection score={investigation.finalScore} />
       <EvidenceGraph graph={investigation.graph} />
       <ArtifactsSection
@@ -56,6 +86,6 @@ export default async function InvestigationDetailPage(
           indicatorCount: scan.result.indicators.length,
         }))}
       />
-    </InteriorShell>
+    </PageFrame>
   );
 }

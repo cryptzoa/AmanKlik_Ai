@@ -12,12 +12,15 @@ function SourceLink({ step }: { step: ResponseStep }) {
   if (!step.sourceTitle || !step.sourceUrl) return null;
   return (
     <a
-      className="mt-4 inline-flex min-h-11 items-center border border-current px-4 py-2 text-xs font-semibold text-ai transition hover:bg-ai hover:text-white"
+      className="product-source-link mt-4 border"
       href={step.sourceUrl}
       target="_blank"
       rel="noreferrer"
     >
-      Buka sumber resmi ↗ · {officialHost(step.sourceUrl)}
+      <span className="product-source-link__label">
+        Sumber resmi · {officialHost(step.sourceUrl)}
+      </span>
+      <span className="product-source-link__arrow" aria-hidden="true">↗</span>
       <span className="sr-only">— {step.sourceTitle}</span>
     </a>
   );
@@ -28,12 +31,12 @@ export function ResponseStepCards(
 ) {
   if (!steps.length) return null;
   return (
-    <ol className="grid gap-px border border-line bg-line">
+    <ol className="grid gap-3">
       {steps.map((step, index) => (
         <li
           key={step.id}
           data-response-step
-          className="bg-surface p-5 sm:grid sm:grid-cols-[44px_1fr] sm:gap-3 sm:p-7"
+          className="product-flat-row bg-surface p-5 sm:grid sm:grid-cols-[44px_1fr] sm:gap-3 sm:p-7"
         >
           <span className="font-mono text-xs text-muted">
             {String(startAt + index).padStart(2, "0")}

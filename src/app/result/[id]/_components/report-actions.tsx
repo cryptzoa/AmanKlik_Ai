@@ -1,36 +1,21 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+import { useState } from "react";
 import type { AnalysisResult } from "@/types/analysis";
 import { buildSafeReport, formatSafeReport } from "@/lib/report/safe-report";
 
 export function ReportActions({ result }: { result: AnalysisResult }) {
-  const root = useRef<HTMLElement>(null);
-  useGSAP(() => {
-    if (
-      typeof window.matchMedia !== "function" ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) return;
-    gsap.from(root.current, {
-      opacity: 0.82,
-      duration: 0.6,
-      scrollTrigger: { trigger: root.current, start: "top 90%", once: true },
-    });
-  }, { scope: root });
-
   const [status, setStatus] = useState<string | null>(null);
+  const [statusIsError, setStatusIsError] = useState(false);
 
   async function copy() {
     const text = formatSafeReport(buildSafeReport(result));
     try {
       await navigator.clipboard.writeText(text);
+      setStatusIsError(false);
       setStatus("Ringkasan aman tersalin.");
     } catch {
+      setStatusIsError(true);
       setStatus(
         "Clipboard tidak tersedia. Gunakan tombol simpan atau pilih teks secara manual.",
       );
@@ -38,13 +23,13 @@ export function ReportActions({ result }: { result: AnalysisResult }) {
   }
 
   function print() {
+    setStatusIsError(false);
     setStatus("Dialog simpan atau cetak dibuka.");
     window.print();
   }
 
   return (
     <section
-      ref={root}
       className="border-t border-line py-10 print:hidden"
       aria-labelledby="report-actions-heading"
     >
@@ -67,14 +52,14 @@ export function ReportActions({ result }: { result: AnalysisResult }) {
         <div className="flex flex-wrap gap-3">
           <button
             type="button"
-            className="min-h-12 rounded-full bg-ink px-5 py-3 text-sm font-semibold text-surface transition hover:-translate-y-0.5 hover:bg-ai"
+            className="product-button product-button--primary"
             onClick={() => void copy()}
           >
             Salin langkah aman
           </button>
           <button
             type="button"
-            className="min-h-12 rounded-full border border-line bg-surface px-5 py-3 text-sm font-semibold hover:border-ai hover:text-ai"
+            className="product-button product-button--secondary"
             onClick={print}
           >
             Simpan / cetak
@@ -82,7 +67,14 @@ export function ReportActions({ result }: { result: AnalysisResult }) {
         </div>
       </div>
       {status
-        ? <p className="mt-4 text-sm text-muted" role="status">{status}</p>
+        ? (
+          <p
+            className={`mt-4 text-sm ${statusIsError ? "text-risk" : "text-muted"}`}
+            role={statusIsError ? "alert" : "status"}
+          >
+            {status}
+          </p>
+        )
         : null}
     </section>
   );

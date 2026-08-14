@@ -1,29 +1,46 @@
 "use client";
 
-import { InteriorShell } from "@/components/site/interior-shell";
+import Link from "next/link";
+import { useEffect, useRef } from "react";
 
-export default function GlobalError({
-  reset,
+import {
+  SystemState,
+  systemStateStyles,
+} from "@/app/_components/system-state";
+
+export default function ErrorPage({
+  retry,
 }: {
   error: Error & { digest?: string };
-  reset: () => void;
+  retry: () => void;
 }) {
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    headingRef.current?.focus();
+  }, []);
+
   return (
-    <InteriorShell
-      eyebrow="Error / Pemulihan"
-      title="Ada yang tersendat."
-      description="Halaman belum bisa ditampilkan, tetapi tidak ada tindakan lanjutan yang dilakukan atas namamu. Coba muat ulang bagian ini."
-      marker="BERHENTI / COBA ULANG"
-      fragments={["AMAN", "TIDAK TERKIRIM", "RETRY"]}
-      compact
-    >
-      <div className="motion-surface grid min-h-72 place-items-center p-8 text-center">
-        <div>
-          <p className="font-mono text-xs uppercase tracking-[0.18em] text-risk">Terjadi kendala</p>
-          <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em]">Halaman belum bisa ditampilkan.</h2>
-          <button className="lift-link mt-7 rounded-full bg-ink px-6 py-3 font-semibold text-surface hover:bg-ai" onClick={reset}>Coba lagi</button>
-        </div>
-      </div>
-    </InteriorShell>
+    <SystemState
+      code="500"
+      eyebrow="Pemulihan halaman"
+      title="Halaman belum dapat ditampilkan."
+      description="Proses berhenti sebelum halaman selesai dimuat. Coba lagi; bila kendala berulang, kembali ke scanner untuk memulai alur baru."
+      headingRef={headingRef}
+      primaryAction={(
+        <button
+          className={systemStateStyles.actionButton}
+          onClick={retry}
+          type="button"
+        >
+          Coba lagi
+        </button>
+      )}
+      secondaryAction={(
+        <Link className={systemStateStyles.actionSecondary} href="/scan">
+          Buka scanner
+        </Link>
+      )}
+    />
   );
 }

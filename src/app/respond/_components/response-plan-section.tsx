@@ -36,7 +36,7 @@ function ExpandableSteps(
 
 type Props = {
   plan: ResponsePlan;
-  copyStatus: string | null;
+  copyStatus: { message: string; isError: boolean } | null;
   onReset: () => void;
   onCopy: () => void;
 };
@@ -71,7 +71,7 @@ export function ResponsePlanSection(
   return (
     <section
       ref={root}
-      className="mt-10 border border-line bg-surface shadow-[10px_10px_0_rgba(17,17,17,0.06)]"
+      className="product-task-surface mt-10"
       aria-labelledby="response-priority-title"
     >
       <div className="bg-ink p-6 text-surface sm:p-8">
@@ -92,7 +92,7 @@ export function ResponsePlanSection(
             {primaryStep.sourceTitle && primaryStep.sourceUrl
               ? (
                 <a
-                  className="mt-5 inline-flex min-h-11 items-center border border-white/30 px-4 py-2 text-xs font-semibold text-surface transition hover:bg-surface hover:text-ink"
+                  className="mt-5 inline-flex min-h-11 items-center rounded-full border border-white/30 px-4 py-2 text-xs font-semibold text-surface transition hover:bg-surface hover:text-ink"
                   href={primaryStep.sourceUrl}
                   target="_blank"
                   rel="noreferrer"
@@ -139,14 +139,14 @@ export function ResponsePlanSection(
         <div className="mt-6 flex flex-wrap gap-3 print:hidden">
           <button
             type="button"
-            className="min-h-12 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-surface transition hover:-translate-y-0.5 hover:bg-ai"
+            className="product-button product-button--primary"
             onClick={onCopy}
           >
             Salin semua langkah
           </button>
           <button
             type="button"
-            className="min-h-12 rounded-full border border-line bg-surface px-6 py-3 text-sm font-semibold transition hover:border-ink"
+            className="product-button product-button--secondary"
             onClick={() => window.print()}
           >
             Cetak panduan
@@ -154,8 +154,13 @@ export function ResponsePlanSection(
         </div>
         {copyStatus
           ? (
-            <p className="mt-3 text-sm text-muted" role="status">
-              {copyStatus}
+            <p
+              className={`mt-3 text-sm ${
+                copyStatus.isError ? "text-risk" : "text-muted"
+              }`}
+              role={copyStatus.isError ? "alert" : "status"}
+            >
+              {copyStatus.message}
             </p>
           )
           : null}

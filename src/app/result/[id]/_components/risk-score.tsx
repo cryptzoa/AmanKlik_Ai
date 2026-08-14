@@ -25,42 +25,36 @@ export function RiskScore(
   { score, level }: { score: number; level: RiskLevel },
 ) {
   const root = useRef<HTMLDivElement>(null);
-  const number = useRef<HTMLSpanElement>(null);
 
   useGSAP(() => {
     if (
       typeof window.matchMedia !== "function" ||
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ) return;
-    const counter = { value: 0 };
-    gsap.from("[data-score-label]", {
+    const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
+    timeline.from("[data-score-value]", {
+      autoAlpha: 0,
+      scale: .96,
+      transformOrigin: "left bottom",
+      duration: .55,
+    }).from("[data-score-label]", {
       autoAlpha: 0,
       y: 12,
-      duration: 0.4,
-      delay: 0.2,
-    });
-    gsap.fromTo("[data-score-bar]", { scaleX: 0 }, {
+      duration: .35,
+    }, "-=.2").fromTo("[data-score-bar]", { scaleX: 0 }, {
       scaleX: score / 100,
-      duration: 1.1,
-      ease: "power3.out",
-    });
-    gsap.to(counter, {
-      value: score,
-      duration: 1.05,
-      ease: "power3.out",
-      onUpdate: () => {
-        if (number.current) {
-          number.current.textContent = Math.round(counter.value).toString();
-        }
-      },
-    });
+      duration: .7,
+    }, "-=.25");
   }, { scope: root, dependencies: [score] });
 
   return (
-    <div ref={root} aria-label={`${score} dari 100, ${labels[level]}`}>
-      <div className="flex items-end gap-2">
+    <div
+      ref={root}
+      role="img"
+      aria-label={`${score} dari 100, ${labels[level]}`}
+    >
+      <div data-score-value className="flex items-end gap-2" aria-hidden="true">
         <span
-          ref={number}
           className={`text-[clamp(6rem,14vw,11rem)] font-semibold leading-[0.72] tracking-[-0.09em] ${
             colors[level]
           }`}
@@ -84,6 +78,7 @@ export function RiskScore(
       </div>
       <div
         data-score-label
+        aria-hidden="true"
         className="mt-4 font-mono text-xs font-semibold uppercase tracking-[0.18em]"
       >
         {labels[level]}

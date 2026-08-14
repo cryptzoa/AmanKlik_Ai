@@ -8,6 +8,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   useEffect(() => {
+    if (pathname !== "/" && !pathname.startsWith("/promo")) return;
     if (!containerRef.current) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const target = containerRef.current;

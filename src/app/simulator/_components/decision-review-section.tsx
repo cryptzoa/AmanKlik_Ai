@@ -1,14 +1,7 @@
-"use client";
-
-import { useRef } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
 import type {
   SimulatorChoiceQuality,
   SimulatorEvaluation,
 } from "@/lib/simulator/scenarios";
-
-gsap.registerPlugin(useGSAP);
 
 const QUALITY_COPY: Record<
   SimulatorChoiceQuality,
@@ -16,39 +9,23 @@ const QUALITY_COPY: Record<
 > = {
   safe: {
     label: "Langkah aman",
-    className: "border-safe bg-[var(--safe-soft)] text-ink",
+    className: "border-safe bg-safe-soft text-ink",
   },
   partial: {
     label: "Belum cukup",
-    className: "border-warning bg-[var(--warning-soft)] text-ink",
+    className: "border-warning bg-warning-soft text-ink",
   },
   unsafe: {
     label: "Berisiko",
-    className: "border-risk bg-[var(--risk-soft)] text-ink",
+    className: "border-risk bg-risk-soft text-ink",
   },
 };
 
 export function DecisionReviewSection(
   { result }: { result: SimulatorEvaluation },
 ) {
-  const root = useRef<HTMLElement>(null);
-  useGSAP(() => {
-    if (
-      typeof window.matchMedia !== "function" ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) return;
-    gsap.from("[data-decision-row]", {
-      autoAlpha: 0,
-      y: 24,
-      stagger: 0.07,
-      duration: 0.5,
-      delay: 0.15,
-    });
-  }, { scope: root });
-
   return (
     <section
-      ref={root}
       className="py-8"
       aria-labelledby="decision-review-title"
     >
@@ -66,14 +43,14 @@ export function DecisionReviewSection(
           {result.unsafeCount} berisiko
         </p>
       </div>
-      <ol className="mt-5 grid gap-px border border-line bg-line">
+      <ol className="mt-5 grid gap-3">
         {result.decisions.map((decision, index) => {
           const quality = QUALITY_COPY[decision.quality];
           return (
             <li
               key={decision.stepId}
               data-decision-row
-              className="bg-surface p-5 sm:grid sm:grid-cols-[42px_1fr] sm:gap-3 sm:p-6"
+              className="product-flat-row bg-surface p-5 sm:grid sm:grid-cols-[42px_1fr] sm:gap-3 sm:p-6"
             >
               <span className="font-mono text-xs text-muted">
                 {String(index + 1).padStart(2, "0")}
@@ -81,7 +58,7 @@ export function DecisionReviewSection(
               <div>
                 <p className="font-semibold">{decision.label}</p>
                 <span
-                  className={`mt-2 inline-flex border-l-2 px-2 py-1 font-mono text-[10px] font-semibold uppercase ${quality.className}`}
+                  className={`mt-2 inline-flex rounded-full border px-3 py-1 font-mono text-[10px] font-semibold uppercase ${quality.className}`}
                 >
                   {quality.label}
                 </span>

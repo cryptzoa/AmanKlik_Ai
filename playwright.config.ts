@@ -1,18 +1,25 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const requestedPort = Number(process.env.PLAYWRIGHT_PORT ?? "3000");
+const port = Number.isInteger(requestedPort) &&
+    requestedPort >= 1_024 && requestedPort <= 65_535
+  ? requestedPort
+  : 3_000;
+const baseURL = `http://127.0.0.1:${port}`;
+
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
-  retries: process.env.CI ? 2 : 0,
+  retries: 0,
   reporter: "list",
   use: {
-    baseURL: "http://127.0.0.1:3000",
-    trace: "on-first-retry",
+    baseURL,
+    trace: "retain-on-failure",
   },
   webServer: {
-    command: "pnpm dev",
-    url: "http://127.0.0.1:3000/api/health",
+    command: `pnpm exec next dev --port ${port}`,
+    url: `${baseURL}/api/health`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },
@@ -20,6 +27,16 @@ export default defineConfig({
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
+    },
+    {
+      name: "firefox-smoke",
+      testMatch: /critical-smoke\.spec\.ts/,
+      use: { ...devices["Desktop Firefox"] },
+    },
+    {
+      name: "webkit-smoke",
+      testMatch: /critical-smoke\.spec\.ts/,
+      use: { ...devices["Desktop Safari"] },
     },
   ],
 });

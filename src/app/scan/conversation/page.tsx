@@ -1,21 +1,31 @@
+import type { Metadata } from "next";
 import { ConversationSection } from "@/app/scan/conversation/_components/conversation-section";
-import { InteriorShell } from "@/components/site/interior-shell";
+import { PageFrame } from "@/components/product/page-frame";
+import { RouteIntro } from "@/components/product/route-intro";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Periksa percakapan — AmanKlik AI",
+  description:
+    "Susun pesan secara kronologis untuk memeriksa eskalasi tekanan, permintaan sensitif, dan perubahan pola percakapan.",
 };
 
 export default function ConversationPage() {
   return (
-    <InteriorShell
-      eyebrow="01 / Conversation"
-      title="Baca urutannya."
-      description="Masukkan beberapa pesan yang sudah kamu hapus datanya untuk melihat pola eskalasi, tekanan, dan permintaan sensitif dari waktu ke waktu."
-      marker="URUTAN / POLA / JEDA"
-      compact
-      fragments={["PESAN 01", "ESKALASI", "JEDA"]}
-    >
+    <PageFrame>
+      <RouteIntro
+        eyebrow="01.2 / Percakapan"
+        title="Baca urutannya."
+        description="Satu pesan dapat terlihat biasa. Urutannya dapat menunjukkan perubahan identitas, tekanan waktu, atau permintaan sensitif yang baru terlihat ketika dibaca bersama."
+        annotation={
+          <p>
+            Hapus nama, OTP, password, nomor rekening, dan identitas sebelum
+            mengirim percakapan.
+          </p>
+        }
+      >
+        2–12 pesan · maksimum 16.000 karakter
+      </RouteIntro>
       <ConversationSection />
-    </InteriorShell>
+    </PageFrame>
   );
 }

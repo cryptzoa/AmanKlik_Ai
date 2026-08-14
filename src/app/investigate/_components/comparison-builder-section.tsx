@@ -1,13 +1,5 @@
-"use client";
-
-import { useRef } from "react";
-import { TransitionLink as Link } from "@/components/site/transition-link";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { TransitionLink } from "@/components/site/transition-link";
 import type { ScanItem } from "@/app/investigate/_components/types";
-
-gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 type Props = {
   scans: ScanItem[];
@@ -20,118 +12,174 @@ type Props = {
   onCreate: () => void;
 };
 
-export function ComparisonBuilderSection(
-  { scans, selected, title, loading, error, onTitleChange, onToggle, onCreate }:
-    Props,
-) {
-  const root = useRef<HTMLElement>(null);
-  useGSAP(() => {
-    if (
-      typeof window.matchMedia !== "function" ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) return;
-    gsap.from(root.current, {
-      opacity: 0.82,
-      duration: 0.7,
-      ease: "power3.out",
-      scrollTrigger: { trigger: root.current, start: "top 88%", once: true },
-    });
-  }, { scope: root });
+const inputLabels: Record<ScanItem["inputType"], string> = {
+  text: "Pesan",
+  image: "Screenshot",
+  url: "Tautan",
+  conversation: "Percakapan",
+};
+
+export function ComparisonBuilderSection({
+  scans,
+  selected,
+  title,
+  loading,
+  error,
+  onTitleChange,
+  onToggle,
+  onCreate,
+}: Props) {
+  const selectedScans = scans.filter((scan) => selected.includes(scan.id));
+  const titleLength = title.trim().length;
+  const canCreate = selected.length >= 2 && titleLength >= 3 && !loading;
+  const disabledReason = loading
+    ? "Kasus sedang dibuat."
+    : titleLength < 3
+    ? "Beri nama kasus minimal 3 karakter."
+    : selected.length < 2
+    ? `Pilih ${2 - selected.length} artefak unik lagi.`
+    : selected.length >= 8
+    ? "Batas 8 artefak sudah tercapai."
+    : "Kasus siap dibuat.";
 
   return (
-    <section
-      ref={root}
-      className="grid gap-8 border-b border-line pb-14 xl:grid-cols-[0.38fr_0.62fr]"
-    >
-      <div>
-        <p className="font-mono text-xs uppercase tracking-[0.18em] text-ai">
-          Bandingkan bukti
-        </p>
-        <h2 className="mt-4 text-4xl font-semibold tracking-[-0.05em]">
-          Cari kesamaan yang berguna.
-        </h2>
-        <p className="mt-4 text-sm leading-7 text-muted">
-          Pilih 2–8 artefak berbeda dari sesi ini. Pemeriksaan ulang atas input
-          yang sama tidak dihitung sebagai bukti tambahan.
+    <section className="investigation-builder" aria-labelledby="case-builder-heading">
+      <div className="investigation-builder__intro">
+        <p className="product-eyebrow text-ai">01 / Susun bukti</p>
+        <h2 id="case-builder-heading">Pilih artefak yang memang berbeda.</h2>
+        <p>
+          Pemeriksaan ulang atas input yang sama sudah disaring di server dan
+          tidak dihitung sebagai bukti tambahan.
         </p>
       </div>
-      <div>
-        <label className="block text-sm font-semibold">
-          Nama kasus<input
-            className="mt-3 min-h-12 w-full border border-line bg-surface px-4 outline-none focus:border-ai"
+
+      <form
+        className="investigation-builder__workspace"
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (canCreate) onCreate();
+        }}
+      >
+        <div>
+          <label className="product-field-label" htmlFor="case-title">
+            Nama kasus
+          </label>
+          <input
+            id="case-title"
+            className="product-field mt-3"
             value={title}
+            minLength={3}
             maxLength={80}
+            autoComplete="off"
+            aria-invalid={title.length > 0 && titleLength < 3}
+            aria-describedby="case-title-help case-title-error"
             placeholder="Contoh: Pesan kurir dan tautan pembayaran"
             onChange={(event) => onTitleChange(event.target.value)}
           />
-        </label>
-        <div className="mt-6 grid gap-2">
-          {scans.length
-            ? scans.map((scan) => {
+          <p id="case-title-help" className="product-field-help">
+            Nama ini disimpan bersama kasus. Jangan gunakan identitas atau data
+            sensitif.
+          </p>
+          <p id="case-title-error" className="product-field-error">
+            {title.length > 0 && titleLength < 3
+              ? "Nama kasus minimal 3 karakter."
+              : "\u00a0"}
+          </p>
+          <span className="product-character-count">
+            {title.length} / 80
+          </span>
+        </div>
+
+        <div className="investigation-selection-rail" aria-label="Artefak terpilih">
+          <div>
+            <p className="product-eyebrow">Pilihan aktif</p>
+            <strong>{selected.length} / 8 artefak</strong>
+          </div>
+          <div className="investigation-selection-rail__items">
+            {selectedScans.length ? (
+              selectedScans.map((scan) => (
+                <span key={scan.id}>
+                  {inputLabels[scan.inputType]} · {scan.finalScore}/100
+                </span>
+              ))
+            ) : (
+              <span>Belum ada artefak dipilih.</span>
+            )}
+          </div>
+        </div>
+
+        <p className="sr-only" aria-live="polite" aria-atomic="true">
+          {selected.length} dari 8 artefak dipilih. {disabledReason}
+        </p>
+
+        <div className="investigation-artifact-list">
+          {scans.length ? (
+            scans.map((scan) => {
               const active = selected.includes(scan.id);
               return (
                 <button
                   key={scan.id}
                   type="button"
                   aria-pressed={active}
-                  className={`grid min-h-16 gap-2 border p-4 text-left sm:grid-cols-[100px_1fr_70px] sm:items-center ${
-                    active
-                      ? "border-ai bg-ai-soft"
-                      : "border-line bg-surface hover:border-ink"
-                  }`}
+                  className="investigation-artifact-row"
+                  data-selected={active ? "true" : "false"}
                   onClick={() => onToggle(scan.id)}
                 >
-                  <span className="font-mono text-xs uppercase text-muted">
-                    {scan.inputType}
+                  <span className="investigation-artifact-row__mark" aria-hidden="true">
+                    {active ? "✓" : "+"}
                   </span>
-                  <span className="truncate text-sm">
-                    <strong className="mr-2">
-                      {scan.riskLevel.replace("_", " ")}
-                    </strong>
-                    {scan.preview ?? "Tanpa preview"}
+                  <span className="min-w-0">
+                    <span className="investigation-artifact-row__meta">
+                      {inputLabels[scan.inputType]} · {scan.riskLevel.replace("_", " ")}
+                    </span>
+                    <span className="investigation-artifact-row__preview">
+                      {scan.preview ?? "Tanpa preview teks"}
+                    </span>
+                    <time dateTime={scan.createdAt}>
+                      {new Date(scan.createdAt).toLocaleString("id-ID")}
+                    </time>
                   </span>
-                  <span className="font-mono text-2xl font-semibold sm:text-right">
-                    {scan.finalScore}
+                  <strong>{scan.finalScore}<small>/100</small></strong>
+                  <span className="sr-only">
+                    {active ? "Dipilih" : "Belum dipilih"}
                   </span>
                 </button>
               );
             })
-            : (
-              <p className="border border-dashed border-line p-5 text-sm text-muted">
-                Belum ada cukup artefak berbeda. Lakukan beberapa pemeriksaan
-                terlebih dahulu.
+          ) : (
+            <div className="investigation-artifact-empty">
+              <h3>Belum ada artefak dalam sesi ini.</h3>
+              <p>
+                Lakukan sedikitnya dua pemeriksaan dengan input berbeda sebelum
+                membuat kasus.
               </p>
-            )}
+            </div>
+          )}
         </div>
-        <div className="mt-6 flex flex-wrap items-center gap-4">
+
+        <div className="investigation-builder__actions">
           <button
-            type="button"
-            disabled={loading || selected.length < 2 || title.trim().length < 3}
-            className="min-h-12 rounded-full bg-ink px-6 font-semibold text-surface hover:bg-ai disabled:opacity-40"
-            onClick={onCreate}
+            type="submit"
+            disabled={!canCreate}
+            className="product-button product-button--primary"
           >
-            {loading
-              ? "Menyusun perbandingan…"
-              : `Bandingkan ${selected.length} artefak`}
+            {loading ? "Menyusun kasus…" : `Buat kasus dari ${selected.length} artefak`}
           </button>
-          <Link
-            className="text-sm font-semibold underline underline-offset-4"
+          <TransitionLink
+            className="product-button product-button--secondary"
             href="/scan"
           >
             Tambah pemeriksaan
-          </Link>
+          </TransitionLink>
+          <p>{disabledReason}</p>
         </div>
-        {error
-          ? (
-            <p
-              className="mt-4 border border-risk/30 bg-risk-soft p-4 text-sm"
-              role="alert"
-            >
-              {error}
-            </p>
-          )
-          : null}
-      </div>
+
+        {error ? (
+          <p className="mt-4 rounded-[16px] border-l-4 border-risk bg-risk-soft p-4 text-sm" role="alert">
+            {error}
+          </p>
+        ) : null}
+      </form>
     </section>
   );
 }

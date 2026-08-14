@@ -1,0 +1,615 @@
+.page {
+  background: var(--canvas);
+}
+
+.documentMeta {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.documentMeta > div {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.documentMeta dt {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.documentMeta dd {
+  margin: 0;
+}
+
+.summary {
+  background: var(--ai-soft);
+  border-bottom: 1px solid var(--line-strong);
+  padding: clamp(3rem, 7vw, 6.5rem) var(--product-gutter);
+}
+
+.summaryInner {
+  display: grid;
+  gap: clamp(2rem, 5vw, 4rem);
+}
+
+.summaryHeading {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.summaryHeading h2,
+.sectionHeading h2 {
+  font-size: clamp(2rem, 4.3vw, 4.4rem);
+  font-weight: 650;
+  letter-spacing: -0.06em;
+  line-height: 0.98;
+  max-width: 16ch;
+}
+
+.summaryGrid {
+  border-block: 1px solid var(--line-strong);
+  display: grid;
+}
+
+.summaryGrid article {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1.5rem 0;
+}
+
+.summaryGrid article + article {
+  border-top: 1px solid var(--line);
+}
+
+.summaryGrid span,
+.flow > li > span,
+.channelList > article > span,
+.matchNotice > span {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.summaryGrid h3,
+.modeGrid h3,
+.retentionBlock h3,
+.sessionGrid h3,
+.channelList h3,
+.splitColumns h3,
+.limitBand h3,
+.closing h3 {
+  font-size: clamp(1.15rem, 2vw, 1.45rem);
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.summaryGrid p,
+.draftNotice p,
+.sectionHeading > p:last-child,
+.factRows p,
+.inlineNote p,
+.warningNote p,
+.flow p,
+.flowFootnote,
+.modeGrid span,
+.policy > .section > p,
+.storageList dd,
+.retentionBlock p,
+.sessionGrid p,
+.matchNotice p,
+.channelList p,
+.splitColumns p,
+.controlGrid li,
+.limitBand p,
+.blockerList,
+.closing p {
+  color: var(--muted);
+  line-height: 1.72;
+}
+
+.draftNotice {
+  align-items: start;
+  border-left: 3px solid var(--ai);
+  display: grid;
+  gap: 0.45rem;
+  max-width: 78ch;
+  padding-left: 1.25rem;
+}
+
+.summary .summaryGrid p,
+.summary .draftNotice p {
+  color: var(--ink-soft);
+}
+
+.readingLayout {
+  display: grid;
+  padding-inline: var(--product-gutter);
+}
+
+.toc {
+  border-bottom: 1px solid var(--line-strong);
+  padding-block: 2rem;
+}
+
+.toc ol {
+  display: grid;
+  gap: 0;
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+}
+
+.toc a {
+  align-items: baseline;
+  border-top: 1px solid var(--line);
+  color: var(--ink-soft);
+  display: grid;
+  font-size: 0.85rem;
+  gap: 0.75rem;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  line-height: 1.4;
+  padding-block: 0.7rem;
+  text-decoration: none;
+}
+
+.toc a:hover {
+  color: var(--ai);
+}
+
+.toc a:focus-visible,
+.sourceLinks a:focus-visible,
+.closingActions a:focus-visible {
+  outline: 3px solid var(--ai);
+  outline-offset: 4px;
+}
+
+.toc a span {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+}
+
+.policy {
+  min-width: 0;
+}
+
+.section {
+  scroll-margin-top: 6rem;
+  padding-block: clamp(4rem, 8vw, 7rem);
+}
+
+.section + .section:not(.flowSection),
+.flowSection + .section {
+  border-top: 1px solid var(--line-strong);
+}
+
+.sectionHeading {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: clamp(2.25rem, 5vw, 4.25rem);
+}
+
+.sectionHeading > p:last-child {
+  font-size: clamp(1rem, 1.8vw, 1.16rem);
+  max-width: 65ch;
+}
+
+.factRows {
+  border-top: 1px solid var(--line-strong);
+}
+
+.factRows article {
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: 0.75rem;
+  padding-block: 1.4rem;
+}
+
+.factRows h3,
+.storageList dt {
+  font-weight: 650;
+}
+
+.inlineNote,
+.warningNote {
+  border-left: 3px solid var(--ai);
+  margin-top: 2rem;
+  padding: 0.25rem 0 0.25rem 1.25rem;
+}
+
+.warningNote p {
+  color: var(--ink-soft);
+}
+
+.warningNote {
+  background: var(--risk-soft);
+  border-left-color: var(--risk);
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 2.5rem;
+  padding: 1.25rem;
+}
+
+.flowSection {
+  background: var(--ink);
+  color: var(--surface);
+  margin-inline: calc(var(--product-gutter) * -1);
+  padding-inline: var(--product-gutter);
+}
+
+.inverseEyebrow {
+  color: #a9a3ff;
+}
+
+.flow {
+  counter-reset: boundary;
+  display: grid;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.flow li {
+  border-top: 1px solid rgba(255, 254, 250, 0.22);
+  display: grid;
+  gap: 0.8rem;
+  padding-block: 1.5rem;
+}
+
+.flow li:last-child {
+  border-bottom: 1px solid rgba(255, 254, 250, 0.22);
+}
+
+.flow li > span {
+  color: #a9a3ff;
+}
+
+.flow h3 {
+  font-size: 1.1rem;
+  font-weight: 650;
+}
+
+.flow p,
+.flowFootnote {
+  color: rgba(255, 254, 250, 0.7);
+}
+
+.flowSection .sectionHeading > p:last-child,
+.policy > .flowSection > .flowFootnote {
+  color: rgba(255, 254, 250, 0.74);
+}
+
+.flowFootnote {
+  margin-top: 1.5rem;
+  max-width: 70ch;
+}
+
+.modeGrid {
+  border-block: 1px solid var(--line-strong);
+  display: grid;
+  margin-bottom: 2rem;
+}
+
+.modeGrid article {
+  display: grid;
+  gap: 0.75rem;
+  padding-block: 1.5rem;
+}
+
+.modeGrid article + article {
+  border-top: 1px solid var(--line);
+}
+
+.modeGrid article > p:first-child {
+  color: var(--ai-text);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.storageList {
+  border-top: 1px solid var(--line-strong);
+  margin: 0;
+}
+
+.storageList > div {
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: 0.75rem;
+  padding-block: 1.4rem;
+}
+
+.storageList dd {
+  margin: 0;
+}
+
+.retentionBlock {
+  background: var(--ai-soft);
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.retentionBlock > div {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.retentionBlock p,
+.retentionBlock .product-eyebrow {
+  color: var(--ink-soft);
+}
+
+.sessionGrid,
+.splitColumns,
+.controlGrid {
+  border-block: 1px solid var(--line-strong);
+  display: grid;
+}
+
+.sessionGrid > div,
+.splitColumns > div,
+.controlGrid > div {
+  display: grid;
+  gap: 0.85rem;
+  padding-block: 1.5rem;
+}
+
+.sessionGrid > div + div,
+.splitColumns > div + div,
+.controlGrid > div + div {
+  border-top: 1px solid var(--line);
+}
+
+.sessionGrid code,
+.channelList code,
+.section code {
+  overflow-wrap: anywhere;
+}
+
+.section > .sessionGrid + p {
+  margin-top: 2rem;
+}
+
+.matchNotice {
+  border: 1px solid var(--line-strong);
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 2rem;
+  padding: 1.25rem;
+}
+
+.matchNotice > span {
+  color: var(--safe);
+}
+
+.channelList {
+  border-top: 1px solid var(--line-strong);
+}
+
+.channelList article {
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: 0.85rem;
+  padding-block: 1.6rem;
+}
+
+.channelList article > span {
+  color: var(--ai-text);
+}
+
+.sourceLinks,
+.closingActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem 1.25rem;
+  margin-top: 0.5rem;
+}
+
+.sourceLinks a {
+  color: var(--ai-text);
+  font-weight: 700;
+  text-underline-offset: 0.2em;
+}
+
+.controlGrid ul {
+  display: grid;
+  gap: 0.8rem;
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.limitBand {
+  background: var(--ink);
+  color: var(--surface);
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 2.5rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.limitBand p {
+  color: rgba(255, 254, 250, 0.72);
+}
+
+.blockerList {
+  border-block: 1px solid var(--line-strong);
+  padding-block: 1.5rem;
+}
+
+.blockerList ol {
+  display: grid;
+  gap: 0.9rem;
+  margin: 1rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.section > .blockerList + p {
+  margin-top: 2rem;
+}
+
+.closing {
+  align-items: end;
+  background: var(--ai-soft);
+  display: grid;
+  gap: 2rem;
+  margin-top: 2.5rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.closing > div:first-child {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.closing p,
+.closing .product-eyebrow {
+  color: var(--ink-soft);
+}
+
+@media (min-width: 700px) {
+  .summaryGrid,
+  .modeGrid,
+  .sessionGrid,
+  .splitColumns,
+  .controlGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .summaryGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .summaryGrid article,
+  .modeGrid article,
+  .sessionGrid > div,
+  .splitColumns > div,
+  .controlGrid > div {
+    padding-inline: 1.5rem;
+  }
+
+  .summaryGrid article:first-child,
+  .modeGrid article:first-child,
+  .sessionGrid > div:first-child,
+  .splitColumns > div:first-child,
+  .controlGrid > div:first-child {
+    padding-left: 0;
+  }
+
+  .summaryGrid article:last-child,
+  .modeGrid article:last-child,
+  .sessionGrid > div:last-child,
+  .splitColumns > div:last-child,
+  .controlGrid > div:last-child {
+    padding-right: 0;
+  }
+
+  .summaryGrid article + article,
+  .modeGrid article + article,
+  .sessionGrid > div + div,
+  .splitColumns > div + div,
+  .controlGrid > div + div {
+    border-left: 1px solid var(--line);
+    border-top: 0;
+  }
+
+  .factRows article,
+  .storageList > div {
+    gap: 2rem;
+    grid-template-columns: minmax(9rem, 0.28fr) minmax(0, 0.72fr);
+  }
+
+  .flow li {
+    align-items: start;
+    gap: 1rem 1.5rem;
+    grid-template-columns: 2rem minmax(10rem, 0.38fr) minmax(0, 0.62fr);
+  }
+
+  .closing {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .closingActions {
+    justify-content: flex-end;
+    margin-top: 0;
+  }
+}
+
+@media (min-width: 980px) {
+  .readingLayout {
+    align-items: start;
+    gap: clamp(3rem, 7vw, 7rem);
+    grid-template-columns: 14rem minmax(0, 1fr);
+  }
+
+  .toc {
+    border-bottom: 0;
+    max-height: calc(100vh - 7rem);
+    overflow: auto;
+    position: sticky;
+    top: 5rem;
+  }
+
+  .policy {
+    max-width: 840px;
+  }
+
+  .flowSection {
+    margin-inline: 0;
+  }
+}
+
+@media print {
+  .summary,
+  .flowSection,
+  .limitBand,
+  .warningNote,
+  .retentionBlock,
+  .closing {
+    background: white !important;
+    color: black !important;
+  }
+
+  .readingLayout {
+    display: block;
+    padding-inline: 0;
+  }
+
+  .toc {
+    max-height: none;
+    position: static;
+  }
+
+  .section {
+    break-inside: auto;
+    padding-block: 2rem;
+  }
+
+  .summaryGrid article,
+  .factRows article,
+  .modeGrid article,
+  .storageList > div,
+  .channelList article,
+  .sessionGrid > div,
+  .splitColumns > div,
+  .controlGrid > div,
+  .retentionBlock > div {
+    break-inside: avoid;
+  }
+
+  .flow p,
+  .flowFootnote,
+  .limitBand p {
+    color: black !important;
+  }
+
+  .closingActions {
+    display: none;
+  }
+}

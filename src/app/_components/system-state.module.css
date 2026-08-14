@@ -1,0 +1,169 @@
+.shell {
+  align-items: center;
+  background:
+    linear-gradient(to right, transparent calc(100% - 1px), rgba(17, 17, 17, 0.05) 1px),
+    linear-gradient(to bottom, transparent calc(100% - 1px), rgba(17, 17, 17, 0.04) 1px),
+    #f7f6f2;
+  background-size: min(25vw, 22rem) min(25vw, 22rem);
+  color: #111;
+  display: grid;
+  font-family: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
+  min-height: 100svh;
+  padding: clamp(1rem, 4vw, 4rem);
+}
+
+.panel {
+  background: #fffefa;
+  border: 1px solid rgba(17, 17, 17, 0.4);
+  display: grid;
+  margin-inline: auto;
+  max-width: 64rem;
+  min-height: min(42rem, calc(100svh - 2rem));
+  width: 100%;
+}
+
+.marker {
+  align-items: center;
+  border-bottom: 1px solid rgba(17, 17, 17, 0.18);
+  display: flex;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  justify-content: space-between;
+  letter-spacing: 0.17em;
+  padding: 1rem clamp(1.25rem, 4vw, 2.5rem);
+  text-transform: uppercase;
+}
+
+.marker span:first-child {
+  color: #bf2721;
+}
+
+.content {
+  align-self: center;
+  display: grid;
+  max-width: 48rem;
+  padding: clamp(2.5rem, 8vw, 7rem) clamp(1.25rem, 6vw, 5rem);
+}
+
+.eyebrow,
+.boundary {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  color: #635bff;
+}
+
+.content h1 {
+  font-size: clamp(2.65rem, 8vw, 6.5rem);
+  font-weight: 650;
+  letter-spacing: -0.07em;
+  line-height: 0.9;
+  margin-top: 1.25rem;
+  max-width: 11ch;
+  outline: none;
+  text-wrap: balance;
+}
+
+.content h1:focus-visible {
+  outline: 3px solid #635bff;
+  outline-offset: 0.35rem;
+}
+
+.description {
+  color: #5f5c55;
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  line-height: 1.7;
+  margin-top: 1.5rem;
+  max-width: 60ch;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.actionPrimary,
+.actionSecondary,
+.actionButton {
+  align-items: center;
+  border: 1px solid #111;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 700;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.75rem 1.25rem;
+  text-decoration: none;
+}
+
+.actionPrimary,
+.actionButton {
+  background: #111;
+  color: #fffefa;
+}
+
+.actionSecondary {
+  background: #fffefa;
+  color: #111;
+}
+
+.actionPrimary:hover,
+.actionButton:hover {
+  background: #635bff;
+  border-color: #635bff;
+}
+
+.actionSecondary:hover {
+  border-color: #635bff;
+  color: #635bff;
+}
+
+.actionPrimary:focus-visible,
+.actionSecondary:focus-visible,
+.actionButton:focus-visible {
+  outline: 3px solid #635bff;
+  outline-offset: 3px;
+}
+
+.actionButton::before {
+  display: none !important;
+}
+
+.boundary {
+  align-self: end;
+  border-top: 1px solid rgba(17, 17, 17, 0.18);
+  color: #6f6c65;
+  line-height: 1.5;
+  padding: 1rem clamp(1.25rem, 4vw, 2.5rem);
+}
+
+@media (min-width: 700px) {
+  .panel {
+    grid-template-rows: auto 1fr auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .actions > * {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .actionPrimary,
+  .actionSecondary,
+  .actionButton {
+    scroll-behavior: auto;
+  }
+}

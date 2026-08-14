@@ -1,73 +1,102 @@
-"use client";
-
-import { useRef } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { TokenItem } from "@/app/connect/_components/types";
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+type Props = {
+  items: TokenItem[];
+  listState: "loading" | "loaded" | "unavailable";
+  revokePendingId: string | null;
+  onRetry: () => void;
+  onRevoke: (id: string, name: string) => void;
+};
 
-export function DevicesSection(
-  { items, onRevoke }: { items: TokenItem[]; onRevoke: (id: string) => void },
-) {
-  const root = useRef<HTMLElement>(null);
-  useGSAP(() => {
-    if (
-      typeof window.matchMedia !== "function" ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) return;
-    gsap.from(root.current, {
-      opacity: 0.82,
-      duration: 0.7,
-      ease: "power3.out",
-      scrollTrigger: { trigger: root.current, start: "top 88%", once: true },
-    });
-    gsap.from("[data-device-row]", {
-      autoAlpha: 0,
-      x: 24,
-      stagger: 0.07,
-      duration: 0.55,
-      scrollTrigger: { trigger: root.current, start: "top 82%", once: true },
-    });
-  }, { scope: root });
-
+export function DevicesSection({
+  items,
+  listState,
+  revokePendingId,
+  onRetry,
+  onRevoke,
+}: Props) {
   return (
-    <section ref={root}>
-      <p className="font-mono text-xs uppercase tracking-[0.18em] text-ai">
-        Connected devices
-      </p>
-      <div className="mt-5 divide-y divide-line border-y border-line">
-        {items.length
-          ? items.map((item) => (
-            <div
-              key={item.id}
-              data-device-row
-              className="grid gap-4 py-5 sm:grid-cols-[1fr_auto] sm:items-center"
+    <section aria-labelledby="connected-devices-heading">
+      <p className="product-eyebrow text-ai">03 / Akses aktif</p>
+      <div className="connect-devices-heading">
+        <h2 id="connected-devices-heading" className="connect-section-title">
+          Perangkat yang masih terhubung.
+        </h2>
+        <p>
+          Token yang kedaluwarsa atau sudah dicabut tidak dapat dipakai lagi.
+        </p>
+      </div>
+
+      <div className="connect-device-list">
+        {listState === "loading" ? (
+          <div className="connect-device-state" role="status">
+            Memuat daftar akses…
+          </div>
+        ) : listState === "unavailable" ? (
+          <div className="connect-device-state" role="status">
+            <p>Daftar akses belum dapat dimuat.</p>
+            <button
+              type="button"
+              className="product-button product-button--secondary mt-4"
+              onClick={onRetry}
             >
-              <div>
-                <strong>{item.name}</strong>
-                <p className="mt-1 text-xs text-muted">
-                  Dibuat {new Date(item.createdAt).toLocaleString("id-ID")}{" "}
-                  · terakhir dipakai {item.lastUsedAt
-                    ? new Date(item.lastUsedAt).toLocaleString("id-ID")
-                    : "belum pernah"}
-                </p>
+              Coba lagi
+            </button>
+          </div>
+        ) : items.length ? (
+          items.map((item) => (
+            <article key={item.id} className="connect-device-row">
+              <div className="min-w-0">
+                <h3>{item.name}</h3>
+                <dl>
+                  <div>
+                    <dt>Dibuat</dt>
+                    <dd>
+                      <time dateTime={item.createdAt}>
+                        {new Date(item.createdAt).toLocaleString("id-ID")}
+                      </time>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Terakhir dipakai</dt>
+                    <dd>
+                      {item.lastUsedAt ? (
+                        <time dateTime={item.lastUsedAt}>
+                          {new Date(item.lastUsedAt).toLocaleString("id-ID")}
+                        </time>
+                      ) : (
+                        "Belum pernah"
+                      )}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Kedaluwarsa</dt>
+                    <dd>
+                      <time dateTime={item.expiresAt}>
+                        {new Date(item.expiresAt).toLocaleString("id-ID")}
+                      </time>
+                    </dd>
+                  </div>
+                </dl>
               </div>
               <button
                 type="button"
-                className="min-h-11 rounded-full border border-risk/30 px-4 text-xs font-semibold text-risk hover:bg-risk-soft"
-                onClick={() => onRevoke(item.id)}
+                className="product-button product-button--destructive"
+                disabled={Boolean(revokePendingId)}
+                onClick={() => onRevoke(item.id, item.name)}
               >
-                Cabut akses
+                {revokePendingId === item.id
+                  ? "Mencabut…"
+                  : `Cabut akses ${item.name}`}
               </button>
-            </div>
+            </article>
           ))
-          : (
-            <p className="py-6 text-sm text-muted">
-              Belum ada perangkat terhubung.
-            </p>
-          )}
+        ) : (
+          <div className="connect-device-state">
+            <p>Belum ada perangkat yang terhubung.</p>
+            <span>Buat token di langkah pertama untuk memulai.</span>
+          </div>
+        )}
       </div>
     </section>
   );

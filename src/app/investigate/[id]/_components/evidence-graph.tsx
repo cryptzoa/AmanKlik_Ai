@@ -1,11 +1,3 @@
-"use client";
-
-import { useRef } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(useGSAP, ScrollTrigger);
 import type { EvidenceNode, InvestigationGraph } from "@/types/investigation";
 
 const kindLabels: Record<EvidenceNode["kind"], string> = {
@@ -15,31 +7,7 @@ const kindLabels: Record<EvidenceNode["kind"], string> = {
   domain: "Domain berulang",
 };
 
-function sourceLabels(
-  node: EvidenceNode,
-  sourceById: Map<string, EvidenceNode>,
-): string {
-  const labels = (node.sourceIds ?? []).map((sourceId) =>
-    sourceById.get(sourceId)?.label
-  ).filter((label): label is string => Boolean(label));
-  return labels.join(" · ");
-}
-
 export function EvidenceGraph({ graph }: { graph: InvestigationGraph }) {
-  const root = useRef<HTMLElement>(null);
-  useGSAP(() => {
-    if (
-      typeof window.matchMedia !== "function" ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) return;
-    gsap.from(root.current, {
-      opacity: 0.82,
-      duration: 0.7,
-      ease: "power3.out",
-      scrollTrigger: { trigger: root.current, start: "top 88%", once: true },
-    });
-  }, { scope: root });
-
   const sourceNodes = graph.nodes.filter((node) => node.kind === "scan");
   const sharedNodes = graph.nodes.filter((node) =>
     node.kind === "signal" || node.kind === "domain"
@@ -48,97 +16,103 @@ export function EvidenceGraph({ graph }: { graph: InvestigationGraph }) {
 
   return (
     <section
-      ref={root}
-      className="border-y border-line py-10"
+      className="investigation-map"
       aria-labelledby="evidence-graph-heading"
     >
-      <div className="max-w-3xl">
-        <p className="font-mono text-xs uppercase tracking-[0.18em] text-ai">
-          Bukti bersama
-        </p>
-        <h2
-          id="evidence-graph-heading"
-          className="mt-3 text-3xl font-semibold tracking-[-0.04em] sm:text-5xl"
-        >
-          Apa yang benar-benar berulang?
-        </h2>
-        <p className="mt-3 text-sm leading-7 text-muted">
-          AmanKlik hanya menampilkan pola atau domain yang muncul pada minimal
-          dua artefak unik. Kesamaan ini membantu verifikasi, tetapi bukan bukti
-          identitas pelaku atau kepastian penipuan.
-        </p>
-      </div>
-
-      <div className="mt-8 grid gap-5 lg:grid-cols-2">
-        <article className="border border-line bg-surface p-5 sm:p-6">
-          <div className="flex items-baseline justify-between gap-4">
-            <h3 className="text-xl font-semibold">Artefak yang dibandingkan</h3>
-            <span className="font-mono text-xs text-muted">
-              {sourceNodes.length} unik
-            </span>
+      <div className="product-container">
+        <div className="investigation-map__heading">
+          <div>
+            <p className="product-eyebrow text-ai-soft">Peta hubungan</p>
+            <h2 id="evidence-graph-heading">Apa yang benar-benar berulang?</h2>
           </div>
-          <ul className="mt-5 grid gap-3" aria-label="Artefak unik dalam kasus">
-            {sourceNodes.map((node) => (
-              <li
-                key={node.id}
-                className="border-l-2 border-ai bg-ai-soft px-4 py-3"
-              >
-                <p className="font-mono text-xs uppercase tracking-[0.12em] text-muted">
-                  {kindLabels[node.kind]} · {node.riskLevel?.replace("_", " ")}
-                </p>
-                <p className="mt-1 text-sm font-semibold">{node.label}</p>
-                <p className="mt-2 text-sm leading-6 text-muted">
-                  {node.detail}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </article>
+          <p>
+            Hanya pola atau domain yang muncul pada sedikitnya dua artefak unik
+            yang ditampilkan. Kesamaan membantu verifikasi, tetapi tidak
+            membuktikan identitas pelaku atau kepastian penipuan.
+          </p>
+        </div>
 
-        <article className="border border-line bg-ink p-5 text-surface sm:p-6">
-          <div className="flex items-baseline justify-between gap-4">
-            <h3 className="text-xl font-semibold">
-              Bukti yang saling menguatkan
-            </h3>
-            <span className="font-mono text-xs text-ai-soft">
-              {sharedNodes.length} ditemukan
-            </span>
+        <div className="investigation-map__legend" aria-label="Legenda peta">
+          <span><i data-kind="artifact" aria-hidden="true" /> Artefak unik</span>
+          <span><i data-kind="pattern" aria-hidden="true" /> Pola bersama</span>
+        </div>
+
+        <div className="investigation-map__canvas">
+          <div className="investigation-map__sources">
+            <div className="investigation-map__column-heading">
+              <h3>Artefak yang dibandingkan</h3>
+              <span>{sourceNodes.length} unik</span>
+            </div>
+            <ol aria-label="Artefak unik dalam kasus">
+              {sourceNodes.map((node, index) => (
+                <li key={node.id} id={`map-${node.id}`}>
+                  <span className="investigation-map__index">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <div>
+                    <p className="investigation-map__node-meta">
+                      {kindLabels[node.kind]} ·{" "}
+                      {node.riskLevel?.replaceAll("_", " ")}
+                    </p>
+                    <h4>{node.label}</h4>
+                    <p>{node.detail}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
           </div>
-          {sharedNodes.length
-            ? (
-              <ul
-                className="mt-5 grid gap-3"
-                aria-label="Pola dan domain berulang"
-              >
-                {sharedNodes.map((node) => (
-                  <li key={node.id} className="border border-white/20 p-4">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <p className="font-semibold">{node.label}</p>
-                      <span className="rounded-full bg-ai px-3 py-1 font-mono text-xs text-ink">
-                        {node.count}/{sourceNodes.length} artefak
-                      </span>
-                    </div>
-                    <p className="mt-3 text-sm leading-6 text-surface/70">
-                      {node.detail}
-                    </p>
-                    <p className="mt-4 border-t border-white/15 pt-3 font-mono text-xs uppercase tracking-[0.08em] text-ai-soft">
-                      Terlihat pada: {sourceLabels(node, sourceById)}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            )
-            : (
-              <div className="mt-5 border border-dashed border-white/30 p-5">
-                <p className="font-semibold">Belum ada bukti yang berulang.</p>
-                <p className="mt-2 text-sm leading-6 text-surface/70">
+
+          <div className="investigation-map__patterns">
+            <div className="investigation-map__column-heading">
+              <h3>Pola yang saling menguatkan</h3>
+              <span>{sharedNodes.length} ditemukan</span>
+            </div>
+            {sharedNodes.length ? (
+              <ol aria-label="Pola dan domain berulang">
+                {sharedNodes.map((node, index) => {
+                  const sources = (node.sourceIds ?? [])
+                    .map((sourceId) => sourceById.get(sourceId))
+                    .filter((source): source is EvidenceNode => Boolean(source));
+
+                  return (
+                    <li key={node.id}>
+                      <div className="investigation-map__pattern-topline">
+                        <span>{String(index + 1).padStart(2, "0")}</span>
+                        <strong>{node.count}/{sourceNodes.length} artefak</strong>
+                      </div>
+                      <h4>{node.label}</h4>
+                      <p>{node.detail}</p>
+                      <div className="investigation-map__source-links">
+                        <span>Terlihat pada</span>
+                        <ul aria-label={`Sumber untuk ${node.label}`}>
+                          {sources.map((source) => (
+                            <li key={source.id}>
+                              <a href={`#map-${source.id}`}>{source.label}</a>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ol>
+            ) : (
+              <div className="investigation-map__empty">
+                <h4>Belum ada pola yang berulang.</h4>
+                <p>
                   Artefak tetap bisa diperiksa satu per satu. Tambahkan sumber
-                  yang berbeda bila ingin membandingkan pola, domain, atau
-                  permintaan yang sama.
+                  berbeda untuk membandingkan pola, domain, atau permintaan yang
+                  sama.
                 </p>
               </div>
             )}
-        </article>
+          </div>
+        </div>
+
+        <p className="investigation-map__caption">
+          Peta dibaca dari artefak ke pola bersama, lalu kembali ke sumber yang
+          mendukungnya. Tidak ada koneksi yang dibuat hanya dari skor yang mirip.
+        </p>
       </div>
     </section>
   );

@@ -73,7 +73,7 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
         setTransitionOrigin(null);
         isAnimatingRef.current = false;
       });
-    }, 8_000);
+    }, 2_000);
     return () => window.clearTimeout(timer);
   }, [isTransitioning]);
 

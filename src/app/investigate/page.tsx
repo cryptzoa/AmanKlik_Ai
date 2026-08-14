@@ -1,11 +1,19 @@
+import type { Metadata } from "next";
 import { InvestigationClient } from "@/app/investigate/_components/investigation-client";
 import { listInvestigationCases } from "@/db/repositories/investigation-repository";
 import { listScansForSession } from "@/db/repositories/scan-repository";
-import { InteriorShell } from "@/components/site/interior-shell";
+import { PageFrame } from "@/components/product/page-frame";
+import { RouteIntro } from "@/components/product/route-intro";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
 import { reportServerError } from "@/server/observability/report-error";
 
 export const dynamic = "force-dynamic";
+export const metadata: Metadata = {
+  title: "Bangun kasus — AmanKlik AI",
+  description:
+    "Bandingkan artefak unik dari sesi anonim ini untuk melihat pola yang benar-benar muncul bersama.",
+  robots: { index: false, follow: false },
+};
 
 export default async function InvestigatePage(
   { searchParams }: { searchParams: Promise<{ scan?: string }> },
@@ -14,6 +22,7 @@ export default async function InvestigatePage(
   const sessionId = await getAnonymousSessionId({ create: false });
   let scans: Awaited<ReturnType<typeof listScansForSession>> = [];
   let cases: Awaited<ReturnType<typeof listInvestigationCases>> = [];
+  let storageUnavailable = false;
   if (sessionId) {
     try {
       [scans, cases] = await Promise.all([
@@ -22,6 +31,7 @@ export default async function InvestigatePage(
       ]);
     } catch (error) {
       reportServerError("investigation.list", error);
+      storageUnavailable = true;
     }
   }
 
@@ -39,35 +49,42 @@ export default async function InvestigatePage(
     : undefined;
 
   return (
-    <InteriorShell
-      eyebrow="06 / Kasus"
-      title="Bandingkan bukti yang berbeda."
-      description="Satukan pesan, URL, dan screenshot yang berkaitan untuk menemukan pola yang benar-benar muncul lintas artefak."
-      marker="ARTEFAK / POLA / VERIFIKASI"
-      fragments={["ARTEFAK UNIK", "PRIVAT", `${cases.length} KASUS`]}
-      compact
-    >
-      <InvestigationClient
-        initialScanId={initialScanId}
-        scans={uniqueScans.map((scan) => ({
-          id: scan.id,
-          inputType: scan.inputType,
-          preview: scan.previewRedacted,
-          finalScore: scan.finalScore,
-          riskLevel: scan.riskLevel,
-          createdAt: scan.createdAt.toISOString(),
-        }))}
-        cases={cases.map((item) => ({
-          id: item.id,
-          title: item.title,
-          status: item.status,
-          finalScore: item.finalScore,
-          riskLevel: item.riskLevel,
-          summary: item.summary,
-          scanCount: item.scanCount,
-          updatedAt: item.updatedAt.toISOString(),
-        }))}
-      />
-    </InteriorShell>
+    <PageFrame>
+      <RouteIntro
+        eyebrow="06 / Investigasi"
+        title="Bandingkan bukti yang berbeda dalam satu kasus."
+        description="Satukan pesan, URL, dan screenshot yang berkaitan. AmanKlik baru menyebut pola bersama setelah pola itu benar-benar muncul pada artefak unik."
+        annotation="Pilih 2–8 artefak · input yang sama dihitung sekali · seluruh record terikat sesi anonim"
+        pattern="analysis"
+      >
+        {cases.length} kasus tersimpan dalam sesi ini.
+      </RouteIntro>
+      <div className="product-section">
+        <div className="product-wide-canvas">
+          <InvestigationClient
+            initialScanId={initialScanId}
+            storageUnavailable={storageUnavailable}
+            scans={uniqueScans.map((scan) => ({
+              id: scan.id,
+              inputType: scan.inputType,
+              preview: scan.previewRedacted,
+              finalScore: scan.finalScore,
+              riskLevel: scan.riskLevel,
+              createdAt: scan.createdAt.toISOString(),
+            }))}
+            cases={cases.map((item) => ({
+              id: item.id,
+              title: item.title,
+              status: item.status,
+              finalScore: item.finalScore,
+              riskLevel: item.riskLevel,
+              summary: item.summary,
+              scanCount: item.scanCount,
+              updatedAt: item.updatedAt.toISOString(),
+            }))}
+          />
+        </div>
+      </div>
+    </PageFrame>
   );
 }

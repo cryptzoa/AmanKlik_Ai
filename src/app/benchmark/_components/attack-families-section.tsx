@@ -1,79 +1,101 @@
-"use client";
-
-import { useRef } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { AdversarialSummary } from "@/lib/evaluation/adversarial-runner";
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+function formatFamilyName(family: string): string {
+  return family.replaceAll("_", " ");
+}
 
 export function AttackFamiliesSection(
   { families }: { families: AdversarialSummary["byFamily"] },
 ) {
-  const root = useRef<HTMLElement>(null);
-  useGSAP(() => {
-    if (
-      typeof window.matchMedia !== "function" ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) return;
-    gsap.from(root.current, {
-      opacity: 0.82,
-      duration: 0.7,
-      ease: "power3.out",
-      scrollTrigger: { trigger: root.current, start: "top 88%", once: true },
-    });
-    gsap.from("[data-family-card]", {
-      autoAlpha: 0,
-      y: 28,
-      stagger: 0.07,
-      duration: 0.55,
-      scrollTrigger: { trigger: root.current, start: "top 80%", once: true },
-    });
-  }, { scope: root });
-
   return (
     <section
-      ref={root}
-      className="grid gap-8 border-b border-line py-14 lg:grid-cols-[0.35fr_0.65fr]"
+      className="border-b border-line py-14 sm:py-20"
+      aria-labelledby="attack-families-title"
     >
-      <div>
-        <p className="font-mono text-xs uppercase tracking-[0.18em] text-ai">
-          Attack families
-        </p>
-        <h2 className="mt-4 text-4xl font-semibold tracking-[-0.05em]">
-          Tahan terhadap variasi input
-        </h2>
-        <p className="mt-4 text-sm leading-7 text-muted">
-          Angka ini hanya menggambarkan fixture sintetis di repository. Bukan
-          klaim akurasi universal atau probabilitas dunia nyata.
-        </p>
-      </div>
-      <div className="grid gap-px border border-line bg-line sm:grid-cols-2">
-        {families.map((family) => (
-          <article
-            key={family.family}
-            data-family-card
-            className="bg-surface p-6"
+      <div className="grid gap-8 lg:grid-cols-[minmax(16rem,0.35fr)_minmax(0,0.65fr)] lg:gap-16">
+        <div>
+          <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-ai">
+            Attack families
+          </p>
+          <h2
+            id="attack-families-title"
+            className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.045em] sm:text-4xl"
           >
-            <p className="font-mono text-xs uppercase text-muted">
-              {family.family.replaceAll("_", " ")}
+            Variasi input dibandingkan satu per satu.
+          </h2>
+          <p className="mt-5 max-w-md text-sm leading-7 text-muted">
+            Setiap bar menunjukkan fixture yang lolos dibagi seluruh fixture
+            dalam keluarga tersebut. Nilai ini bukan probabilitas kejadian di
+            dunia nyata.
+          </p>
+        </div>
+
+        {families.length > 0 ? (
+          <ol className="grid gap-3">
+            {families.map((family, index) => {
+              const rate = family.total > 0
+                ? Math.round((family.passed / family.total) * 100)
+                : 0;
+
+              return (
+                <li
+                  key={family.family}
+                  className="grid gap-4 rounded-[18px] border border-[var(--line-strong)] bg-surface p-5 sm:grid-cols-[2.5rem_minmax(0,1fr)_auto] sm:items-center"
+                >
+                  <span className="font-mono text-[10px] font-semibold tabular-nums text-muted">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-baseline justify-between gap-x-5 gap-y-2">
+                      <span className="break-words text-sm font-semibold capitalize [overflow-wrap:anywhere]">
+                        {formatFamilyName(family.family)}
+                      </span>
+                      <span className="font-mono text-xs font-semibold tabular-nums text-muted">
+                        {family.passed}/{family.total} fixture
+                        {family.total > 0 ? ` · ${rate}%` : " · tanpa rate"}
+                      </span>
+                    </div>
+                    <div
+                      className="mt-3 h-1.5 overflow-hidden rounded-full bg-line"
+                      aria-hidden="true"
+                    >
+                      <span
+                        className="block h-full bg-ai transition-[width] duration-500 motion-reduce:transition-none"
+                        style={{ width: `${rate}%` }}
+                      />
+                    </div>
+                  </div>
+                  <span
+                    className={`w-fit font-mono text-[10px] font-semibold uppercase tracking-[0.12em] ${
+                      family.total === 0
+                        ? "text-muted"
+                        : family.passed === family.total
+                        ? "text-safe"
+                        : "text-risk"
+                    }`}
+                  >
+                    {family.total === 0
+                      ? "Belum diuji"
+                      : family.passed === family.total
+                      ? "Semua lolos"
+                      : `${family.total - family.passed} perlu ditinjau`}
+                  </span>
+                </li>
+              );
+            })}
+          </ol>
+        ) : (
+          <div className="product-empty-state" role="status">
+            <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+              0 keluarga
             </p>
-            <p className="mt-5 font-mono text-4xl font-semibold">
-              {family.passed}/{family.total}
+            <h2>Belum ada keluarga serangan</h2>
+            <p className="product-empty-state__copy">
+              Snapshot valid, tetapi belum memiliki fixture adversarial untuk
+              dibandingkan.
             </p>
-            <div className="mt-4 h-2 bg-line">
-              <div
-                className="h-full bg-ai"
-                style={{
-                  width: `${
-                    family.total ? (family.passed / family.total) * 100 : 0
-                  }%`,
-                }}
-              />
-            </div>
-          </article>
-        ))}
+          </div>
+        )}
       </div>
     </section>
   );

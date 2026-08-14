@@ -2,13 +2,18 @@
 
 import { TransitionLink as Link } from "@/components/site/transition-link";
 import { usePathname } from "next/navigation";
-import { type MouseEvent, useEffect, useRef, useState } from "react";
+import {
+  type MouseEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { MotionArrowIcon } from "@/components/ui/animated-button";
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+gsap.registerPlugin(useGSAP);
 
 const primaryNavigation = [
   ["/scan", "Periksa"],
@@ -26,6 +31,16 @@ const navigation = [
   ...primaryNavigation.map(([href, label]) => [href, label]),
   ...secondaryNavigation.map(([href, label]) => [href, label]),
 ] as const;
+
+const focusableSelector = [
+  "a[href]:not([tabindex='-1'])",
+  "button:not([disabled]):not([tabindex='-1'])",
+  "input:not([disabled]):not([tabindex='-1'])",
+  "select:not([disabled]):not([tabindex='-1'])",
+  "textarea:not([disabled]):not([tabindex='-1'])",
+  "[contenteditable='true']",
+  "[tabindex]:not([tabindex='-1'])",
+].join(",");
 
 function routeIsActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(href + "/");
@@ -55,17 +70,67 @@ export function SiteHeader({ variant }: { variant: "landing" | "interior" }) {
   const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMenuClosing, setIsMenuClosing] = useState(false);
+  const focusReturnFrameRef = useRef<number | null>(null);
+  const previousPathnameRef = useRef(pathname);
+  const isMobileModalActive = isMobileMenuOpen || isMenuClosing;
+
+  const returnFocusToMenuButton = useCallback(() => {
+    if (focusReturnFrameRef.current !== null) {
+      window.cancelAnimationFrame(focusReturnFrameRef.current);
+    }
+    focusReturnFrameRef.current = window.requestAnimationFrame(() => {
+      focusReturnFrameRef.current = null;
+      mobileMenuButtonRef.current?.focus({ preventScroll: true });
+    });
+  }, []);
+
+  const closeMobileMenu = useCallback((restoreFocus = true) => {
+    setIsMenuClosing(true);
+    setIsMobileMenuOpen(false);
+    if (restoreFocus) returnFocusToMenuButton();
+  }, [returnFocusToMenuButton]);
+
+  const hideMobileMenuImmediately = useCallback(() => {
+    if (focusReturnFrameRef.current !== null) {
+      window.cancelAnimationFrame(focusReturnFrameRef.current);
+      focusReturnFrameRef.current = null;
+    }
+
+    const menu = mobileMenuRef.current;
+    if (menu) {
+      const background = menu.querySelector("[data-menu-bg]");
+      const links = gsap.utils.toArray<HTMLElement>("[data-menu-link]", menu);
+      const footer = menu.querySelector("[data-menu-footer]");
+      const content = [background, ...links, footer].filter(
+        (element): element is Element => element instanceof Element,
+      );
+      gsap.killTweensOf([menu, ...content]);
+      gsap.set(menu, { display: "none" });
+      gsap.set(content, { clearProps: "all" });
+    }
+    setIsMobileMenuOpen(false);
+    setIsMenuClosing(false);
+  }, []);
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
+    const header = headerRef.current;
+    const menu = mobileMenuRef.current;
 
     const handleScroll = () => {
-      if (isMobileMenuOpen) return;
-
       const currentScrollY = window.scrollY;
-      const header = headerRef.current;
 
       if (!header) return;
+
+      const activeElement = document.activeElement;
+      const focusIsInsideNavigation = activeElement instanceof Node &&
+        (header.contains(activeElement) || menu?.contains(activeElement));
+
+      if (isMobileModalActive || focusIsInsideNavigation) {
+        header.style.transform = "translateY(0)";
+        lastScrollY = currentScrollY;
+        return;
+      }
 
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
         header.style.transform = "translateY(-100%)";
@@ -76,41 +141,157 @@ export function SiteHeader({ variant }: { variant: "landing" | "interior" }) {
       lastScrollY = currentScrollY;
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [isMobileMenuOpen]);
-
-  useEffect(() => {
-    const previousBodyOverflow = document.body.style.overflow;
-    const previousHtmlOverflow = document.documentElement.style.overflow;
-
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
+    const keepHeaderVisible = () => {
       if (headerRef.current) {
         headerRef.current.style.transform = "translateY(0)";
       }
-    } else {
-      document.body.style.overflow = previousBodyOverflow;
-      document.documentElement.style.overflow = previousHtmlOverflow;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    header?.addEventListener("focusin", keepHeaderVisible);
+    menu?.addEventListener("focusin", keepHeaderVisible);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      header?.removeEventListener("focusin", keepHeaderVisible);
+      menu?.removeEventListener("focusin", keepHeaderVisible);
+    };
+  }, [isMobileModalActive]);
+
+  useEffect(() => {
+    if (!isMobileModalActive) return;
+
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    if (headerRef.current) {
+      headerRef.current.style.transform = "translateY(0)";
     }
 
     return () => {
       document.body.style.overflow = previousBodyOverflow;
       document.documentElement.style.overflow = previousHtmlOverflow;
     };
-  }, [isMobileMenuOpen]);
+  }, [isMobileModalActive]);
+
+  useEffect(() => {
+    if (!isMobileModalActive) return;
+
+    const header = headerRef.current;
+    const menu = mobileMenuRef.current;
+    if (!header || !menu) return;
+
+    const snapshots: Array<{
+      element: HTMLElement;
+      inert: string | null;
+      ariaHidden: string | null;
+    }> = [];
+    const suppress = (element: HTMLElement) => {
+      snapshots.push({
+        element,
+        inert: element.getAttribute("inert"),
+        ariaHidden: element.getAttribute("aria-hidden"),
+      });
+      element.setAttribute("inert", "");
+      element.setAttribute("aria-hidden", "true");
+    };
+
+    if (header.parentElement === menu.parentElement) {
+      for (const sibling of header.parentElement?.children ?? []) {
+        if (
+          sibling instanceof HTMLElement &&
+          sibling !== header &&
+          sibling !== menu
+        ) {
+          suppress(sibling);
+        }
+      }
+    }
+
+    header
+      .querySelectorAll<HTMLElement>(
+        "[data-header-brand], [data-desktop-nav], [data-header-cta]",
+      )
+      .forEach(suppress);
+
+    return () => {
+      for (const { element, inert, ariaHidden } of snapshots) {
+        if (inert === null) {
+          element.removeAttribute("inert");
+        } else {
+          element.setAttribute("inert", inert);
+        }
+        if (ariaHidden === null) {
+          element.removeAttribute("aria-hidden");
+        } else {
+          element.setAttribute("aria-hidden", ariaHidden);
+        }
+      }
+    };
+  }, [isMobileModalActive]);
 
   useEffect(() => {
     if (!isMobileMenuOpen) return;
 
+    const focusFrame = window.requestAnimationFrame(() => {
+      const firstMenuLink = mobileMenuRef.current?.querySelector<HTMLElement>(
+        "[data-menu-link]",
+      );
+      firstMenuLink?.focus({ preventScroll: true });
+    });
+
+    return () => window.cancelAnimationFrame(focusFrame);
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    if (!isMobileModalActive) return;
+
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      setIsMobileMenuOpen(false);
-      mobileMenuButtonRef.current?.focus();
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeMobileMenu(true);
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const candidates = [
+        mobileMenuButtonRef.current,
+        ...Array.from(
+          mobileMenuRef.current?.querySelectorAll<HTMLElement>(
+            focusableSelector,
+          ) ?? [],
+        ),
+      ].filter((element): element is HTMLElement => {
+        if (!element || element.closest("[inert]")) return false;
+        const style = window.getComputedStyle(element);
+        return style.display !== "none" &&
+          style.visibility !== "hidden" &&
+          element.getClientRects().length > 0;
+      });
+
+      if (!candidates.length) {
+        event.preventDefault();
+        mobileMenuButtonRef.current?.focus({ preventScroll: true });
+        return;
+      }
+
+      const activeIndex = candidates.indexOf(
+        document.activeElement as HTMLElement,
+      );
+      const target = event.shiftKey
+        ? activeIndex <= 0
+          ? candidates[candidates.length - 1]
+          : candidates[activeIndex - 1]
+        : activeIndex === -1 || activeIndex === candidates.length - 1
+        ? candidates[0]
+        : candidates[activeIndex + 1];
+
+      event.preventDefault();
+      target.focus({ preventScroll: true });
     };
     const handleResize = () => {
-      if (window.innerWidth >= 1024) setIsMobileMenuOpen(false);
+      if (window.innerWidth >= 1024) hideMobileMenuImmediately();
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -119,7 +300,23 @@ export function SiteHeader({ variant }: { variant: "landing" | "interior" }) {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("resize", handleResize);
     };
-  }, [isMobileMenuOpen]);
+  }, [
+    closeMobileMenu,
+    hideMobileMenuImmediately,
+    isMobileModalActive,
+  ]);
+
+  useEffect(() => {
+    if (previousPathnameRef.current === pathname) return;
+    previousPathnameRef.current = pathname;
+    hideMobileMenuImmediately();
+  }, [hideMobileMenuImmediately, pathname]);
+
+  useEffect(() => () => {
+    if (focusReturnFrameRef.current !== null) {
+      window.cancelAnimationFrame(focusReturnFrameRef.current);
+    }
+  }, []);
 
   useGSAP(() => {
     const menu = mobileMenuRef.current;
@@ -316,7 +513,13 @@ export function SiteHeader({ variant }: { variant: "landing" | "interior" }) {
         duration: 0.72,
         ease: "power3.out",
         force3D: true,
-        onStart: () => gsap.set(shell, { willChange: "transform" }),
+        onComplete: () => {
+          shell.setAttribute("data-header-entry-state", "ready");
+        },
+        onStart: () => {
+          shell.setAttribute("data-header-entry-state", "running");
+          gsap.set(shell, { willChange: "transform" });
+        },
         y: 0,
       },
     );
@@ -487,6 +690,7 @@ export function SiteHeader({ variant }: { variant: "landing" | "interior" }) {
         <div
           data-header-shell
           data-header-mode={variant === "landing" ? "top" : "scrolled"}
+          data-header-entry-state="pending"
           className="site-header-shell pointer-events-auto relative z-50 isolate mx-auto flex min-h-16 max-w-[900px] items-center justify-between gap-3 rounded-full lg:border lg:border-black/[0.08] lg:bg-[rgba(255,254,250,0.88)] p-2 lg:shadow-[0_10px_36px_rgba(17,17,17,0.07)] lg:backdrop-blur-xl"
         >
           <Link
@@ -607,7 +811,14 @@ export function SiteHeader({ variant }: { variant: "landing" | "interior" }) {
             <button
               ref={mobileMenuButtonRef}
               type="button"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={() => {
+                if (isMobileMenuOpen) {
+                  closeMobileMenu(true);
+                } else {
+                  setIsMenuClosing(false);
+                  setIsMobileMenuOpen(true);
+                }
+              }}
               aria-label={isMobileMenuOpen ? "Tutup Menu" : "Buka Menu"}
               aria-expanded={isMobileMenuOpen}
               aria-controls="mobile-navigation-overlay"
@@ -663,7 +874,7 @@ export function SiteHeader({ variant }: { variant: "landing" | "interior" }) {
                   <Link
                     data-menu-link
                     href={href}
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    onClick={() => closeMobileMenu(false)}
                     aria-current={active ? "page" : undefined}
                     className={`block text-[clamp(2.35rem,11vw,4rem)] font-bold leading-[0.9] tracking-[-0.065em] transition-colors ${
                       active ? "text-ai" : "text-white hover:text-white/80"
@@ -682,7 +893,7 @@ export function SiteHeader({ variant }: { variant: "landing" | "interior" }) {
           >
             <Link
               href="/scan"
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={() => closeMobileMenu(false)}
               className="flex h-14 items-center justify-center gap-3 rounded-full bg-white px-8 text-ink font-semibold text-lg hover:bg-ai hover:text-white transition-colors"
             >
               Mulai Periksa

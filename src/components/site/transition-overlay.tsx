@@ -31,10 +31,10 @@ export function TransitionOverlay() {
     await new Promise<void>((resolve) => {
       gsap.to(layers, {
         xPercent: 0,
-        duration: 0.42,
+        duration: 0.22,
         ease: "power3.inOut",
         force3D: true,
-        stagger: 0.045,
+        stagger: 0.025,
         onComplete: () => {
           container.dataset.transitionState = "covered";
           resolve();
@@ -64,10 +64,10 @@ export function TransitionOverlay() {
     await new Promise<void>((resolve) => {
       gsap.to(layers, {
         xPercent: 100,
-        duration: 0.52,
+        duration: 0.28,
         ease: "power3.inOut",
         force3D: true,
-        stagger: { each: 0.045, from: "end" },
+        stagger: { each: 0.025, from: "end" },
         onComplete: () => {
           isActiveRef.current = false;
           container.dataset.transitionState = "idle";

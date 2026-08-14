@@ -1,8 +1,6 @@
 "use client";
 
-import { useRef } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
+import { useEffect, useRef } from "react";
 import type {
   SimulatorChoice,
   SimulatorEvaluation,
@@ -13,8 +11,6 @@ import type { PersonalizedPractice } from "@/lib/simulator/personalized";
 import { ChoiceFeedbackSection } from "@/app/simulator/_components/choice-feedback-section";
 import { DecisionReviewSection } from "@/app/simulator/_components/decision-review-section";
 import { TransferableRuleSection } from "@/app/simulator/_components/transferable-rule-section";
-
-gsap.registerPlugin(useGSAP);
 
 const LEVEL_COPY: Record<
   SimulatorEvaluation["level"],
@@ -49,7 +45,10 @@ type Props = {
   selectedChoice: SimulatorChoice | null;
   result: SimulatorEvaluation | null;
   practice: PersonalizedPractice | null;
+  practiceState: "idle" | "loading" | "loaded" | "unavailable";
+  completedCount: number;
   progressValue: number;
+  manageFocus: boolean;
   onChoose: (choiceId: string) => void;
   onContinue: () => void;
   onReset: () => void;
@@ -65,35 +64,45 @@ export function ScenarioPanelSection(
     selectedChoice,
     result,
     practice,
+    practiceState,
+    completedCount,
     progressValue,
+    manageFocus,
     onChoose,
     onContinue,
     onReset,
     onNext,
   }: Props,
 ) {
-  const root = useRef<HTMLElement>(null);
-  useGSAP(() => {
-    if (
-      typeof window.matchMedia !== "function" ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) return;
-    gsap.from(root.current, {
-      opacity: 0.82,
-      duration: 0.65,
-      ease: "power3.out",
+  const contentHeadingRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    if (!manageFocus) return;
+    const frame = window.requestAnimationFrame(() => {
+      contentHeadingRef.current?.focus();
     });
-  }, { scope: root });
+    return () => window.cancelAnimationFrame(frame);
+  }, [manageFocus, result, step.id]);
 
   return (
     <section
-      ref={root}
-      className="motion-surface p-5 sm:p-8"
+      className="product-task-surface p-5 sm:p-8"
       aria-labelledby="simulator-scenario-title"
     >
+      {practiceState === "loading" ? (
+        <p className="relative z-10 mb-5 rounded-[16px] border-l-4 border-ai bg-ai-soft p-4 text-sm" role="status">
+          Menyiapkan latihan dari hasil pemeriksaan…
+        </p>
+      ) : null}
+      {practiceState === "unavailable" ? (
+        <p className="relative z-10 mb-5 rounded-[16px] border-l-4 border-warning bg-warning-soft p-4 text-sm leading-6" role="status">
+          Personalisasi belum tersedia. Latihan lokal tetap dapat digunakan
+          tanpa kehilangan pilihanmu.
+        </p>
+      ) : null}
       {practice
         ? (
-          <div className="relative z-10 mb-6 border-l-4 border-ai bg-ai-soft p-4 text-sm leading-6">
+          <div className="relative z-10 mb-6 rounded-[16px] border-l-4 border-ai bg-ai-soft p-4 text-sm leading-6">
             <strong>{practice.title}</strong>
             <p className="mt-1 text-muted">{practice.learningObjective}</p>
           </div>
@@ -117,7 +126,7 @@ export function ScenarioPanelSection(
             {scenario.description}
           </p>
         </div>
-        <span className="shrink-0 border border-line px-3 py-2 font-mono text-xs text-muted">
+        <span className="shrink-0 rounded-full border border-line px-3 py-2 font-mono text-xs text-muted">
           {result ? "Selesai" : `${stepIndex + 1} / ${scenario.steps.length}`}
         </span>
       </div>
@@ -128,6 +137,7 @@ export function ScenarioPanelSection(
         aria-valuemin={0}
         aria-valuemax={scenario.steps.length}
         aria-valuenow={progressValue}
+        aria-valuetext={`${progressValue} dari ${scenario.steps.length} keputusan`}
       >
         <span
           className="block h-full origin-left bg-ai transition-transform duration-300 motion-reduce:transition-none"
@@ -139,6 +149,19 @@ export function ScenarioPanelSection(
       {result
         ? (
           <div className="relative z-10 py-8" aria-live="polite">
+            {completedCount === 8 ? (
+              <section className="mb-8 rounded-[20px] bg-ai p-5 text-white sm:p-7" aria-labelledby="all-scenarios-complete">
+                <p className="product-eyebrow text-white/70">Rangkaian selesai</p>
+                <h3 id="all-scenarios-complete" className="mt-3 text-2xl font-semibold">
+                  Delapan skenario sudah kamu selesaikan.
+                </h3>
+                <p className="mt-3 max-w-2xl text-sm leading-7 text-white/75">
+                  Tinjau keputusan pada skenario ini, lalu ulangi skenario yang
+                  masih terasa sulit. Tidak ada streak atau peringkat yang perlu
+                  dipertahankan.
+                </p>
+              </section>
+            ) : null}
             <div className="grid gap-6 border-b border-line pb-8 sm:grid-cols-[0.32fr_0.68fr] sm:items-end">
               <div>
                 <p className="font-mono text-xs uppercase tracking-[0.16em] text-safe">
@@ -150,7 +173,11 @@ export function ScenarioPanelSection(
                 </p>
               </div>
               <div>
-                <h3 className="text-2xl font-semibold tracking-[-0.03em]">
+                <h3
+                  ref={contentHeadingRef}
+                  tabIndex={-1}
+                  className="text-2xl font-semibold tracking-[-0.03em] outline-none"
+                >
                   {LEVEL_COPY[result.level].title}
                 </h3>
                 <p className="mt-3 text-sm leading-7 text-muted">
@@ -168,7 +195,7 @@ export function ScenarioPanelSection(
                 {scenario.sources.map((source) => (
                   <a
                     key={source.url}
-                    className="inline-flex min-h-11 items-center border border-line px-4 py-2 text-xs font-semibold text-ai transition hover:border-ai hover:bg-ai-soft"
+                    className="inline-flex min-h-11 items-center rounded-full border border-line px-4 py-2 text-xs font-semibold text-ai transition hover:border-ai hover:bg-ai-soft"
                     href={source.url}
                     target="_blank"
                     rel="noreferrer"
@@ -181,14 +208,14 @@ export function ScenarioPanelSection(
             <div className="mt-8 flex flex-wrap gap-3">
               <button
                 type="button"
-                className="min-h-12 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-surface hover:bg-ai"
+                className="product-button product-button--primary"
                 onClick={onReset}
               >
                 Ulangi skenario
               </button>
               <button
                 type="button"
-                className="min-h-12 rounded-full border border-line bg-surface px-6 py-3 text-sm font-semibold hover:border-ink"
+                className="product-button product-button--secondary"
                 onClick={onNext}
               >
                 Skenario berikutnya →
@@ -201,8 +228,14 @@ export function ScenarioPanelSection(
             <p className="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-ai">
               {step.phase}
             </p>
-            <h3 className="mt-3 text-xl font-semibold">{step.prompt}</h3>
-            <p className="mt-5 border-l-4 border-risk bg-canvas p-5 text-lg leading-8 tracking-[-0.02em] sm:p-6 sm:text-2xl">
+            <h3
+              ref={contentHeadingRef}
+              tabIndex={-1}
+              className="mt-3 text-xl font-semibold outline-none"
+            >
+              {step.prompt}
+            </h3>
+            <p className="mt-5 rounded-[18px] border-l-4 border-risk bg-canvas p-5 text-lg leading-8 tracking-[-0.02em] sm:p-6 sm:text-2xl">
               “{step.message}”
             </p>
             <div className="mt-6 grid gap-3" aria-label="Pilihan respons">
@@ -214,7 +247,7 @@ export function ScenarioPanelSection(
                     type="button"
                     disabled={Boolean(selectedChoiceId)}
                     aria-pressed={active}
-                    className={`group grid min-h-14 grid-cols-[38px_1fr_auto] items-center border px-4 py-4 text-left text-sm font-semibold transition ${
+                    className={`product-choice-row group grid min-h-14 grid-cols-[38px_1fr_auto] items-center border px-4 py-4 text-left text-sm font-semibold transition ${
                       active
                         ? "border-ink bg-ink text-surface"
                         : selectedChoiceId

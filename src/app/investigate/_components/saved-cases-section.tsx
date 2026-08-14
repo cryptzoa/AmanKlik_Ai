@@ -1,76 +1,52 @@
-"use client";
-
-import { useRef } from "react";
-import { TransitionLink as Link } from "@/components/site/transition-link";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { TransitionLink } from "@/components/site/transition-link";
 import type { CaseItem } from "@/app/investigate/_components/types";
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
-
 export function SavedCasesSection({ cases }: { cases: CaseItem[] }) {
-  const root = useRef<HTMLElement>(null);
-  useGSAP(() => {
-    if (
-      typeof window.matchMedia !== "function" ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) return;
-    gsap.from(root.current, {
-      opacity: 0.82,
-      duration: 0.7,
-      ease: "power3.out",
-      scrollTrigger: { trigger: root.current, start: "top 88%", once: true },
-    });
-    gsap.from("[data-case-card]", {
-      autoAlpha: 0,
-      y: 30,
-      stagger: 0.08,
-      duration: 0.58,
-      scrollTrigger: { trigger: root.current, start: "top 82%", once: true },
-    });
-  }, { scope: root });
-
   return (
-    <section ref={root} aria-labelledby="case-list-heading">
-      <p className="font-mono text-xs uppercase tracking-[0.18em] text-ai">
-        Kasus tersimpan
-      </p>
-      <h2
-        id="case-list-heading"
-        className="mt-4 text-4xl font-semibold tracking-[-0.05em]"
-      >
-        Perbandingan sebelumnya
-      </h2>
-      <div className="mt-8 grid gap-px border border-line bg-line md:grid-cols-2">
-        {cases.length
-          ? cases.map((item) => (
-            <Link
+    <section className="saved-cases" aria-labelledby="case-list-heading">
+      <div className="saved-cases__heading">
+        <div>
+          <p className="product-eyebrow text-ai">02 / Temukan kembali</p>
+          <h2 id="case-list-heading">Kasus dalam sesi ini.</h2>
+        </div>
+        <p>
+          Jumlah artefak bukan jumlah pola bersama. Buka kasus untuk melihat
+          relasi yang benar-benar ditemukan.
+        </p>
+      </div>
+      <div className="saved-case-list">
+        {cases.length ? (
+          cases.map((item) => (
+            <TransitionLink
               key={item.id}
-              data-case-card
               prefetch={false}
-              className="lift-link bg-surface p-6 hover:bg-ai-soft sm:p-8"
+              className="saved-case-row"
               href={`/investigate/${item.id}`}
             >
-              <div className="flex items-center justify-between gap-4">
-                <span className="font-mono text-xs uppercase text-muted">
-                  {item.scanCount} artefak unik
+              <span className="saved-case-row__score">
+                {item.finalScore}<small>/100</small>
+              </span>
+              <span className="min-w-0">
+                <span className="saved-case-row__meta">
+                  {item.riskLevel.replace("_", " ")} · {item.status} · {item.scanCount} artefak
                 </span>
-                <span className="font-mono text-3xl font-semibold">
-                  {item.finalScore}
-                </span>
-              </div>
-              <h3 className="mt-6 text-2xl font-semibold">{item.title}</h3>
-              <p className="mt-3 text-sm leading-7 text-muted">
-                {item.summary}
-              </p>
-            </Link>
+                <strong>{item.title}</strong>
+                <span className="saved-case-row__summary">{item.summary}</span>
+                <time dateTime={item.updatedAt}>
+                  Diperbarui {new Date(item.updatedAt).toLocaleString("id-ID")}
+                </time>
+              </span>
+              <span aria-hidden="true">→</span>
+            </TransitionLink>
           ))
-          : (
-            <div className="col-span-full bg-surface p-8 text-muted">
-              Belum ada perbandingan bukti di sesi ini.
-            </div>
-          )}
+        ) : (
+          <div className="saved-case-empty">
+            <h3>Belum ada kasus tersimpan.</h3>
+            <p>
+              Pilih dua artefak unik di atas untuk membuat perbandingan pertama.
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );

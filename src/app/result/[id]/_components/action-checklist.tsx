@@ -1,11 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+import { useMemo, useState } from "react";
 
 import type { ActionItem } from "@/types/analysis";
 import type { ActionProgressState } from "@/types/action-progress";
@@ -16,6 +11,21 @@ const priorityLabels: Record<ActionItem["priority"], string> = {
   if_already_acted: "Jika sudah bertindak",
 };
 
+type ActionApiEnvelope = {
+  ok?: boolean;
+  error?: { message?: string };
+};
+
+async function readActionEnvelope(
+  response: Response,
+): Promise<ActionApiEnvelope> {
+  try {
+    return await response.json() as ActionApiEnvelope;
+  } catch {
+    return {};
+  }
+}
+
 export function ActionChecklist(
   { scanId, actions, initialProgress }: {
     scanId: string;
@@ -25,28 +35,8 @@ export function ActionChecklist(
 ) {
   const [progress, setProgress] = useState(initialProgress);
   const [saving, setSaving] = useState<string | null>(null);
-  const root = useRef<HTMLElement>(null);
-  useGSAP(() => {
-    if (
-      typeof window.matchMedia !== "function" ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) return;
-    gsap.from(root.current, {
-      opacity: 0.82,
-      duration: 0.7,
-      ease: "power3.out",
-      scrollTrigger: { trigger: root.current, start: "top 88%", once: true },
-    });
-    gsap.from("[data-action-row]", {
-      autoAlpha: 0,
-      y: 30,
-      stagger: 0.07,
-      duration: 0.58,
-      scrollTrigger: { trigger: root.current, start: "top 80%", once: true },
-    });
-  }, { scope: root });
-
   const [message, setMessage] = useState<string | null>(null);
+  const [messageIsError, setMessageIsError] = useState(false);
   const completed = useMemo(
     () =>
       actions.filter((action) => progress[action.id] === "completed").length,
@@ -61,13 +51,14 @@ export function ActionChecklist(
     setProgress((current) => ({ ...current, [actionId]: state }));
     setSaving(actionId);
     setMessage(null);
+    setMessageIsError(false);
     try {
       const response = await fetch(`/api/scans/${scanId}/actions`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ actionId, state }),
       });
-      const body = await response.json();
+      const body = await readActionEnvelope(response);
       if (!response.ok || !body.ok) {
         throw new Error(body.error?.message ?? "Progres belum tersimpan.");
       }
@@ -78,8 +69,13 @@ export function ActionChecklist(
       );
     } catch (error) {
       setProgress((current) => ({ ...current, [actionId]: previous }));
+      setMessageIsError(true);
       setMessage(
-        error instanceof Error ? error.message : "Progres belum tersimpan.",
+        !navigator.onLine || error instanceof TypeError
+          ? "Jaringan belum dapat menjangkau AmanKlik. Perubahan dibatalkan; coba lagi setelah koneksi stabil."
+          : error instanceof Error
+          ? error.message
+          : "Progres belum tersimpan.",
       );
     } finally {
       setSaving(null);
@@ -88,7 +84,6 @@ export function ActionChecklist(
 
   return (
     <section
-      ref={root}
       className="border-t border-line py-16"
       aria-labelledby="action-heading"
     >
@@ -104,7 +99,15 @@ export function ActionChecklist(
             <span>Progres</span>
             <span>{completed}/{actions.length}</span>
           </div>
-          <div className="mt-3 h-2 overflow-hidden rounded-full bg-line">
+          <div
+            className="mt-3 h-2 overflow-hidden rounded-full bg-line"
+            role="progressbar"
+            aria-label="Progres langkah aman"
+            aria-valuemin={0}
+            aria-valuemax={actions.length}
+            aria-valuenow={completed}
+            aria-valuetext={`${completed} dari ${actions.length} langkah selesai`}
+          >
             <div
               className="h-full bg-safe transition-[width]"
               style={{ width: `${percent}%` }}
@@ -112,14 +115,14 @@ export function ActionChecklist(
           </div>
         </div>
       </div>
-      <ol className="mt-9 border-y border-line">
+      <ol className="mt-9 grid gap-3">
         {actions.map((action, index) => {
           const state = progress[action.id] ?? "pending";
           return (
             <li
               key={action.id}
               data-action-row
-              className={`editorial-row grid gap-3 py-7 sm:grid-cols-[64px_1fr] sm:px-5 ${
+              className={`product-flat-row grid gap-3 p-5 sm:grid-cols-[64px_1fr] sm:p-7 ${
                 state === "completed"
                   ? "bg-safe-soft"
                   : state === "skipped"
@@ -157,11 +160,11 @@ export function ActionChecklist(
                 <div className="mt-5 flex flex-wrap gap-2">
                   <button
                     type="button"
-                    disabled={saving === action.id}
-                    className={`min-h-11 rounded-full px-4 text-xs font-semibold ${
+                    disabled={Boolean(saving)}
+                    className={`product-button min-h-11 px-4 text-xs ${
                       state === "completed"
                         ? "border border-ink bg-transparent text-ink"
-                        : "bg-ink text-surface hover:bg-ai"
+                        : "product-button--primary"
                     }`}
                     onClick={() =>
                       void update(
@@ -169,14 +172,16 @@ export function ActionChecklist(
                         state === "completed" ? "pending" : "completed",
                       )}
                   >
-                    {state === "completed"
+                    {saving === action.id
+                      ? "Menyimpan…"
+                      : state === "completed"
                       ? "Batalkan selesai"
                       : "Tandai selesai"}
                   </button>
                   <button
                     type="button"
-                    disabled={saving === action.id}
-                    className="min-h-11 rounded-full border border-line px-4 text-xs font-semibold hover:border-ai"
+                    disabled={Boolean(saving)}
+                    className="product-button product-button--secondary min-h-11 px-4 text-xs"
                     onClick={() =>
                       void update(
                         action.id,
@@ -192,7 +197,14 @@ export function ActionChecklist(
         })}
       </ol>
       {message
-        ? <p className="mt-4 text-sm text-muted" role="status">{message}</p>
+        ? (
+          <p
+            className={`mt-4 text-sm ${messageIsError ? "text-risk" : "text-muted"}`}
+            role={messageIsError ? "alert" : "status"}
+          >
+            {message}
+          </p>
+        )
         : null}
     </section>
   );

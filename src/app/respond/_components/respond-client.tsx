@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ResponsePlanSection } from "@/app/respond/_components/response-plan-section";
 import {
   buildResponsePlan,
@@ -19,19 +19,22 @@ import type {
 } from "@/lib/response/types";
 
 const INCIDENTS = Object.keys(INCIDENT_LABELS) as IncidentType[];
+type CopyStatus = { message: string; isError: boolean };
 
 function ChoiceButton(
-  { active, children, onClick }: {
+  { active, buttonRef, children, onClick }: {
     active: boolean;
+    buttonRef?: React.Ref<HTMLButtonElement>;
     children: React.ReactNode;
     onClick: () => void;
   },
 ) {
   return (
     <button
+      ref={buttonRef}
       type="button"
       aria-pressed={active}
-      className={`min-h-14 border px-4 py-4 text-left text-sm font-semibold transition ${
+      className={`product-choice-row min-h-14 border px-4 py-4 text-left text-sm font-semibold transition ${
         active
           ? "border-ink bg-ink text-surface"
           : "border-line bg-surface hover:border-ai hover:bg-ai-soft"
@@ -47,11 +50,12 @@ function ChoiceButton(
 }
 
 export function RespondClient() {
+  const firstIncidentRef = useRef<HTMLButtonElement>(null);
   const [selectedIncidents, setSelectedIncidents] = useState<IncidentType[]>(
     [],
   );
   const [selectedAssets, setSelectedAssets] = useState<AffectedAsset[]>([]);
-  const [copyStatus, setCopyStatus] = useState<string | null>(null);
+  const [copyStatus, setCopyStatus] = useState<CopyStatus | null>(null);
   const availableAssets = useMemo(
     () => affectedAssetsForIncidents(selectedIncidents),
     [selectedIncidents],
@@ -98,6 +102,7 @@ export function RespondClient() {
     setSelectedIncidents([]);
     setSelectedAssets([]);
     setCopyStatus(null);
+    window.requestAnimationFrame(() => firstIncidentRef.current?.focus());
   }
 
   async function copyChecklist() {
@@ -131,11 +136,16 @@ export function RespondClient() {
     try {
       if (!navigator.clipboard) throw new Error("Clipboard unavailable");
       await navigator.clipboard.writeText(text);
-      setCopyStatus("Langkah aman dan tautan resmi tersalin.");
+      setCopyStatus({
+        message: "Langkah aman dan tautan resmi tersalin.",
+        isError: false,
+      });
     } catch {
-      setCopyStatus(
-        "Clipboard tidak tersedia. Kamu tetap bisa mencetak atau mencatat langkah di halaman ini.",
-      );
+      setCopyStatus({
+        message:
+          "Clipboard tidak tersedia. Kamu tetap bisa mencetak atau mencatat langkah di halaman ini.",
+        isError: true,
+      });
     }
   }
 
@@ -150,10 +160,11 @@ export function RespondClient() {
             Pilih semua yang relevan. Jangan masukkan OTP, password, nomor
             rekening, nomor kartu, NIK, atau bukti transaksi.
           </p>
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            {INCIDENTS.map((incident) => (
+          <div className="mt-6 grid gap-2">
+            {INCIDENTS.map((incident, index) => (
               <ChoiceButton
                 key={incident}
+                buttonRef={index === 0 ? firstIncidentRef : undefined}
                 active={selectedIncidents.includes(incident)}
                 onClick={() => toggleIncident(incident)}
               >
@@ -204,7 +215,7 @@ export function RespondClient() {
             />
           )
           : (
-            <p className="mt-8 border border-dashed border-line p-6 text-sm leading-7 text-muted">
+            <p className="mt-8 rounded-[20px] border border-dashed border-line bg-surface p-6 text-sm leading-7 text-muted">
               Pilih situasi di atas. AmanKlik akan menyusun tiga tindakan
               pertama tanpa memakai AI dan tanpa menyimpan pilihanmu.
             </p>

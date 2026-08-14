@@ -16,15 +16,15 @@ const QUALITY_COPY: Record<
 > = {
   safe: {
     label: "Langkah aman",
-    className: "border-safe bg-[var(--safe-soft)] text-ink",
+    className: "border-safe bg-safe-soft text-ink",
   },
   partial: {
     label: "Belum cukup",
-    className: "border-warning bg-[var(--warning-soft)] text-ink",
+    className: "border-warning bg-warning-soft text-ink",
   },
   unsafe: {
     label: "Berisiko",
-    className: "border-risk bg-[var(--risk-soft)] text-ink",
+    className: "border-risk bg-risk-soft text-ink",
   },
 };
 
@@ -48,7 +48,8 @@ export function ChoiceFeedbackSection(
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ) return;
     gsap.from(root.current, {
-      opacity: 0.82,
+      opacity: 0,
+      y: 16,
       duration: 0.45,
       ease: "power3.out",
     });
@@ -57,7 +58,7 @@ export function ChoiceFeedbackSection(
   return (
     <section
       ref={root}
-      className={`mt-5 border-l-4 p-5 sm:p-6 ${quality.className}`}
+      className={`mt-5 rounded-[18px] border-l-4 p-5 sm:p-6 ${quality.className}`}
       aria-labelledby="decision-feedback-title"
       aria-live="polite"
     >
@@ -82,7 +83,7 @@ export function ChoiceFeedbackSection(
         : null}
       <button
         type="button"
-        className="mt-6 min-h-12 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-surface transition hover:bg-ai"
+        className="product-button product-button--primary mt-6"
         onClick={onContinue}
       >
         {finalStep ? "Lihat hasil latihan" : "Lanjut ke keputusan berikutnya"} →

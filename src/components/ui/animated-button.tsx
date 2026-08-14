@@ -78,7 +78,9 @@ export function MotionButton({
   );
 }
 
-export function ButtonMotion() {
+export function ButtonMotion(
+  { selector = BUTTON_SELECTOR }: { selector?: string } = {},
+) {
   useEffect(() => {
     if (
       typeof window.matchMedia !== "function" ||
@@ -90,7 +92,7 @@ export function ButtonMotion() {
 
     const findButton = (target: EventTarget | null) => {
       return target instanceof Element
-        ? target.closest<HTMLElement>(BUTTON_SELECTOR)
+        ? target.closest<HTMLElement>(selector)
         : null;
     };
 
@@ -146,7 +148,7 @@ export function ButtonMotion() {
       document.removeEventListener("pointermove", handlePointerMove);
       document.removeEventListener("pointerout", handlePointerOut);
     };
-  }, []);
+  }, [selector]);
 
   return null;
 }

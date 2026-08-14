@@ -1,21 +1,25 @@
-"use client";
-
-import { useRef } from "react";
 import { TransitionLink as Link } from "@/components/site/transition-link";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { InputType, RiskLevel } from "@/types/analysis";
-import { MotionButton } from "@/components/ui/animated-button";
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
-
-const labels: Record<RiskLevel, string> = {
+const riskLabels: Record<RiskLevel, string> = {
   LOW: "Risiko rendah",
   MEDIUM: "Risiko sedang",
   HIGH: "Risiko tinggi",
   VERY_HIGH: "Risiko sangat tinggi",
 };
+
+const inputLabels: Record<InputType, string> = {
+  text: "Pesan",
+  image: "Screenshot",
+  url: "Tautan",
+  conversation: "Percakapan",
+};
+
+const historyDateFormatter = new Intl.DateTimeFormat("id-ID", {
+  dateStyle: "medium",
+  timeStyle: "short",
+  timeZone: "Asia/Jakarta",
+});
 
 export type HistoryItem = {
   id: string;
@@ -23,6 +27,7 @@ export type HistoryItem = {
   riskLevel: RiskLevel;
   previewRedacted: string | null;
   finalScore: number;
+  createdAt: Date;
 };
 
 export function HistorySection(
@@ -31,107 +36,119 @@ export function HistorySection(
     storageUnavailable: boolean;
   },
 ) {
-  const root = useRef<HTMLElement>(null);
-
-  useGSAP(() => {
-    if (
-      typeof window.matchMedia !== "function" ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) return;
-    gsap.from(root.current, {
-      opacity: 0.82,
-      duration: 0.7,
-      ease: "power3.out",
-      scrollTrigger: { trigger: root.current, start: "top 88%", once: true },
-    });
-    gsap.from("[data-history-card]", {
-      autoAlpha: 0,
-      y: 34,
-      stagger: 0.055,
-      duration: 0.62,
-      ease: "power2.out",
-      scrollTrigger: { trigger: root.current, start: "top 84%", once: true },
-    });
-  }, { scope: root });
-
   return (
-    <section ref={root}>
-      <div className="flex flex-col gap-6 border-b border-line pb-8 sm:flex-row sm:items-end sm:justify-between">
-        <h2 className="section-title">Pemeriksaan terakhir</h2>
-        <MotionButton
-          arrow
-          className="editorial-button editorial-button-primary"
+    <section aria-labelledby="history-list-title">
+      <div className="flex flex-col gap-6  border-line pb-7 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+            Terbaru lebih dahulu
+          </p>
+          <h2
+            id="history-list-title"
+            className="mt-3 text-3xl font-semibold tracking-[-0.045em] sm:text-4xl"
+          >
+            Pemeriksaan terakhir
+          </h2>
+        </div>
+        <Link
+          className="product-button product-button--primary w-fit"
           href="/scan"
         >
           Periksa pesan baru
-        </MotionButton>
+          <span className="ml-3" aria-hidden="true">→</span>
+        </Link>
       </div>
-      {storageUnavailable
-        ? (
-          <div data-history-card className="motion-surface mt-12 p-8 sm:p-12">
-            <h2 className="text-2xl font-semibold">Riwayat belum tersedia</h2>
-            <p className="mt-3 max-w-xl text-muted">
-              Penyimpanan database belum terhubung. Hasil tidak ditampilkan
-              sebagai riwayat sampai penyimpanan siap.
-            </p>
-          </div>
-        )
-        : rows.length
-        ? (
-          <div className="mt-12 border-y border-line">
-            {rows.map((row) => (
+
+      {storageUnavailable ? (
+        <div className="product-empty-state" role="status">
+          <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-risk">
+            Penyimpanan tidak tersedia
+          </p>
+          <h2>Riwayat belum dapat dibaca</h2>
+          <p className="product-empty-state__copy">
+            Penyimpanan server sedang tidak dapat diakses. AmanKlik tidak
+            mengganti kondisi ini dengan daftar kosong, dan hasil baru belum
+            tentu dapat ditemukan kembali sampai layanan pulih.
+          </p>
+        </div>
+      ) : rows.length > 0 ? (
+        <ol
+          className="grid gap-3"
+          aria-label="Riwayat pemeriksaan, terbaru lebih dahulu"
+        >
+          {rows.map((row, index) => (
+            <li key={row.id} className="overflow-hidden rounded-[18px] border border-line-strong bg-surface">
               <Link
-                key={row.id}
-                data-history-card
                 prefetch={false}
                 href={`/result/${row.id}`}
-                className="editorial-row group grid gap-4 p-5 first:border-t-0 sm:grid-cols-[110px_1fr_100px] sm:items-center sm:p-6"
+                className="group grid min-h-28 gap-5 p-6 transition-colors hover:bg-ai-soft focus-visible:bg-ai-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ai sm:grid-cols-[3rem_9rem_minmax(0,1fr)_7rem] sm:items-center"
               >
-                <span className="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-muted">
-                  {row.inputType}
+                <span className="font-mono text-[11px] font-semibold tabular-nums text-muted">
+                  {String(index + 1).padStart(2, "0")}
                 </span>
-                <span>
-                  <strong className="block text-xl tracking-[-0.02em]">
-                    {labels[row.riskLevel]}
+
+                <span className="grid gap-2">
+                  <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-ink">
+                    {inputLabels[row.inputType]}
+                  </span>
+                  <time
+                    className="text-xs leading-5 text-muted"
+                    dateTime={row.createdAt.toISOString()}
+                  >
+                    {historyDateFormatter.format(row.createdAt)} WIB
+                  </time>
+                </span>
+
+                <span className="min-w-0">
+                  <strong className="block text-lg font-semibold tracking-[-0.025em] sm:text-xl">
+                    {riskLabels[row.riskLevel]}
                   </strong>
-                  <span className="mt-1 block truncate text-sm text-muted">
-                    {row.previewRedacted ?? "Tanpa preview teks"}
+                  <span className="mt-2 block break-words text-sm leading-6 text-muted [overflow-wrap:anywhere]">
+                    {row.previewRedacted ?? "Preview teks tidak tersedia."}
                   </span>
                 </span>
-                <span className="flex items-center justify-between font-mono text-3xl font-semibold sm:justify-end">
-                  <span>{row.finalScore}</span>
-                  <span className="ml-5 text-base text-muted transition-transform group-hover:translate-x-1">
+
+                <span className="flex items-end justify-between sm:items-center sm:justify-end">
+                  <span>
+                    <span className="block font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted sm:text-right">
+                      Skor
+                    </span>
+                    <span className="mt-1 block font-mono text-3xl font-semibold tabular-nums sm:text-right">
+                      {row.finalScore}
+                    </span>
+                  </span>
+                  <span
+                    className="ml-5 text-lg text-muted transition-transform duration-200 group-hover:translate-x-1 group-hover:text-ai"
+                    aria-hidden="true"
+                  >
                     →
                   </span>
                 </span>
               </Link>
-            ))}
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <div className="product-empty-state">
+          <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-ai">
+            0 hasil
+          </p>
+          <h2>Belum ada pemeriksaan di sesi ini</h2>
+          <p className="product-empty-state__copy">
+            Hasil yang terhubung ke cookie sesi anonim browser ini akan muncul
+            di sini setelah pemeriksaan selesai. Ini bukan inbox atau akun, dan
+            data sesi dicocokkan oleh server.
+          </p>
+          <div className="product-empty-state__action">
+            <Link
+              className="product-button product-button--primary"
+              href="/scan"
+            >
+              Mulai periksa
+            </Link>
           </div>
-        )
-        : (
-          <div
-            data-history-card
-            className="motion-surface mt-12 grid min-h-72 place-items-center p-8 text-center sm:p-12"
-          >
-            <div>
-              <span className="font-mono text-xs uppercase tracking-[0.18em] text-ai">
-                0 hasil
-              </span>
-              <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em]">
-                Belum ada pemeriksaan
-              </h2>
-              <p className="mt-3 text-muted">
-                Hasil yang kamu periksa di sesi ini akan muncul di sini.
-              </p>
-              <Link
-                className="lift-link mt-7 inline-flex rounded-full bg-ink px-6 py-3 font-semibold text-surface hover:bg-ai"
-                href="/scan"
-              >
-                Mulai periksa
-              </Link>
-            </div>
-          </div>
-        )}
+        </div>
+      )}
     </section>
   );
 }

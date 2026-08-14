@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { ResultView } from "@/app/result/[id]/_components/result-view";
 import {
   countDistinctSessionsForInputHash,
@@ -10,6 +11,12 @@ import { listActionProgress } from "@/db/repositories/action-progress-repository
 import { reportServerError } from "@/server/observability/report-error";
 
 export const dynamic = "force-dynamic";
+export const metadata: Metadata = {
+  title: "Hasil pemeriksaan — AmanKlik AI",
+  description:
+    "Tinjau skor risiko, bukti, keterbatasan analisis, dan langkah aman berikutnya.",
+  robots: { index: false, follow: false },
+};
 
 export default async function ResultPage(
   { params }: { params: Promise<{ id: string }> },

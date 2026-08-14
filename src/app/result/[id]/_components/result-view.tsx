@@ -5,18 +5,12 @@ import { ResultDisclaimer } from "@/app/result/[id]/_components/result-disclaime
 import { ResultNotices } from "@/app/result/[id]/_components/result-notices";
 import { ResultSummarySection } from "@/app/result/[id]/_components/result-summary-section";
 import { UrlAnalysisSection } from "@/app/result/[id]/_components/url-analysis-section";
-import { InteriorShell } from "@/components/site/interior-shell";
 import { ScoreBreakdown } from "@/app/result/[id]/_components/score-breakdown";
 import { ReportActions } from "@/app/result/[id]/_components/report-actions";
 import { ConversationTimeline } from "@/app/result/[id]/_components/conversation-timeline";
 import { ActionChecklist } from "@/app/result/[id]/_components/action-checklist";
 import type { ActionProgressState } from "@/types/action-progress";
-
-const modeLabels: Record<AnalysisResult["analysisMode"], string> = {
-  hybrid: "AI + pola",
-  cached_hybrid: "Analisis tersimpan",
-  rules_only: "Pola saja",
-};
+import { PageFrame } from "@/components/product/page-frame";
 
 export function ResultView({
   result,
@@ -27,57 +21,48 @@ export function ResultView({
   initialActionProgress?: Record<string, ActionProgressState>;
   intelligenceMatchCount?: number;
 }) {
-  const isElevated = result.riskLevel === "HIGH" ||
-    result.riskLevel === "VERY_HIGH";
-
   return (
-    <InteriorShell
-      eyebrow="05 / Result"
-      title={isElevated
-        ? "Jeda sebelum bertindak."
-        : "Tetap periksa konteksnya."}
-      description="Skor bukan vonis. Baca indikator, ketidakpastian, dan tindakan aman sebelum mengambil keputusan berikutnya."
-      marker="SKOR / ALASAN / AKSI"
-      fragments={[
-        result.riskLevel.replace("_", " "),
-        `${result.indicators.length} SINYAL`,
-        modeLabels[result.analysisMode],
-      ]}
-      compact
-    >
-      <ResultSummarySection result={result} />
-
-      <ResultNotices
-        aiAvailable={result.aiAvailable}
-        intelligenceMatchCount={intelligenceMatchCount}
-      />
-
-      <ScoreBreakdown
-        explanation={result.scoreExplanation}
-        signals={result.indicators}
-      />
-
-      <ConversationTimeline analysis={result.conversationAnalysis} />
+    <PageFrame>
+      <section className="result-opening">
+        <div className="product-container">
+          <ResultSummarySection result={result} />
+          <ResultNotices
+            aiAvailable={result.aiAvailable}
+            intelligenceMatchCount={intelligenceMatchCount}
+          />
+        </div>
+      </section>
 
       <EvidenceSection signals={result.indicators} />
 
-      {result.urlAnalysis
-        ? <UrlAnalysisSection analysis={result.urlAnalysis} />
-        : null}
+      <div className="product-route-body">
+        <div className="product-wide-canvas">
+          <ScoreBreakdown
+            explanation={result.scoreExplanation}
+            signals={result.indicators}
+          />
 
-      {result.previewRedacted
-        ? <ContextSection preview={result.previewRedacted} />
-        : null}
+          <ConversationTimeline analysis={result.conversationAnalysis} />
 
-      <ActionChecklist
-        scanId={result.scanId}
-        actions={result.actionPlan}
-        initialProgress={initialActionProgress}
-      />
+          {result.urlAnalysis
+            ? <UrlAnalysisSection analysis={result.urlAnalysis} />
+            : null}
 
-      <ReportActions result={result} />
+          {result.previewRedacted
+            ? <ContextSection preview={result.previewRedacted} />
+            : null}
 
-      <ResultDisclaimer>{result.disclaimer}</ResultDisclaimer>
-    </InteriorShell>
+          <ActionChecklist
+            scanId={result.scanId}
+            actions={result.actionPlan}
+            initialProgress={initialActionProgress}
+          />
+
+          <ReportActions result={result} />
+
+          <ResultDisclaimer>{result.disclaimer}</ResultDisclaimer>
+        </div>
+      </div>
+    </PageFrame>
   );
 }

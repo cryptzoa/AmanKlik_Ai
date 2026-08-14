@@ -1,5 +1,40 @@
 import { expect, test } from "@playwright/test";
 
+test("product rows and CTA motion use the shared visual grammar", async ({ page }) => {
+  await page.goto("/respond");
+
+  const choice = page.getByRole("button", { name: /Uang sudah terkirim/i });
+  await expect.poll(() =>
+    choice.evaluate((element) => getComputedStyle(element).borderRadius)
+  ).toBe("16px");
+  await expect.poll(() =>
+    page.locator("p.border-dashed").evaluate((element) =>
+      getComputedStyle(element).borderRadius
+    )
+  ).toBe("20px");
+
+  await choice.click();
+  const sourceLink = page.locator(".product-source-link").first();
+  await sourceLink.hover();
+  await expect.poll(() =>
+    sourceLink.evaluate((element) => getComputedStyle(element).color)
+  ).toBe("rgb(255, 255, 255)");
+
+  const primaryAction = page.locator(".product-button--primary").first();
+  await primaryAction.hover();
+  await expect(primaryAction).toHaveClass(/is-hovering/);
+  await expect.poll(() =>
+    primaryAction.evaluate((element) =>
+      getComputedStyle(element, "::before").opacity
+    )
+  ).toBe("1");
+  await expect.poll(() =>
+    primaryAction.evaluate((element) =>
+      getComputedStyle(element, "::before").zIndex
+    )
+  ).toBe("-1");
+});
+
 test("money transfer flow exposes bank, IASC, and police as the first three actions", async ({ page }) => {
   await page.goto("/respond");
   await page.getByRole("button", { name: /Uang sudah terkirim/i }).click();
@@ -59,4 +94,22 @@ test("unsure stays exclusive from concrete incidents", async ({ page }) => {
   await transfer.click();
   await expect(unsure).toHaveAttribute("aria-pressed", "false");
   await expect(transfer).toHaveAttribute("aria-pressed", "true");
+});
+
+test("copy failure stays visible as an actionable error", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: {
+        writeText: () => Promise.reject(new Error("Clipboard blocked")),
+      },
+    });
+  });
+  await page.goto("/respond");
+  await page.getByRole("button", { name: /Uang sudah terkirim/i }).click();
+  await page.getByRole("button", { name: "Salin semua langkah" }).click();
+
+  await expect(page.getByRole("alert").filter({
+    hasText: "Clipboard tidak tersedia",
+  })).toBeVisible();
 });

@@ -1,84 +1,56 @@
-"use client";
-
-import { useRef, useEffect } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { usePreloader } from "@/components/site/preloader-context";
-import { useTransition } from "@/components/site/transition-context";
-
-gsap.registerPlugin(useGSAP, ScrollTrigger);
-
 export function SetupSection(
   { appBaseUrl, onCopy }: {
     appBaseUrl: string;
     onCopy: (value: string) => void;
   },
 ) {
-  const root = useRef<HTMLElement>(null);
-  const { isLoaded } = usePreloader();
-  const { isTransitioning } = useTransition();
-  const isReady = isLoaded && !isTransitioning;
-  const tweenRef = useRef<gsap.core.Tween | null>(null);
-
-  useGSAP(() => {
-    if (
-      typeof window.matchMedia !== "function" ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) return;
-    const tween = gsap.from(root.current, {
-      opacity: 0.82,
-      duration: 0.7,
-      ease: "power3.out",
-      scrollTrigger: { trigger: root.current, start: "top 88%", once: true },
-      paused: !isReady
-    });
-    tweenRef.current = tween;
-  }, { scope: root });
-
-  useEffect(() => {
-    if (isReady && tweenRef.current) {
-      tweenRef.current.play();
-    }
-  }, [isReady]);
-
   return (
-    <section ref={root} className="grid gap-8 lg:grid-cols-[0.4fr_0.6fr]">
+    <section className="connect-setup" aria-labelledby="connect-setup-heading">
       <div>
-        <p className="font-mono text-xs uppercase tracking-[0.18em] text-ai">
-          Setup
-        </p>
-        <h2 className="mt-4 text-3xl font-semibold">Konfigurasi side panel</h2>
-        <ol className="mt-5 list-decimal space-y-3 pl-5 text-sm leading-7 text-muted">
+        <p className="product-eyebrow text-ai">02 / Siapkan side panel</p>
+        <h2 id="connect-setup-heading" className="connect-section-title">
+          Empat langkah, lalu uji dengan konten sintetis.
+        </h2>
+        <ol className="connect-setup__steps">
           <li>
-            Buka <code>chrome://extensions</code> dan aktifkan Developer mode.
+            <span>01</span>
+            <p>Buka <code>chrome://extensions</code> dan aktifkan Developer mode.</p>
           </li>
           <li>
-            Pilih Load unpacked, lalu pilih folder <code>extension/</code>{" "}
-            di repository.
+            <span>02</span>
+            <p>
+              Pilih Load unpacked, lalu pilih folder <code>extension/</code> di
+              repository.
+            </p>
           </li>
-          <li>Buka ikon AmanKlik, isi Base URL dan token di atas.</li>
           <li>
-            Blok pesan atau klik kanan tautan, lalu pilih “Periksa dengan
-            AmanKlik”.
+            <span>03</span>
+            <p>Buka ikon AmanKlik, lalu isi Base URL dan token dari atas.</p>
+          </li>
+          <li>
+            <span>04</span>
+            <p>
+              Blok pesan atau klik kanan tautan, lalu pilih “Periksa dengan
+              AmanKlik”.
+            </p>
           </li>
         </ol>
       </div>
-      <div className="border border-line bg-ink p-6 text-surface sm:p-8">
-        <p className="font-mono text-xs uppercase text-surface/60">Base URL</p>
+      <div className="connect-setup__endpoint">
+        <p className="product-eyebrow text-white/55">Base URL terverifikasi</p>
         <code className="mt-3 block break-all text-ai-soft">{appBaseUrl}</code>
         <button
           type="button"
-          className="mt-4 min-h-11 rounded-full border border-white/30 px-4 text-xs font-semibold"
+          className="product-button mt-4 border border-white/30 text-surface"
           onClick={() => onCopy(appBaseUrl)}
         >
           Salin Base URL
         </button>
-        <div className="mt-8 border-t border-white/20 pt-5 text-sm leading-7 text-surface/70">
-          Extension memakai permission{" "}
-          <strong className="text-surface">activeTab</strong>: akses halaman
-          bersifat sementara setelah tindakan pengguna, bukan membaca semua tab
-          terus-menerus.
+        <div className="connect-setup__permission">
+          Manifest extension meminta <strong>activeTab</strong>, context menu,
+          scripting, side panel, dan storage. Pemeriksaan dikirim ketika kamu
+          menjalankan aksi extension; token mentah disimpan oleh extension di
+          penyimpanan lokal browser sampai kamu mengganti atau menghapusnya.
         </div>
       </div>
     </section>

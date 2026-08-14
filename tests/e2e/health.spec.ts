@@ -159,6 +159,19 @@ test("landing stays readable with reduced motion and on mobile", async ({ page }
   await expect(
     mobileNavigation.getByRole("link", { name: "Riwayat", exact: true }),
   ).toBeVisible();
+  const firstMobileLink = mobileNavigation.getByRole("link", {
+    name: "Periksa",
+    exact: true,
+  });
+  await expect(firstMobileLink).toBeFocused();
+  await expect(page.locator('[inert][aria-hidden="true"]').first())
+    .toBeAttached();
+  await page.keyboard.press("Shift+Tab");
+  await expect(menuButton).toBeFocused();
+  await page.keyboard.press("Shift+Tab");
+  await expect(
+    mobileOverlay.getByRole("link", { name: /Mulai Periksa/i }),
+  ).toBeFocused();
   await expect.poll(() =>
     page.evaluate(() => {
       const overlay = document.querySelector<HTMLElement>(
@@ -258,6 +271,8 @@ test("landing and interior pages share one complete navigation", async ({ page }
 test("desktop Lainnya cursor and dropdown animation stay aligned", async ({ page }) => {
   await page.goto("/scan");
 
+  const shell = page.locator("[data-header-shell]");
+  await expect(shell).toHaveAttribute("data-header-entry-state", "ready");
   const primary = page.getByRole("navigation", { name: "Navigasi utama" });
   const more = primary.getByLabel("Lainnya", { exact: true });
   await more.hover();
@@ -385,8 +400,7 @@ test("scanner can load every kind of synthetic fixture", async ({ page }) => {
     .toBeVisible();
 });
 
-test("every product surface uses the animated interior system without horizontal overflow", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
+test("every product surface reflows without clipped headings or horizontal overflow", async ({ page }) => {
   const surfaces = [
     ["/scan", /Apa yang ingin kamu periksa/i],
     ["/simulator", /Latih refleks amanmu/i],
@@ -397,28 +411,127 @@ test("every product surface uses the animated interior system without horizontal
     ["/investigate", /Bandingkan bukti yang berbeda/i],
     ["/benchmark", /Buktikan batasnya/i],
     ["/connect", /AmanKlik di tempat pesan datang/i],
+    ["/privacy", /Apa yang terjadi pada data yang kamu kirim/i],
     ["/alamat-yang-tidak-ada", /Jalurnya berhenti di sini/i],
   ] as const;
 
-  for (const [route, heading] of surfaces) {
+  for (const width of [320, 390]) {
+    await page.setViewportSize({ width, height: width === 320 ? 800 : 844 });
+
+    for (const [route, heading] of surfaces) {
+      await page.goto(route);
+      const title = page.getByRole("heading", { name: heading });
+      await expect(title).toBeVisible();
+      const layout = await page.evaluate(() => {
+        const h1 = document.querySelector("h1")?.getBoundingClientRect();
+        return {
+          client: document.documentElement.clientWidth,
+          headingLeft: h1?.left ?? -1,
+          headingRight: h1?.right ?? Number.POSITIVE_INFINITY,
+          scroll: document.documentElement.scrollWidth,
+        };
+      });
+      expect(layout.scroll, `${route} overflow pada ${width}px`).toBe(
+        layout.client,
+      );
+      expect(layout.headingLeft, `${route} h1 terpotong di kiri pada ${width}px`)
+        .toBeGreaterThanOrEqual(0);
+      expect(layout.headingRight, `${route} h1 terpotong di kanan pada ${width}px`)
+        .toBeLessThanOrEqual(layout.client);
+    }
+  }
+});
+
+test("intermediate product layouts and link CTAs keep their visual states", async ({ page }) => {
+  await page.setViewportSize({ width: 900, height: 870 });
+
+  for (const route of ["/investigate", "/learn"]) {
     await page.goto(route);
-    await expect(page.getByRole("heading", { name: heading })).toBeVisible();
-    const width = await page.evaluate(() => ({
-      scroll: document.documentElement.scrollWidth,
-      client: document.documentElement.clientWidth,
-    }));
-    expect(width.scroll, `${route} memiliki horizontal overflow`).toBe(
-      width.client,
+    const layout = await page.evaluate(() => {
+      const heading = document.querySelector("h1")?.getBoundingClientRect();
+      return {
+        client: document.documentElement.clientWidth,
+        scroll: document.documentElement.scrollWidth,
+        headingLeft: heading?.left ?? -1,
+        headingRight: heading?.right ?? Number.POSITIVE_INFINITY,
+      };
+    });
+    expect(layout.scroll).toBe(layout.client);
+    expect(layout.headingLeft).toBeGreaterThanOrEqual(0);
+    expect(layout.headingRight).toBeLessThanOrEqual(layout.client);
+  }
+
+  const learnSource = page.locator(".product-source-link").first();
+  await learnSource.hover();
+  await expect.poll(() =>
+    learnSource.evaluate((element) => getComputedStyle(element).color)
+  ).toBe("rgb(255, 255, 255)");
+
+  const headerCta = page.locator("[data-header-cta]");
+  await headerCta.hover();
+  await expect(headerCta).toHaveClass(/is-hovering/);
+  await expect.poll(() =>
+    headerCta.evaluate((element) =>
+      getComputedStyle(element, "::before").opacity
+    )
+  ).toBe("1");
+
+  await page.goto("/history");
+  const linkCta = page.locator("a.product-button").first();
+  await linkCta.hover();
+  await expect.poll(() =>
+    linkCta.evaluate((element) =>
+      getComputedStyle(element, "::before").backgroundColor
+    )
+  ).toBe("rgb(99, 91, 255)");
+});
+
+test("shared footer, hero surface, and Lenis stay consistent across public routes", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+
+  await page.goto("/");
+  const landingFooter = await page.locator("footer").evaluate((element) => ({
+    variant: element.getAttribute("data-footer-variant"),
+    links: Array.from(element.querySelectorAll("a")).map((link) => ({
+      href: link.getAttribute("href"),
+      text: link.textContent,
+    })),
+    wordmark: element.querySelector('[aria-hidden="true"]')?.textContent,
+  }));
+  const landingHeroSurface = await page.locator(".reference-hero").evaluate(
+    (element) => getComputedStyle(element).backgroundColor,
+  );
+
+  await page.goto("/scan");
+  await expect.poll(() => page.locator("footer").evaluate((element) => ({
+    variant: element.getAttribute("data-footer-variant"),
+    links: Array.from(element.querySelectorAll("a")).map((link) => ({
+      href: link.getAttribute("href"),
+      text: link.textContent,
+    })),
+    wordmark: element.querySelector('[aria-hidden="true"]')?.textContent,
+  }))).toEqual(landingFooter);
+  await expect(page.locator(".product-intro")).toHaveCSS(
+    "background-color",
+    landingHeroSurface,
+  );
+
+  for (const route of ["/", "/scan", "/learn"]) {
+    await page.goto(route);
+    await expect.poll(() =>
+      page.evaluate(() => document.documentElement.classList.contains("lenis"))
+    ).toBe(true);
+    await expect(page.locator("[data-scroll-progress-bar]")).toHaveCount(
+      route === "/" ? 1 : 0,
     );
   }
 });
 
-test("Lenis is attached to the expressive landing only when motion is allowed", async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: "no-preference" });
-  await page.goto("/");
+test("Lenis remains disabled when a visitor requests reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/scan");
 
   await expect.poll(() =>
     page.evaluate(() => document.documentElement.classList.contains("lenis"))
-  ).toBe(true);
-  await expect(page.locator("[data-scroll-progress-bar]")).toHaveCount(1);
+  ).toBe(false);
 });
