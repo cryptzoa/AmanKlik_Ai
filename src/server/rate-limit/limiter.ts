@@ -85,8 +85,21 @@ export async function consumeRateLimit(subject: string, cost = 1, request?: Requ
 
   const now = new Date(nowMs);
   const resetBefore = new Date(nowMs - windowMs);
-  for (const bucket of buckets) {
-    await consumeDatabaseBucket(bucket.hash, cost, bucket.limit, now, resetBefore);
+  try {
+    for (const bucket of buckets) {
+      await consumeDatabaseBucket(bucket.hash, cost, bucket.limit, now, resetBefore);
+    }
+  } catch (error) {
+    // The database-backed bucket is the shared limit. If it becomes unavailable,
+    // retain a bounded per-instance limit instead of turning every scan into a
+    // server error. A real limit rejection must still reach the caller.
+    if (error instanceof RateLimitError) throw error;
+
+    reportServerError("rate-limit.database", error);
+    for (const bucket of buckets) {
+      consumeLocalBucket(bucket.hash, cost, bucket.limit, nowMs, windowMs);
+    }
+    return;
   }
 
   if (nowMs - lastDatabaseCleanup >= Math.max(windowMs, 900_000)) {
