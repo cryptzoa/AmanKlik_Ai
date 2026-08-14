@@ -36,12 +36,12 @@ const STATUS_BY_CODE: Record<string, number> = {
   INTERNAL_ERROR: 503,
 };
 
-export function publicErrorResponse(error: unknown) {
+export function publicErrorResponse(error: unknown, context = "api.request") {
   const domainError = error instanceof DomainError ? error : null;
   const code = domainError?.code ?? (error instanceof z.ZodError || error instanceof SyntaxError ? "INVALID_INPUT" : "INTERNAL_ERROR");
   const retryable = domainError?.retryable ?? code === "INTERNAL_ERROR";
   const status = STATUS_BY_CODE[code] ?? 400;
-  if (status >= 500) reportServerError("api.request", error);
+  if (status >= 500) reportServerError(context, error);
 
   return Response.json(
     {

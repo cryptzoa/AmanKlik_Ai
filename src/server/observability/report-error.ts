@@ -2,6 +2,16 @@ import "server-only";
 
 import { DomainError } from "@/lib/errors";
 
+function safeCauseCode(error: unknown): string | undefined {
+  if (!error || typeof error !== "object" || !("code" in error)) return undefined;
+  const code = error.code;
+  // Database and network error codes identify the failure class without
+  // revealing request content, credentials, hostnames, or error messages.
+  return typeof code === "string" && /^[A-Z0-9_]{1,32}$/i.test(code)
+    ? code
+    : undefined;
+}
+
 export function reportServerError(context: string, error: unknown): void {
   const domainError = error instanceof DomainError ? error : null;
   const retryable = domainError?.retryable ?? false;
@@ -10,6 +20,7 @@ export function reportServerError(context: string, error: unknown): void {
     context,
     errorName: error instanceof Error ? error.name : "UnknownError",
     code: domainError?.code ?? "UNEXPECTED_ERROR",
+    causeCode: safeCauseCode(error),
     retryable,
     timestamp: new Date().toISOString(),
   };

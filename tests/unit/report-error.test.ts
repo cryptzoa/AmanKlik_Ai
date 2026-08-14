@@ -35,7 +35,10 @@ describe("reportServerError", () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     const error = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    reportServerError("unexpected", new Error("private detail"));
+    const failure = Object.assign(new Error("private detail"), {
+      code: "ECONNRESET",
+    });
+    reportServerError("unexpected", failure);
 
     expect(warn).not.toHaveBeenCalled();
     expect(error).toHaveBeenCalledOnce();
@@ -43,7 +46,11 @@ describe("reportServerError", () => {
       level: "error",
       context: "unexpected",
       code: "UNEXPECTED_ERROR",
+      causeCode: "ECONNRESET",
       retryable: false,
     });
+    expect(JSON.stringify(error.mock.calls[0]?.[0] ?? "")).not.toContain(
+      "private detail",
+    );
   });
 });

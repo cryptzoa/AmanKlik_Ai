@@ -35,6 +35,6 @@ export async function POST(request: Request) {
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch (error) {
-    return publicErrorResponse(error);
+    return publicErrorResponse(error, "api.scan.image");
   }
 }
