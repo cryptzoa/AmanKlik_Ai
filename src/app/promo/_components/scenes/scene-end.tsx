@@ -7,7 +7,6 @@ interface SceneEndProps {
 export function SceneEnd({ isPortrait = false }: SceneEndProps) {
   return (
     <div className="scene-end absolute inset-0 hidden flex-col items-center justify-center p-6 md:p-14 bg-[#F3F1EA] text-[#111111] overflow-hidden select-none">
-      {/* Moving subtle geometric grid */}
       <div
         className="end-grid absolute inset-0 opacity-20 pointer-events-none"
         style={{
@@ -17,7 +16,6 @@ export function SceneEnd({ isPortrait = false }: SceneEndProps) {
         }}
       />
 
-      {/* Centerpiece: Final Call to Action */}
       <div className="relative z-10 my-auto flex flex-col items-center text-center max-w-4xl px-4">
         <h2
           className="end-prompt font-extrabold tracking-tight text-[#111111] leading-tight mb-3"
@@ -28,16 +26,15 @@ export function SceneEnd({ isPortrait = false }: SceneEndProps) {
           Ada pesan yang bikin ragu?
         </h2>
 
-        <h1
+        <p
           className="end-cta font-extrabold tracking-tight text-[#635BFF] leading-none mb-10"
           style={{
             fontSize: isPortrait ? "80px" : "clamp(3.4rem, 6.2vw, 5.8rem)",
           }}
         >
           Periksa dengan AmanKlik.
-        </h1>
+        </p>
 
-        {/* Wordmark Lockup */}
         <div
           className={`end-brand flex items-center font-extrabold tracking-tighter leading-none border-3 border-[#111111] bg-white rounded-3xl shadow-[10px_10px_0_#111111] ${
             isPortrait ? "text-5xl px-8 py-5" : "text-3xl md:text-5xl border-2 px-6 md:px-8 py-3 md:py-4 rounded-2xl shadow-[8px_8px_0_#111111]"
@@ -51,7 +48,6 @@ export function SceneEnd({ isPortrait = false }: SceneEndProps) {
           </span>
         </div>
 
-        {/* Responsible Safety Guardrail Disclaimer */}
         <p className={`end-disclaimer font-mono text-[#6f6c65] leading-relaxed ${isPortrait ? "mt-10 text-lg max-w-xl" : "mt-8 text-xs max-w-md"}`}>
           AmanKlik membantu mengenali tanda bahaya manipulasi digital. Selalu lakukan verifikasi mandiri ke kanal resmi.
         </p>

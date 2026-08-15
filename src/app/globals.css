@@ -13,6 +13,8 @@
   --safe: #087f5b;
   --ai: #635bff;
   --ai-text: #5a51ed;
+  --ai-on-dark: #8f89ff;
+  --risk-on-dark: #ff756e;
   --risk-soft: #ffe4e1;
   --warning-soft: #fff0ca;
   --safe-soft: #dff6ea;
@@ -31,12 +33,16 @@
   --color-ink-soft: var(--ink-soft);
   --color-line: var(--line);
   --color-risk: var(--risk);
+  --color-risk-text: var(--risk-text);
   --color-risk-soft: var(--risk-soft);
   --color-warning: var(--warning);
   --color-warning-soft: var(--warning-soft);
   --color-safe: var(--safe);
   --color-safe-soft: var(--safe-soft);
   --color-ai: var(--ai);
+  --color-ai-text: var(--ai-text);
+  --color-ai-on-dark: var(--ai-on-dark);
+  --color-risk-on-dark: var(--risk-on-dark);
   --color-ai-soft: var(--ai-soft);
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
@@ -672,7 +678,6 @@ header details > summary {
 }
 
 .product-intro {
-  /* Match the landing hero surface; page-specific content supplies the hierarchy. */
   background: var(--canvas);
   border-bottom: 1px solid var(--line);
   padding: clamp(3.5rem, 8vw, 7rem) var(--product-gutter)
@@ -1287,8 +1292,6 @@ header details > summary {
 }
 
 .product-scope .result-summary__title {
-  /* Results are generated text, so they need an editorial display scale rather
-     than the fixed, short-copy hero scale used by route introductions. */
   font-size: clamp(2.5rem, 3.35vw, 4rem);
   font-weight: 650;
   letter-spacing: -.035em;

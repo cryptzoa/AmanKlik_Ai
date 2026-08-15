@@ -21,36 +21,34 @@ export function ClosingCtaSection() {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ) return;
 
-    const isDesktop = window.innerWidth >= 768;
-
     if (!root.current) return;
 
-    const pipelineContainer = document.querySelector("[data-pipeline-container]");
-    
-    const triggerEl = pipelineContainer || root.current;
+    const media = gsap.matchMedia();
+    media.add("(min-width: 768px)", () => {
+      const pipelineContainer = document.querySelector("[data-pipeline-container]");
+      const triggerEl = pipelineContainer || root.current;
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: triggerEl,
+          start: pipelineContainer ? "top 40%" : "top 60%",
+          end: pipelineContainer ? "bottom 10%" : "top 10%",
+          scrub: 0.5,
+        },
+      });
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: triggerEl,
-        start: pipelineContainer ? "top 40%" : "top 60%", 
-        end: pipelineContainer ? "bottom 10%" : "top 10%",
-        scrub: 0.5,
+      if (pipelineContainer) {
+        tl.to({}, { duration: 0.8 }, 0);
       }
-    });
 
-    if (pipelineContainer) {
-      tl.to({}, { duration: 0.8 }, 0);
-    }
-
-    const startTime = pipelineContainer ? 0.7 : 0;
-    
-    if (isDesktop) {
+      const startTime = pipelineContainer ? 0.7 : 0;
       tl.to(subtitleRef.current, { color: "rgba(255,255,255,0.7)", ease: "power3.inOut", duration: 0.3 }, startTime)
         .to(titleRef.current, { color: "white", ease: "power3.inOut", duration: 0.3 }, startTime)
         .to(descRef.current, { color: "rgba(255,255,255,0.8)", ease: "power3.inOut", duration: 0.3 }, startTime)
         .to(borderRef.current, { borderColor: "rgba(255,255,255,0.3)", ease: "power3.inOut", duration: 0.3 }, startTime)
         .to(".btn-text-anim", { color: "#161b22", backgroundColor: "white", ease: "power3.inOut", duration: 0.3 }, startTime);
-    }
+    });
+
+    return () => media.revert();
   }, { scope: root });
 
   return (

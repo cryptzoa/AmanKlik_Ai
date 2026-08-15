@@ -10,12 +10,13 @@ export function SmoothScroll() {
   useEffect(() => {
     if (typeof window.matchMedia !== "function") return;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const precisePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
     let cancelled = false;
     let starting = false;
     let cleanup: (() => void) | undefined;
 
     function start() {
-      if (reducedMotion.matches || cleanup || starting) return;
+      if (reducedMotion.matches || !precisePointer.matches || cleanup || starting) return;
       starting = true;
 
       void Promise.all([
@@ -23,7 +24,7 @@ export function SmoothScroll() {
         import("gsap"),
         import("gsap/ScrollTrigger"),
       ]).then(([lenisModule, gsapModule, scrollTriggerModule]) => {
-        if (cancelled || reducedMotion.matches) {
+        if (cancelled || reducedMotion.matches || !precisePointer.matches) {
           starting = false;
           return;
         }
@@ -53,8 +54,6 @@ export function SmoothScroll() {
 
         lenis.on("scroll", syncScroll);
         gsap.ticker.add(update);
-        // Lenis receives the same GSAP ticker as every ScrollTrigger timeline.
-        // This avoids a competing requestAnimationFrame loop.
         gsap.ticker.lagSmoothing(0);
         const refreshFrame = window.requestAnimationFrame(() => ScrollTrigger.refresh());
 
@@ -72,17 +71,19 @@ export function SmoothScroll() {
       });
     }
 
-    function handleMotionChange() {
-      if (reducedMotion.matches) cleanup?.();
+    function handlePreferenceChange() {
+      if (reducedMotion.matches || !precisePointer.matches) cleanup?.();
       else start();
     }
 
-    reducedMotion.addEventListener("change", handleMotionChange);
+    reducedMotion.addEventListener("change", handlePreferenceChange);
+    precisePointer.addEventListener("change", handlePreferenceChange);
     start();
 
     return () => {
       cancelled = true;
-      reducedMotion.removeEventListener("change", handleMotionChange);
+      reducedMotion.removeEventListener("change", handlePreferenceChange);
+      precisePointer.removeEventListener("change", handlePreferenceChange);
       cleanup?.();
     };
   }, []);

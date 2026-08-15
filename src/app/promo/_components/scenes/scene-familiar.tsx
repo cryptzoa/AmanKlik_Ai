@@ -7,7 +7,6 @@ interface SceneFamiliarProps {
 export function SceneFamiliar({ isPortrait = false }: SceneFamiliarProps) {
   return (
     <div className="scene-familiar absolute inset-0 hidden flex-col items-center justify-center p-6 md:p-12 bg-[#F3F1EA] text-[#111111] overflow-hidden select-none">
-      {/* Background subtle grain/rules */}
       <div
         className="absolute inset-0 opacity-40 pointer-events-none"
         style={{
@@ -17,7 +16,6 @@ export function SceneFamiliar({ isPortrait = false }: SceneFamiliarProps) {
         }}
       />
 
-      {/* Editorial Headline */}
       <div
         className={`familiar-headline relative z-10 text-center ${
           isPortrait ? "max-w-3xl mb-12" : "max-w-2xl mb-8 md:mb-12"
@@ -33,13 +31,11 @@ export function SceneFamiliar({ isPortrait = false }: SceneFamiliarProps) {
         </h2>
       </div>
 
-      {/* Layered Synthetic Chat Simulator Box */}
       <div
         className={`familiar-chat-box relative z-10 w-full ${
           isPortrait ? "w-[90%] max-w-[880px] p-8 gap-5 border-[3px] shadow-[12px_12px_0_#111111] rounded-3xl" : "max-w-lg p-5 md:p-7 gap-3 border-2 shadow-[8px_8px_0_#111111] rounded-2xl"
         } bg-[#fffefa] border-[#111111] flex flex-col`}
       >
-        {/* Chat header */}
         <div className="flex items-center justify-between pb-3 border-b border-[#111111]/15">
           <div className="flex items-center gap-4">
             <div
@@ -74,7 +70,6 @@ export function SceneFamiliar({ isPortrait = false }: SceneFamiliarProps) {
           </span>
         </div>
 
-        {/* Message bubble */}
         <div
           className={`bg-[#f7f6f2] border border-[#111111]/15 rounded-2xl flex flex-col gap-3 ${
             isPortrait ? "p-6" : "p-4"
@@ -104,7 +99,6 @@ export function SceneFamiliar({ isPortrait = false }: SceneFamiliarProps) {
           </div>
         </div>
 
-        {/* Manipulation pattern indicators */}
         <div className="familiar-tags flex flex-wrap gap-2 pt-1">
           <span
             className={`font-mono bg-[#111111] text-[#F3F1EA] rounded-full font-medium ${

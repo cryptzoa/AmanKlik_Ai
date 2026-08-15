@@ -7,7 +7,6 @@ interface SceneImpactProps {
 export function SceneImpact({ isPortrait = false }: SceneImpactProps) {
   return (
     <div className="scene-impact absolute inset-0 hidden flex-col justify-center p-6 md:p-14 bg-[#111111] text-[#F3F1EA] overflow-hidden select-none">
-      {/* 3 Sequential Value Core Lines */}
       <div
         className={`relative z-10 my-auto flex flex-col justify-center ${
           isPortrait ? "gap-10 max-w-2xl px-4" : "gap-8 md:gap-10 max-w-5xl px-4 md:px-8"

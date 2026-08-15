@@ -90,9 +90,6 @@ export async function consumeRateLimit(subject: string, cost = 1, request?: Requ
       await consumeDatabaseBucket(bucket.hash, cost, bucket.limit, now, resetBefore);
     }
   } catch (error) {
-    // The database-backed bucket is the shared limit. If it becomes unavailable,
-    // retain a bounded per-instance limit instead of turning every scan into a
-    // server error. A real limit rejection must still reach the caller.
     if (error instanceof RateLimitError) throw error;
 
     reportServerError("rate-limit.database", error);

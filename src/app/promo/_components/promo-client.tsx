@@ -23,7 +23,6 @@ export function PromoClient({ ratio, cut, mode }: PromoClientProps) {
   const [duration, setDuration] = useState(0);
   const [hasStarted, setHasStarted] = useState(false);
 
-  // Setup GSAP timeline callbacks
   useEffect(() => {
     masterTl.eventCallback("onUpdate", () => {
       setProgress(masterTl.progress());
@@ -64,20 +63,15 @@ export function PromoClient({ ratio, cut, mode }: PromoClientProps) {
 
   const jumpToLabel = useCallback(
     (label: string) => {
-      try {
-        masterTl.seek(label);
-        setProgress(masterTl.progress());
-      } catch {
-        // label seek fallback
-      }
+      if (!(label in masterTl.labels)) return;
+      masterTl.seek(label);
+      setProgress(masterTl.progress());
     },
     [masterTl]
   );
 
-  // Global Keyboard controls
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if typing in input
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
         return;
       }
@@ -111,9 +105,9 @@ export function PromoClient({ ratio, cut, mode }: PromoClientProps) {
       ref={containerRef}
       className="relative w-full h-screen bg-[#F3F1EA] flex items-center justify-center overflow-hidden"
     >
-      {/* RECORD MODE: Clean initial ready screen before capture */}
       {mode === "record" && !hasStarted && (
-        <div
+        <button
+          type="button"
           onClick={togglePlay}
           className="absolute inset-0 z-50 bg-[#111111] flex flex-col items-center justify-center text-center p-8 cursor-pointer select-none"
         >
@@ -128,10 +122,9 @@ export function PromoClient({ ratio, cut, mode }: PromoClientProps) {
           <p className="font-sans text-xs text-[#F3F1EA]/60 max-w-sm">
             Tekan <kbd className="px-2 py-1 bg-white/10 rounded font-mono text-white">SPACE</kbd> atau klik di mana saja untuk memulai perekaman layar deterministik.
           </p>
-        </div>
+        </button>
       )}
 
-      {/* THE DETERMINISTIC PROMO STAGE */}
       <PromoStage
         timeline={masterTl}
         ratio={ratio}
@@ -139,7 +132,6 @@ export function PromoClient({ ratio, cut, mode }: PromoClientProps) {
         onReady={handleStageReady}
       />
 
-      {/* PREVIEW CONTROLS (Only visible in Preview mode) */}
       {mode === "preview" && (
         <PromoControls
           isPlaying={isPlaying}

@@ -17,31 +17,34 @@ export function UrlAnatomySection() {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ) return;
 
-    const entranceTl = gsap.timeline({ paused: true });
-    entranceTl.fromTo("[data-headline-line]", 
-      { y: 80, opacity: 0, rotateZ: 2 }, 
-      { y: 0, opacity: 1, rotateZ: 0, stagger: 0.1, duration: 1, ease: "power4.out" }, 0
-    );
-    entranceTl.fromTo("[data-url-part]", 
-      { y: 60, opacity: 0, scale: 0.95 }, 
-      { y: 0, opacity: 1, scale: 1, stagger: 0.08, duration: 1, ease: "back.out(1.5)" }, 0.2
-    );
+    const buildTimelines = (targetGap: string) => {
+      const entrance = gsap.timeline({ paused: true });
+      entrance.fromTo("[data-headline-line]",
+        { y: 80, opacity: 0, rotateZ: 2 },
+        { y: 0, opacity: 1, rotateZ: 0, stagger: 0.1, duration: 1, ease: "power4.out" }, 0,
+      ).fromTo("[data-url-part]",
+        { y: 60, opacity: 0, scale: 0.95 },
+        { y: 0, opacity: 1, scale: 1, stagger: 0.08, duration: 1, ease: "back.out(1.5)" }, 0.2,
+      );
 
-    const isMobile = window.innerWidth < 768;
-    const targetGap = isMobile ? "1rem" : "3rem";
+      const breakout = gsap.timeline({ paused: true });
+      breakout.fromTo("[data-url-container]",
+        { columnGap: "0px" },
+        { columnGap: targetGap, ease: "power2.out" }, 0,
+      ).fromTo("[data-url-label]",
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, stagger: 0.1, ease: "back.out(1.5)" }, 0,
+      );
 
-    const breakoutTl = gsap.timeline({ paused: true });
-    breakoutTl.fromTo("[data-url-container]", 
-      { columnGap: "0px" }, 
-      { columnGap: targetGap, ease: "power2.out" }, 0
-    );
-    breakoutTl.fromTo("[data-url-label]", 
-      { y: 20, opacity: 0 }, 
-      { y: 0, opacity: 1, stagger: 0.1, ease: "back.out(1.5)" }, 0
-    );
+      return { entrance, breakout };
+    };
 
-    const prevSection = root.current?.previousElementSibling;
-    if (prevSection) {
+    const media = gsap.matchMedia();
+    media.add("(min-width: 768px)", () => {
+      const { entrance, breakout } = buildTimelines("3rem");
+      const prevSection = root.current?.previousElementSibling;
+      if (!prevSection) return;
+
       ScrollTrigger.create({
         trigger: prevSection,
         start: "bottom bottom",
@@ -50,15 +53,28 @@ export function UrlAnatomySection() {
         pin: true,
         pinSpacing: false,
         onUpdate: (self) => {
-          if (self.progress > 0.1) {
-            entranceTl.play();
-          }
-
-          const p = gsap.utils.clamp(0, 1, gsap.utils.mapRange(0.45, 0.85, 0, 1, self.progress));
-          breakoutTl.progress(p);
-        }
+          if (self.progress > 0.1) entrance.play();
+          breakout.progress(gsap.utils.clamp(
+            0,
+            1,
+            gsap.utils.mapRange(0.45, 0.85, 0, 1, self.progress),
+          ));
+        },
       });
-    }
+    });
+
+    media.add("(max-width: 767px)", () => {
+      const { entrance, breakout } = buildTimelines("1rem");
+      ScrollTrigger.create({
+        trigger: root.current,
+        start: "top 82%",
+        once: true,
+        onEnter: () => {
+          entrance.play();
+          breakout.play();
+        },
+      });
+    });
 
     gsap.to("[data-url-domain]", {
       boxShadow: "0 0 50px rgba(255,51,51,0.5)",
@@ -66,8 +82,15 @@ export function UrlAnatomySection() {
       repeat: -1,
       duration: 1.5,
       ease: "sine.inOut",
+      scrollTrigger: {
+        trigger: root.current,
+        start: "top bottom",
+        end: "bottom top",
+        toggleActions: "play pause resume pause",
+      },
     });
 
+    return () => media.revert();
   }, { scope: root });
 
   return (
@@ -79,7 +102,7 @@ export function UrlAnatomySection() {
       <div className="mx-auto max-w-[1320px]">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-end lg:gap-8">
           <div className="lg:col-span-7">
-            <p className="font-mono text-xs uppercase tracking-[0.2em] text-ai">
+            <p className="font-mono text-xs uppercase tracking-[0.2em] text-ai-on-dark">
               02 / Anatomi URL
             </p>
             <h2 className="mt-8 flex flex-col text-[clamp(2.5rem,5vw,4.5rem)] font-medium leading-[1.05] tracking-tight text-white">
@@ -103,7 +126,7 @@ export function UrlAnatomySection() {
             style={{ columnGap: "0px", rowGap: "64px" }}
           >
             <div className="relative flex flex-col items-center" data-url-group>
-              <span data-url-part className="text-[#77776f]">https://</span>
+              <span data-url-part className="text-[#aaa9a2]">https://</span>
               <div className="absolute top-[calc(100%+0.5rem)] flex flex-col items-center z-10" data-url-label>
                 <div className="w-[1px] h-3 bg-white/20 mb-1.5"></div>
                 <div className="flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-md text-[10px] sm:text-[11px] leading-none">
@@ -113,11 +136,11 @@ export function UrlAnatomySection() {
             </div>
 
             <div className="relative flex flex-col items-center" data-url-group>
-              <span data-url-part className="text-ai">ib.bri.co.id.</span>
+              <span data-url-part className="text-ai-on-dark">ib.bri.co.id.</span>
               <div className="absolute top-[calc(100%+0.5rem)] flex flex-col items-center z-10" data-url-label>
                 <div className="w-[1px] h-3 bg-ai/40 mb-1.5"></div>
                 <div className="flex items-center justify-center rounded-full border border-ai/30 bg-ai/10 px-3 py-1.5 backdrop-blur-md shadow-[0_0_15px_rgba(99,91,255,0.15)] text-[10px] sm:text-[11px] leading-none">
-                  <span className="whitespace-nowrap font-mono text-ai uppercase tracking-[0.2em] font-semibold">Subdomain / Hiasan</span>
+                  <span className="whitespace-nowrap font-mono text-ai-on-dark uppercase tracking-[0.2em] font-semibold">Subdomain / Hiasan</span>
                 </div>
               </div>
             </div>
@@ -128,20 +151,20 @@ export function UrlAnatomySection() {
               <span
                 data-url-part
                 data-url-domain
-                className="relative inline-block rounded-xl bg-risk px-2 py-1 sm:px-4 sm:py-2 font-bold text-white shadow-[0_0_20px_rgba(255,51,51,0.2)]"
+                className="relative inline-block rounded-xl bg-risk-text px-2 py-1 sm:px-4 sm:py-2 font-bold text-white shadow-[0_0_20px_rgba(255,51,51,0.2)]"
               >
                 layanan-pembaruan.com
               </span>
               <div className="absolute top-[calc(100%+0.5rem)] flex flex-col items-center z-10" data-url-label>
                 <div className="w-[1px] h-3 bg-risk/50 mb-1.5"></div>
                 <div className="flex items-center justify-center rounded-full border border-risk/40 bg-risk/10 px-3 py-1.5 backdrop-blur-md shadow-[0_0_15px_rgba(255,51,51,0.2)] text-[10px] sm:text-[11px] leading-none">
-                  <span className="whitespace-nowrap font-mono text-risk uppercase tracking-[0.2em] font-bold">Domain Sebenarnya</span>
+                  <span className="whitespace-nowrap font-mono text-risk-on-dark uppercase tracking-[0.2em] font-bold">Domain Sebenarnya</span>
                 </div>
               </div>
             </div>
 
             <div className="relative flex flex-col items-center" data-url-group>
-              <span data-url-part className="text-[#77776f]">/login</span>
+              <span data-url-part className="text-[#aaa9a2]">/login</span>
               <div className="absolute top-[calc(100%+0.5rem)] flex flex-col items-center z-10" data-url-label>
                 <div className="w-[1px] h-3 bg-white/20 mb-1.5"></div>
                 <div className="flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-md text-[10px] sm:text-[11px] leading-none">

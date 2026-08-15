@@ -32,7 +32,6 @@ export function PromoStage({
   const isPortrait = ratio === "9x16";
   const [scale, setScale] = useState(0.5);
 
-  // Dynamic scale calculation to fit or cover the stage inside container/viewport
   useEffect(() => {
     const updateScale = () => {
       if (!stageRef.current) return;
@@ -74,11 +73,6 @@ export function PromoStage({
       const isShort = cut === "15s";
 
       if (!isShort) {
-        // ==========================================
-        // MASTER CUT (~55 SECONDS)
-        // ==========================================
-
-        // --- SCENE 1: PRESSURE (00:00 - 04:30) ---
         timeline.addLabel("scene-pressure", 0);
         timeline.set(".scene-pressure", { display: "flex", opacity: 1, zIndex: 10 }, "scene-pressure");
         timeline.fromTo(
@@ -118,7 +112,6 @@ export function PromoStage({
         );
         timeline.set(".scene-pressure", { display: "none" }, "scene-pressure+=4.6");
 
-        // --- SCENE 2: FAMILIAR MESSAGE (04:30 - 09:30) ---
         timeline.addLabel("scene-familiar", "scene-pressure+=4.6");
         timeline.set(".scene-familiar", { display: "flex", opacity: 1, zIndex: 11 }, "scene-familiar");
         timeline.fromTo(
@@ -158,7 +151,6 @@ export function PromoStage({
         );
         timeline.set(".scene-familiar", { display: "none" }, "scene-familiar+=5.4");
 
-        // --- SCENE 3: THE PAUSE (09:30 - 13:80) ---
         timeline.addLabel("scene-pause", "scene-familiar+=5.4");
         timeline.set(".scene-pause", { display: "flex", opacity: 1, zIndex: 12 }, "scene-pause");
         timeline.fromTo(
@@ -186,7 +178,6 @@ export function PromoStage({
         );
         timeline.set(".scene-pause", { display: "none" }, "scene-pause+=4.6");
 
-        // --- SCENE 4: BRAND REVEAL (13:80 - 19:20) ---
         timeline.addLabel("scene-brand", "scene-pause+=4.6");
         timeline.set(".scene-brand", { display: "flex", opacity: 1, zIndex: 13 }, "scene-brand");
         timeline.fromTo(
@@ -226,7 +217,6 @@ export function PromoStage({
         );
         timeline.set(".scene-brand", { display: "none" }, "scene-brand+=5.2");
 
-        // --- SCENE 5: SCAN (19:20 - 28:00) ---
         timeline.addLabel("scene-scan", "scene-brand+=5.2");
         timeline.set(".scene-scan", { display: "flex", opacity: 1, zIndex: 14 }, "scene-scan");
         timeline.fromTo(
@@ -259,7 +249,6 @@ export function PromoStage({
           { scale: 1, opacity: 1, duration: 0.4, ease: "back.out" },
           "scene-scan+=1.4"
         );
-        // Scanning optical beam sweep
         timeline.fromTo(
           ".scan-beam",
           { top: "0%", opacity: 0 },
@@ -279,7 +268,6 @@ export function PromoStage({
         );
         timeline.set(".scene-scan", { display: "none" }, "scene-scan+=8.3");
 
-        // --- SCENE 6: EXPLAINABILITY (28:00 - 35:50) ---
         timeline.addLabel("scene-explain", "scene-scan+=8.3");
         timeline.set(".scene-explain", { display: "flex", opacity: 1, zIndex: 15 }, "scene-explain");
         timeline.fromTo(
@@ -331,7 +319,6 @@ export function PromoStage({
         );
         timeline.set(".scene-explain", { display: "none" }, "scene-explain+=7.4");
 
-        // --- SCENE 7: FEATURE SYSTEM (35:50 - 43:50) ---
         timeline.addLabel("scene-features", "scene-explain+=7.4");
         timeline.set(".scene-features", { display: "flex", opacity: 1, zIndex: 16 }, "scene-features");
         timeline.fromTo(
@@ -365,7 +352,6 @@ export function PromoStage({
         );
         timeline.set(".scene-features", { display: "none" }, "scene-features+=7.2");
 
-        // --- SCENE 8: IMPACT (43:50 - 49:50) ---
         timeline.addLabel("scene-impact", "scene-features+=7.2");
         timeline.set(".scene-impact", { display: "flex", opacity: 1, zIndex: 17 }, "scene-impact");
         timeline.fromTo(
@@ -393,7 +379,6 @@ export function PromoStage({
         );
         timeline.set(".scene-impact", { display: "none" }, "scene-impact+=5.9");
 
-        // --- SCENE 9: END CARD & CTA (49:50 - 55:00+) ---
         timeline.addLabel("scene-end", "scene-impact+=5.9");
         timeline.set(".scene-end", { display: "flex", opacity: 1, zIndex: 18 }, "scene-end");
         timeline.fromTo(
@@ -421,14 +406,8 @@ export function PromoStage({
           "scene-end+=1.4"
         );
 
-        // Final hold (at least 3.5 seconds)
         timeline.set({}, {}, "scene-end+=5.0");
       } else {
-        // ==========================================
-        // SHORT CUT (15 SECONDS)
-        // ==========================================
-
-        // 1. Kinetic Strike Pressure (0 - 2.8s)
         timeline.addLabel("scene-pressure", 0);
         timeline.set(".scene-pressure", { display: "flex", opacity: 1, zIndex: 10 }, "scene-pressure");
         timeline.fromTo(
@@ -452,7 +431,6 @@ export function PromoStage({
         timeline.to(".scene-pressure", { opacity: 0, duration: 0.3 }, "scene-pressure+=2.4");
         timeline.set(".scene-pressure", { display: "none" }, "scene-pressure+=2.7");
 
-        // 2. The Pause (2.7 - 5.2s)
         timeline.addLabel("scene-pause", "scene-pressure+=2.7");
         timeline.set(".scene-pause", { display: "flex", opacity: 1, zIndex: 11 }, "scene-pause");
         timeline.fromTo(
@@ -464,7 +442,6 @@ export function PromoStage({
         timeline.to(".scene-pause", { opacity: 0, duration: 0.3 }, "scene-pause+=2.2");
         timeline.set(".scene-pause", { display: "none" }, "scene-pause+=2.5");
 
-        // 3. Brand Reveal (5.2 - 8.0s)
         timeline.addLabel("scene-brand", "scene-pause+=2.5");
         timeline.set(".scene-brand", { display: "flex", opacity: 1, zIndex: 12 }, "scene-brand");
         timeline.fromTo(
@@ -488,7 +465,6 @@ export function PromoStage({
         timeline.to(".scene-brand", { opacity: 0, duration: 0.3 }, "scene-brand+=2.5");
         timeline.set(".scene-brand", { display: "none" }, "scene-brand+=2.8");
 
-        // 4. Scanner & Explain (8.0 - 11.5s)
         timeline.addLabel("scene-scan", "scene-brand+=2.8");
         timeline.set(".scene-scan", { display: "flex", opacity: 1, zIndex: 13 }, "scene-scan");
         timeline.fromTo(
@@ -500,7 +476,6 @@ export function PromoStage({
         timeline.to(".scene-scan", { opacity: 0, duration: 0.3 }, "scene-scan+=3.2");
         timeline.set(".scene-scan", { display: "none" }, "scene-scan+=3.5");
 
-        // 5. End Card CTA (11.5 - 15.5s)
         timeline.addLabel("scene-end", "scene-scan+=3.5");
         timeline.set(".scene-end", { display: "flex", opacity: 1, zIndex: 14 }, "scene-end");
         timeline.fromTo(
@@ -516,11 +491,9 @@ export function PromoStage({
           "scene-end+=0.3"
         );
 
-        // Final hold
         timeline.set({}, {}, "scene-end+=3.7");
       }
 
-      // Initialize state to 0
       timeline.progress(0);
       onReady(timeline.duration());
     },
@@ -537,7 +510,6 @@ export function PromoStage({
         transform: `scale(${scale})`,
       }}
     >
-      {/* 9 SCENE LAYERS */}
       <ScenePressure isPortrait={isPortrait} />
       <SceneFamiliar isPortrait={isPortrait} />
       <ScenePause isPortrait={isPortrait} />

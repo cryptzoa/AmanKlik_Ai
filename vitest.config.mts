@@ -9,9 +9,31 @@ export default defineConfig({
     },
   },
   test: {
-    environment: "node",
     globals: true,
-    include: ["tests/unit/**/*.test.ts", "tests/unit/**/*.test.tsx", "tests/integration/**/*.test.ts"],
     setupFiles: ["./tests/setup.ts"],
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "node",
+          environment: "node",
+          include: [
+            "tests/unit/**/*.test.ts",
+            "tests/integration/**/*.test.ts",
+          ],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "dom",
+          environment: "jsdom",
+          include: [
+            "tests/unit/respond-client.test.tsx",
+            "tests/unit/simulator-client.test.tsx",
+          ],
+        },
+      },
+    ],
   },
 });

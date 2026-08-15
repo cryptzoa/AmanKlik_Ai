@@ -7,7 +7,6 @@ interface SceneBrandProps {
 export function SceneBrand({ isPortrait = false }: SceneBrandProps) {
   return (
     <div className="scene-brand absolute inset-0 hidden flex-col items-center justify-center p-6 md:p-12 bg-[#F3F1EA] text-[#111111] overflow-hidden select-none">
-      {/* Background dynamic radial glow and geometric grid */}
       <div className="brand-glow absolute w-[600px] h-[600px] rounded-full bg-[#635BFF]/10 blur-[120px] pointer-events-none" />
 
       <div
@@ -20,7 +19,6 @@ export function SceneBrand({ isPortrait = false }: SceneBrandProps) {
       />
 
       <div className="relative z-10 flex flex-col items-center text-center px-4">
-        {/* Intro subtitle */}
         <div
           className={`brand-intro font-mono uppercase tracking-[0.35em] text-[#635BFF] font-bold ${
             isPortrait ? "text-2xl mb-8" : "text-xs md:text-sm mb-6"
@@ -29,7 +27,6 @@ export function SceneBrand({ isPortrait = false }: SceneBrandProps) {
           Kenalin, AmanKlik AI.
         </div>
 
-        {/* Massive locked wordmark */}
         <div
           className="brand-lockup flex items-center font-extrabold tracking-tighter leading-none"
           style={{
@@ -47,7 +44,6 @@ export function SceneBrand({ isPortrait = false }: SceneBrandProps) {
           </span>
         </div>
 
-        {/* Product Positioning Statement */}
         <div className={`brand-statement flex flex-col items-center gap-3 ${isPortrait ? "mt-12" : "mt-8 md:mt-12"}`}>
           <p
             className="font-bold text-[#111111] tracking-tight"

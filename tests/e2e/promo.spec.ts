@@ -4,11 +4,9 @@ test.describe("AmanKlik AI Promo Film (JEDA)", () => {
   test("renders promo page in preview mode with full controls", async ({ page }) => {
     await page.goto("/promo");
 
-    // Canvas stage is present
     const canvas = page.locator(".promo-canvas");
     await expect(canvas).toBeVisible();
 
-    // Controls overlay is present
     const playBtn = page.getByTestId("promo-play-btn");
     await expect(playBtn).toBeVisible();
 
@@ -18,7 +16,6 @@ test.describe("AmanKlik AI Promo Film (JEDA)", () => {
     const scrubber = page.getByTestId("promo-scrubber");
     await expect(scrubber).toBeVisible();
 
-    // Scene marker buttons exist
     await expect(page.getByTestId("scene-marker-scene-pressure")).toBeVisible();
     await expect(page.getByTestId("scene-marker-scene-pause")).toBeVisible();
     await expect(page.getByTestId("scene-marker-scene-brand")).toBeVisible();
@@ -32,11 +29,9 @@ test.describe("AmanKlik AI Promo Film (JEDA)", () => {
     const playBtn = page.getByTestId("promo-play-btn");
     await expect(playBtn).toHaveAttribute("aria-label", "Putar animasi");
 
-    // Press Space to play
     await page.keyboard.press("Space");
     await expect(playBtn).toHaveAttribute("aria-label", "Jeda animasi");
 
-    // Press Space again to pause
     await page.keyboard.press("Space");
     await expect(playBtn).toHaveAttribute("aria-label", "Putar animasi");
   });
@@ -47,7 +42,6 @@ test.describe("AmanKlik AI Promo Film (JEDA)", () => {
     const canvas = page.locator(".promo-canvas");
     await expect(canvas).toBeVisible();
 
-    // Portrait button is active in controls
     const portraitLink = page.getByRole("link", { name: "9:16" });
     await expect(portraitLink).toHaveClass(/font-bold/);
   });
@@ -58,7 +52,6 @@ test.describe("AmanKlik AI Promo Film (JEDA)", () => {
     const canvas = page.locator(".promo-canvas");
     await expect(canvas).toBeVisible();
 
-    // 15s cut indicator is active
     const shortCutLink = page.getByRole("link", { name: "15s" });
     await expect(shortCutLink).toHaveClass(/font-bold/);
   });
@@ -66,13 +59,10 @@ test.describe("AmanKlik AI Promo Film (JEDA)", () => {
   test("supports clean record mode", async ({ page }) => {
     await page.goto("/promo?mode=record");
 
-    // Clean ready screen is visible
     await expect(page.getByText("MODE REKAM SIAP")).toBeVisible();
 
-    // Controls bar is hidden in record mode
     await expect(page.getByTestId("promo-controls-bar")).not.toBeVisible();
 
-    // Press Space to start recording
     await page.keyboard.press("Space");
     await expect(page.getByText("MODE REKAM SIAP")).not.toBeVisible();
   });

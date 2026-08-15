@@ -5,8 +5,6 @@ import { DomainError } from "@/lib/errors";
 function safeCauseCode(error: unknown): string | undefined {
   if (!error || typeof error !== "object" || !("code" in error)) return undefined;
   const code = error.code;
-  // Database and network error codes identify the failure class without
-  // revealing request content, credentials, hostnames, or error messages.
   return typeof code === "string" && /^[A-Z0-9_]{1,32}$/i.test(code)
     ? code
     : undefined;

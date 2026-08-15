@@ -1,15 +1,23 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { PromoStage } from "@/app/promo/_components/promo-stage";
 
 gsap.registerPlugin(useGSAP);
 
+const PromoStage = dynamic(
+  () => import("@/app/promo/_components/promo-stage").then((module) => module.PromoStage),
+  { ssr: false },
+);
+
 export function LandingVideoPlayer() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const readyRef = useRef(false);
+  const visibleRef = useRef(false);
   const [isPortrait, setIsPortrait] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
   const [masterTl] = useState(() =>
     gsap.timeline({
       paused: true,
@@ -18,28 +26,32 @@ export function LandingVideoPlayer() {
     })
   );
 
-  // Responsive ratio detection (Mobile < 768px -> 9:16 portrait, Desktop -> 16:9 landscape)
   useEffect(() => {
-    const handleResize = () => {
-      setIsPortrait(window.innerWidth < 768);
-    };
+    const portraitQuery = window.matchMedia("(max-width: 767px)");
+    const handleChange = () => setIsPortrait(portraitQuery.matches);
 
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    handleChange();
+    portraitQuery.addEventListener("change", handleChange);
+    return () => portraitQuery.removeEventListener("change", handleChange);
   }, []);
 
-  // Autoplay and loop when scrolled into section via IntersectionObserver
   useEffect(() => {
     const target = containerRef.current;
     if (!target) return;
 
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let hasStarted = false;
 
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.25) {
+          visibleRef.current = entry.isIntersecting && entry.intersectionRatio >= 0.01;
+          if (visibleRef.current) setShouldRender(true);
+          if (reducedMotion.matches) {
+            masterTl.pause(0);
+            continue;
+          }
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.25 && readyRef.current) {
             if (!hasStarted) {
               hasStarted = true;
               masterTl.play();
@@ -47,7 +59,6 @@ export function LandingVideoPlayer() {
               masterTl.play();
             }
           } else if (!entry.isIntersecting && entry.intersectionRatio === 0) {
-            // Pause if completely out of view to save CPU
             if (masterTl.isActive()) {
               masterTl.pause();
             }
@@ -59,23 +70,43 @@ export function LandingVideoPlayer() {
       }
     );
 
+    const handleMotionChange = () => {
+      if (reducedMotion.matches) masterTl.pause(0);
+      else if (visibleRef.current && readyRef.current) masterTl.play();
+    };
+
+    reducedMotion.addEventListener("change", handleMotionChange);
     observer.observe(target);
-    return () => observer.disconnect();
+    return () => {
+      reducedMotion.removeEventListener("change", handleMotionChange);
+      observer.disconnect();
+    };
   }, [masterTl]);
 
   return (
     <div
       ref={containerRef}
       className="absolute inset-0 w-full h-full overflow-hidden flex items-center justify-center bg-[#111111] pointer-events-none select-none"
+      role="img"
       aria-label="Area Film Animasi AmanKlik AI"
     >
-      <PromoStage
-        timeline={masterTl}
-        ratio={isPortrait ? "9x16" : "16x9"}
-        cut="master"
-        fitMode="cover"
-        onReady={() => {}}
-      />
+      {shouldRender ? (
+        <PromoStage
+          timeline={masterTl}
+          ratio={isPortrait ? "9x16" : "16x9"}
+          cut="master"
+          fitMode="cover"
+          onReady={() => {
+            readyRef.current = true;
+            if (
+              visibleRef.current &&
+              !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+            ) {
+              masterTl.play();
+            }
+          }}
+        />
+      ) : null}
     </div>
   );
 }

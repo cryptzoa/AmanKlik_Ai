@@ -7,7 +7,6 @@ interface ScenePressureProps {
 export function ScenePressure({ isPortrait = false }: ScenePressureProps) {
   return (
     <div className="scene-pressure absolute inset-0 hidden bg-[#111111] text-[#F3F1EA] flex-col items-center justify-center overflow-hidden select-none">
-      {/* Background kinetic grid lines */}
       <div
         className="pressure-grid absolute inset-0 opacity-15 pointer-events-none"
         style={{
@@ -17,7 +16,6 @@ export function ScenePressure({ isPortrait = false }: ScenePressureProps) {
         }}
       />
 
-      {/* Incoming threat notification shards */}
       <div
         className={`pressure-shard-1 absolute ${
           isPortrait ? "top-28 left-[6%] right-[6%] p-7 rounded-2xl" : "top-20 left-16 max-w-md p-4 rounded-xl"
@@ -66,7 +64,6 @@ export function ScenePressure({ isPortrait = false }: ScenePressureProps) {
         </p>
       </div>
 
-      {/* Central kinetic typographic impact words */}
       <div className="relative z-20 flex flex-col items-center justify-center text-center uppercase tracking-tighter font-extrabold leading-[0.88] px-4">
         <div
           className="pressure-word-1 text-[#635BFF] drop-shadow-[0_0_50px_rgba(99,91,255,0.45)]"

@@ -267,7 +267,7 @@ export function LandingStorySection() {
                   className="bg-white p-8 sm:p-10 rounded-[1.5rem] md:rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-line/5 will-change-transform"
                 >
                   <div className="flex items-center gap-3">
-                     <span className="flex size-8 items-center justify-center rounded-full bg-ai/10 text-xs font-bold text-ai">
+                     <span className="flex size-8 items-center justify-center rounded-full bg-ai/10 text-xs font-bold text-ai-text">
                        {beat.number}
                      </span>
                      <span className="text-xs font-semibold tracking-wider text-muted uppercase">Langkah</span>

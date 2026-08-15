@@ -59,9 +59,7 @@ export function PromoControls({
       data-testid="promo-controls-bar"
       className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-3 bg-[#fffefa]/95 backdrop-blur-xl p-4 md:p-5 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.25)] border-2 border-[#111111] min-w-[340px] max-w-2xl w-[92vw] select-none transition-all"
     >
-      {/* Top Bar: Play controls + Time + Format Switchers */}
       <div className="flex items-center justify-between gap-3">
-        {/* Play/Pause & Restart */}
         <div className="flex items-center gap-2">
           <button
             onClick={onTogglePlay}
@@ -93,7 +91,6 @@ export function PromoControls({
             </svg>
           </button>
 
-          {/* Time indicator */}
           <div data-testid="promo-time-display" className="font-mono text-xs font-bold text-[#111111] ml-2 flex items-center gap-1">
             <span>{formatTime(currentTime)}</span>
             <span className="text-[#111111]/40">/</span>
@@ -101,9 +98,7 @@ export function PromoControls({
           </div>
         </div>
 
-        {/* Format Selectors & Fullscreen */}
         <div className="flex items-center gap-2">
-          {/* Ratio Selector */}
           <div className="flex items-center bg-[#f7f6f2] border border-[#111111]/15 rounded-lg p-0.5 text-xs font-mono">
             <Link
               href={`/promo?ratio=16x9&cut=${cut}`}
@@ -119,7 +114,6 @@ export function PromoControls({
             </Link>
           </div>
 
-          {/* Cut Selector */}
           <div className="flex items-center bg-[#f7f6f2] border border-[#111111]/15 rounded-lg p-0.5 text-xs font-mono">
             <Link
               href={`/promo?ratio=${ratio}&cut=master`}
@@ -135,7 +129,6 @@ export function PromoControls({
             </Link>
           </div>
 
-          {/* Fullscreen Button */}
           <button
             onClick={toggleFullscreen}
             data-testid="promo-fullscreen-btn"
@@ -149,7 +142,6 @@ export function PromoControls({
         </div>
       </div>
 
-      {/* Progress Timeline Scrubber */}
       <div className="flex flex-col gap-1 pt-1">
         <input
           type="range"
@@ -162,7 +154,6 @@ export function PromoControls({
           className="w-full accent-[#635BFF] h-2 bg-[#111111]/15 rounded-lg cursor-pointer appearance-none"
         />
 
-        {/* Scene Jump Markers (in Master Cut) */}
         {cut === "master" && (
           <div className="flex items-center justify-between pt-1 overflow-x-auto gap-1">
             {MASTER_SCENES.map((scene) => {
@@ -193,7 +184,6 @@ export function PromoControls({
         )}
       </div>
 
-      {/* Mode shortcuts footnote */}
       <div className="flex items-center justify-between text-[10px] font-mono text-[#6f6c65] pt-1 border-t border-[#111111]/10">
         <span>Shortcut: [SPACE] Putar/Jeda · [R] Ulang</span>
         <Link

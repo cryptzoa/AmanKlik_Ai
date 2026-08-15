@@ -2,6 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 const routes = [
+  "/",
   "/scan",
   "/scan/conversation",
   "/respond",
@@ -17,6 +18,7 @@ const routes = [
 
 test("product routes have no serious or critical accessibility violations", async ({ page }) => {
   test.setTimeout(60_000);
+  await page.emulateMedia({ reducedMotion: "reduce" });
 
   for (const route of routes) {
     await page.goto(route, { waitUntil: "domcontentloaded" });
@@ -50,6 +52,28 @@ test("skip link and privacy print mode preserve the reading path", async ({ page
   await expect(page.getByRole("heading", {
     name: /Apa yang terjadi pada data yang kamu kirim/i,
   })).toBeVisible();
+});
+
+test("landing and mobile navigation have no serious accessibility violations", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+
+  for (const menuOpen of [false, true]) {
+    if (menuOpen) {
+      await page.getByRole("button", { name: "Buka Menu" }).click();
+      await expect(page.getByRole("dialog", { name: "Menu navigasi" }))
+        .toBeVisible();
+    }
+
+    const report = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+      .analyze();
+    const blockers = report.violations.filter((violation) =>
+      violation.impact === "critical" || violation.impact === "serious"
+    );
+    expect(blockers, JSON.stringify(blockers, null, 2)).toEqual([]);
+  }
 });
 
 test("privacy remains an explicitly unapproved, non-indexable technical draft", async ({ page }) => {

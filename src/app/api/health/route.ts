@@ -9,10 +9,6 @@ export async function GET() {
 
   if (db) {
     try {
-      // A plain `select 1` can succeed against a newly-provisioned database
-      // whose application migrations have not run yet. These three tables are
-      // required before every scan can be rate-limited, read from cache, and
-      // persisted safely.
       await db.execute(sql`select 1`);
       await db.execute(sql`select 1 from rate_limit_buckets limit 1`);
       await db.execute(sql`select 1 from analysis_cache limit 1`);

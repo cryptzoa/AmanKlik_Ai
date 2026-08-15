@@ -115,7 +115,7 @@ export function LandingHeroSection() {
         ))}
       </svg>
       <div className="relative z-10 mx-auto w-full max-w-6xl text-center">
-        <p className="eyebrow-label text-ai">
+        <p className="eyebrow-label text-ai-text">
           AMAN KLIK AI / DIGITAL SAFETY COMPANION
         </p>
         <h1 className="reference-hero-title mt-7 text-balanced">
