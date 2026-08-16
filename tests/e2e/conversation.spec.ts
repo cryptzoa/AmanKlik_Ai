@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("conversation draft manages bounds, validation, and focus", async ({ page }) => {
   await page.goto("/scan/conversation");
-  await expect(page.getByText("Contoh sintetis.")).toBeVisible();
+  await expect(page.getByText("Contoh buatan.")).toBeVisible();
   await page.getByRole("button", { name: "Mulai kosong" }).click();
 
   const first = page.getByLabel("Pesan 1", { exact: true });

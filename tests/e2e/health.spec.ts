@@ -113,7 +113,7 @@ test("core product pages render and connect", async ({ page }) => {
     .toBeVisible();
 
   await page.goto("/benchmark");
-  await expect(page.getByRole("heading", { name: /Buktikan batasnya/i }))
+  await expect(page.getByRole("heading", { name: /Lihat kemampuan dan batas AmanKlik/i }))
     .toBeVisible();
 });
 
@@ -129,7 +129,7 @@ test("landing stays readable with reduced motion and on mobile", async ({ page }
   await expect(page.getByRole("heading", { name: /Nama merek bisa ditempel/i }))
     .toBeVisible();
   await expect(
-    page.getByRole("heading", { name: /Bukan sekadar tebakan AI mentah/i }),
+    page.getByRole("heading", { name: /Tidak hanya mengandalkan tebakan AI/i }),
   ).toBeVisible();
 
   const width = await page.evaluate(() => ({
@@ -151,7 +151,7 @@ test("landing stays readable with reduced motion and on mobile", async ({ page }
   });
   await expect(mobileNavigation).toBeVisible();
   await expect(
-    mobileNavigation.getByRole("link", { name: "Investigasi", exact: true }),
+    mobileNavigation.getByRole("link", { name: "Bandingkan", exact: true }),
   ).toBeVisible();
   await expect(
     mobileNavigation.getByRole("link", { name: "Pelajari", exact: true }),
@@ -251,7 +251,7 @@ test("landing and interior pages share one complete navigation", async ({ page }
       name: "Navigasi tambahan",
     });
     await expect(
-      secondary.getByRole("link", { name: "Investigasi", exact: true }),
+      secondary.getByRole("link", { name: "Bandingkan", exact: true }),
     ).toBeVisible();
     await expect(secondary.getByRole("link", { name: "Pelajari", exact: true }))
       .toBeVisible();
@@ -394,9 +394,9 @@ test("scanner can load every kind of synthetic fixture", async ({ page }) => {
     "http://192.0.2.10/verify-account",
   );
 
-  await page.getByRole("tab", { name: "Screenshot" }).click();
+  await page.getByRole("tab", { name: "Tangkapan layar" }).click();
   await page.getByRole("button", { name: /IMG_T1/i }).click();
-  await expect(page.getByAltText("Preview screenshot yang dipilih"))
+  await expect(page.getByAltText("Pratinjau tangkapan layar yang dipilih"))
     .toBeVisible();
 });
 
@@ -405,12 +405,12 @@ test("every product surface reflows without clipped headings or horizontal overf
     ["/scan", /Apa yang ingin kamu periksa/i],
     ["/simulator", /Latih refleks amanmu/i],
     ["/learn", /Kenali polanya sendiri/i],
-    ["/history", /Jejak pemeriksaanmu/i],
+    ["/history", /Pemeriksaan sebelumnya/i],
     ["/respond", /Sudah terlanjur/i],
     ["/scan/conversation", /Baca urutannya/i],
-    ["/investigate", /Bandingkan bukti yang berbeda/i],
-    ["/benchmark", /Buktikan batasnya/i],
-    ["/connect", /AmanKlik di tempat pesan datang/i],
+    ["/investigate", /Temukan pola yang muncul di beberapa hasil/i],
+    ["/benchmark", /Lihat kemampuan dan batas AmanKlik/i],
+    ["/connect", /Periksa pesan langsung dari browser/i],
     ["/privacy", /Apa yang terjadi pada data yang kamu kirim/i],
     ["/alamat-yang-tidak-ada", /Jalurnya berhenti di sini/i],
   ] as const;

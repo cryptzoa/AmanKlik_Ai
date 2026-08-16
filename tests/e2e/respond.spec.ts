@@ -55,7 +55,7 @@ test("credential flow can be refined and reset with keyboard on mobile", async (
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/respond");
 
-  const incident = page.getByRole("button", { name: /OTP, PIN, password/i });
+  const incident = page.getByRole("button", { name: /OTP, PIN, kata sandi/i });
   await incident.focus();
   await page.keyboard.press("Enter");
   await expect(incident).toHaveAttribute("aria-pressed", "true");
@@ -80,7 +80,7 @@ test("unsure stays exclusive from concrete incidents", async ({ page }) => {
   await page.goto("/respond");
 
   const transfer = page.getByRole("button", { name: /Uang sudah terkirim/i });
-  const credential = page.getByRole("button", { name: /OTP, PIN, password/i });
+  const credential = page.getByRole("button", { name: /OTP, PIN, kata sandi/i });
   const unsure = page.getByRole("button", { name: /Saya tidak yakin apa yang sudah terjadi/i });
 
   await transfer.click();

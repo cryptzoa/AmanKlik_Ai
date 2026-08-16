@@ -102,7 +102,7 @@ export function SiteFooter({ variant = "landing" }: SiteFooterProps) {
         <div className="border-t border-white/10 w-full">
           <div className="mx-auto w-full max-w-[1320px] px-5 py-6 sm:px-10 lg:px-16 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-[#aaa9a2] font-mono uppercase tracking-widest">
             <span>© {new Date().getFullYear()} AmanKlik AI</span>
-            <span>Made with precision by bersiaplah - HMTI UNIPI</span>
+            <span>Made with precision by bersiaplah Team</span>
           </div>
         </div>
       </div>

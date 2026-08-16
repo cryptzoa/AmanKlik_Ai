@@ -19,7 +19,7 @@ test("critical navigation and recovery remain usable", async ({ page }) => {
   await page.goto("/result/bukan-uuid");
   await expect(page.getByRole("heading", { name: /Jalurnya berhenti/i }))
     .toBeVisible();
-  await expect(page.getByRole("link", { name: /Buka scanner/i })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Mulai periksa/i })).toBeVisible();
 });
 
 test("mobile scan and simulator reflow without horizontal overflow", async ({ page }) => {

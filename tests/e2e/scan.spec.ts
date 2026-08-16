@@ -35,7 +35,7 @@ test("tabs, validation, and URL failure preserve a safe input path", async ({ pa
   await urlTab.press("Home");
   await expect(textTab).toBeFocused();
 
-  await page.getByRole("button", { name: "Analisis sekarang" }).click();
+  await page.getByRole("button", { name: "Periksa sekarang" }).click();
   await expect(page.getByLabel("Tempel pesan yang ingin diperiksa"))
     .toBeFocused();
   await expect(page.getByLabel("Tempel pesan yang ingin diperiksa"))
@@ -47,7 +47,7 @@ test("tabs, validation, and URL failure preserve a safe input path", async ({ pa
   const submit = page.locator('button[type="submit"]');
   await submit.click();
   await expect(page.locator('[data-tone="loading"]')).toContainText(
-    "Menerima input",
+    "Membaca isi",
   );
   await expect(submit).toBeDisabled();
 
@@ -66,7 +66,7 @@ test("network failure uses product copy and retains the message", async ({ page 
 
   const input = page.getByLabel("Tempel pesan yang ingin diperiksa");
   await input.fill("Pesan uji meminta transfer sekarang juga.");
-  await page.getByRole("button", { name: "Analisis sekarang" }).click();
+  await page.getByRole("button", { name: "Periksa sekarang" }).click();
 
   await expect(page.getByRole("alert").filter({
     hasText: "Jaringan belum dapat menjangkau AmanKlik",

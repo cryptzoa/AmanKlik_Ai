@@ -13,11 +13,11 @@ test("Latihan explains every decision before allowing the scenario to continue",
   await expect(page.getByText(/^Langkah aman · 100\/100$/i)).toBeVisible();
   await page.getByRole("button", { name: /Lanjut ke keputusan berikutnya/i }).click();
 
-  await page.getByRole("button", { name: /Berhenti sampai orangnya bisa dikonfirmasi/i }).click();
+  await page.getByRole("button", { name: /Berhenti sampai orangnya bisa dipastikan/i }).click();
   await page.getByRole("button", { name: /Lihat hasil latihan/i }).click();
 
   await expect(page.getByText("67/ 100")).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Suara, foto, dan jawaban di chat bukan verifikasi/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Suara, foto, dan jawaban di chat bukan bukti identitas/i })).toBeVisible();
   await expect(page.getByText(/2 aman · 0 belum cukup · 1 berisiko/i)).toBeVisible();
 });
 

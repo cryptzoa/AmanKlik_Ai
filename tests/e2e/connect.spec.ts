@@ -57,14 +57,14 @@ test("token ceremony creates, copies, dismisses, and revokes without a DOM leak"
   await expect(page.getByText("Belum ada perangkat yang terhubung."))
     .toBeVisible();
 
-  await page.getByRole("button", { name: "Buat token extension" }).click();
+  await page.getByRole("button", { name: "Buat kode akses" }).click();
   await expect(page.getByRole("heading", {
     name: "Salin sebelum menutup tampilan ini.",
   })).toBeFocused();
   await expect(page.getByText(rawToken, { exact: true })).toBeVisible();
 
-  await page.getByRole("button", { name: "Salin token" }).click();
-  await expect(page.getByRole("status")).toContainText("Token tersalin.");
+  await page.getByRole("button", { name: "Salin kode akses" }).click();
+  await expect(page.getByRole("status")).toContainText("Kode akses tersalin.");
 
   await page.getByRole("button", { name: "Selesai dan tutup" }).click();
   await expect(page.getByText(rawToken, { exact: true })).toHaveCount(0);
@@ -104,7 +104,7 @@ test("HTTP failure is unavailable state, not an empty token list", async ({ page
   await expect(page.getByText("Belum ada perangkat yang terhubung."))
     .toHaveCount(0);
 
-  await page.getByRole("button", { name: "Buat token extension" }).click();
+  await page.getByRole("button", { name: "Buat kode akses" }).click();
   await expect(page.getByRole("alert").filter({
     hasText: "Layanan token belum tersedia.",
   })).toBeVisible();
