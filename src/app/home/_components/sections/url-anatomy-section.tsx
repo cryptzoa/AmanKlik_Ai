@@ -85,7 +85,7 @@ export function UrlAnatomySection() {
     <section
       ref={root}
       data-url-anatomy
-      className="relative z-20 -mt-10 overflow-hidden rounded-t-[2.5rem] border-t border-white/5 bg-ink px-5 py-24 text-surface shadow-[0_-20px_50px_rgba(0,0,0,0.5)] sm:px-10 sm:py-32 md:mt-0 lg:rounded-t-[4rem] lg:px-16"
+      className="relative z-20 -mt-28 overflow-hidden rounded-t-[2.5rem] border-t border-white/5 bg-ink px-5 py-24 text-surface shadow-[0_-20px_50px_rgba(0,0,0,0.5)] sm:px-10 sm:py-32 md:mt-0 lg:rounded-t-[4rem] lg:px-16"
     >
       <div className="mx-auto max-w-[1320px]">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-end lg:gap-8">

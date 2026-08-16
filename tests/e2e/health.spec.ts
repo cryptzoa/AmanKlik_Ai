@@ -31,13 +31,16 @@ test("public pages send the baseline browser security policy", async ({ request 
   expect(scriptPolicy).not.toContain("'unsafe-inline'");
 });
 
-test("landing avoids a blocking preloader and route transitions release promptly", async ({ page }) => {
+test("landing preloader stays brief and route transitions release promptly", async ({ page }) => {
   await page.goto("/scan");
   await expect(page.locator("[data-site-preloader]")).toHaveCount(0);
 
   await page.goto("/");
-  await page.waitForLoadState("networkidle");
-  await expect(page.locator("[data-site-preloader]")).toHaveCount(0);
+  const preloader = page.locator("[data-site-preloader]");
+  await expect(preloader).toBeAttached();
+  await expect(preloader).toHaveAttribute("data-preloader-state", "complete", {
+    timeout: 2_000,
+  });
 
   const overlay = page.locator("[data-transition-overlay]");
   await page.evaluate(() => {
@@ -139,10 +142,10 @@ test("landing stays readable with reduced motion and on mobile", async ({ page }
     return story.getBoundingClientRect().bottom -
       anatomy.getBoundingClientRect().top;
   });
-  expect(sectionOverlap).toBeGreaterThanOrEqual(32);
+  expect(sectionOverlap).toBeGreaterThanOrEqual(104);
 
   await expect(page.getByRole("button", { name: "Putar film" }))
-    .toBeVisible();
+    .toHaveCount(0);
   await expect(page.locator(".promo-canvas")).toHaveCount(0);
 
   const width = await page.evaluate(() => ({
@@ -206,11 +209,54 @@ test("landing stays readable with reduced motion and on mobile", async ({ page }
   await expect(menuButton).toBeFocused();
 
   await page.locator("[data-pipeline]").scrollIntoViewIfNeeded();
-  await expect(page.locator("[data-pipeline-moving-dot]")).toBeHidden();
+  await expect(page.locator('[data-pipeline-moving-dot="mobile"]')).toBeHidden();
   await expect(page.locator("[data-pipeline-node]").first()).toHaveCSS(
     "opacity",
     "1",
   );
+});
+
+test("mobile film autoplays in view and pipeline progress follows the scroll", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await expect(page.locator("[data-site-preloader]")).toHaveAttribute(
+    "data-preloader-state",
+    "complete",
+  );
+  await expect(page.locator(".promo-canvas")).toHaveCount(0);
+
+  const film = page.getByRole("region", { name: "Film AmanKlik" });
+  await film.evaluate((element) => {
+    const bounds = element.getBoundingClientRect();
+    window.scrollTo({
+      top: bounds.top + window.scrollY - window.innerHeight * 0.55,
+      behavior: "instant",
+    });
+  });
+  await expect(page.locator(".promo-canvas")).toHaveCount(1, {
+    timeout: 5_000,
+  });
+
+  await page.locator("[data-url-anatomy]").scrollIntoViewIfNeeded();
+  await expect(page.locator(".promo-canvas")).toHaveCount(0);
+
+  const pipeline = page.locator("[data-pipeline-container]");
+  await pipeline.evaluate((element) => {
+    const bounds = element.getBoundingClientRect();
+    window.scrollTo({
+      top: bounds.top + window.scrollY + element.clientHeight * 0.4,
+      behavior: "instant",
+    });
+  });
+
+  const mobileDot = page.locator('[data-pipeline-moving-dot="mobile"]');
+  await expect(mobileDot).toBeVisible();
+  await expect.poll(async () => Number(
+    await page.locator("#mask-mobile-pipeline rect").getAttribute("height"),
+  )).toBeGreaterThan(5);
+  await expect.poll(() => mobileDot.evaluate((element) => (
+    getComputedStyle(element).transform
+  ))).not.toBe("none");
 });
 
 test("animated mobile navigation covers the viewport without leaking into the page", async ({ page }) => {

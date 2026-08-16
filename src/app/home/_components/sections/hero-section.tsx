@@ -5,6 +5,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTransition } from "@/components/site/transition-context";
+import { PRELOADER_COMPLETE_EVENT } from "@/components/site/preloader-events";
 
 import { MotionButton } from "@/components/ui/animated-button";
 
@@ -77,7 +78,18 @@ export function LandingHeroSection() {
 
   useEffect(() => {
     if (isTransitioning) return;
-    timelineRef.current?.play();
+    const activePreloader = document.querySelector(
+      '[data-site-preloader]:not([data-preloader-state="complete"])',
+    );
+    const playHero = () => timelineRef.current?.play();
+
+    if (!activePreloader) {
+      playHero();
+      return;
+    }
+
+    window.addEventListener(PRELOADER_COMPLETE_EVENT, playHero, { once: true });
+    return () => window.removeEventListener(PRELOADER_COMPLETE_EVENT, playHero);
   }, [isTransitioning]);
 
   return (
