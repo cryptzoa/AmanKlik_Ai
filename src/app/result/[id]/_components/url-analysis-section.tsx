@@ -9,7 +9,7 @@ export function UrlAnalysisSection(
       aria-labelledby="url-heading"
     >
       <p className="font-mono text-xs uppercase tracking-[0.18em] text-ai">
-        Konteks URL
+        Rincian tautan
       </p>
       <h2 id="url-heading" className="section-title mt-4">Anatomi tautan</h2>
       <p className="mt-7 break-all rounded-[20px] border border-line bg-ink p-6 font-mono text-sm leading-7 text-surface sm:text-lg">
@@ -18,13 +18,13 @@ export function UrlAnalysisSection(
       <dl className="mt-6 grid gap-4 sm:grid-cols-2">
         <div>
           <dt className="text-xs uppercase tracking-[0.12em] text-muted">
-            Protocol
+            Cara koneksi
           </dt>
           <dd className="mt-1 font-mono">{analysis.protocol}</dd>
         </div>
         <div>
           <dt className="text-xs uppercase tracking-[0.12em] text-muted">
-            Domain utama
+            Alamat utama
           </dt>
           <dd className="mt-1 font-mono text-lg font-semibold">
             {analysis.domain ?? "Tidak terbaca"}
@@ -32,7 +32,7 @@ export function UrlAnalysisSection(
         </div>
         <div>
           <dt className="text-xs uppercase tracking-[0.12em] text-muted">
-            Subdomain
+            Bagian sebelum alamat utama
           </dt>
           <dd className="mt-1 break-all font-mono">
             {analysis.subdomain ?? "—"}
@@ -40,7 +40,7 @@ export function UrlAnalysisSection(
         </div>
         <div>
           <dt className="text-xs uppercase tracking-[0.12em] text-muted">
-            Path
+            Halaman tujuan
           </dt>
           <dd className="mt-1 break-all font-mono">{analysis.path}</dd>
         </div>

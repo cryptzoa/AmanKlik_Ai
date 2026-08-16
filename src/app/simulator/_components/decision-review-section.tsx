@@ -32,7 +32,7 @@ export function DecisionReviewSection(
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="font-mono text-xs uppercase tracking-[0.16em] text-muted">
-            Review keputusan
+            Tinjau keputusan
           </p>
           <h3 id="decision-review-title" className="mt-2 text-xl font-semibold">
             Lihat momen yang masih bisa diperkuat.

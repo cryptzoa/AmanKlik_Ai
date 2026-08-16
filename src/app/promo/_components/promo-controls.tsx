@@ -19,7 +19,7 @@ const MASTER_SCENES = [
   { id: "scene-familiar", label: "Pesan", time: 4.6 },
   { id: "scene-pause", label: "Jeda", time: 10.0 },
   { id: "scene-brand", label: "Brand", time: 14.6 },
-  { id: "scene-scan", label: "Scan", time: 19.8 },
+  { id: "scene-scan", label: "Pemeriksaan", time: 19.8 },
   { id: "scene-explain", label: "Kenapa", time: 28.1 },
   { id: "scene-features", label: "Fitur", time: 35.5 },
   { id: "scene-impact", label: "Dampak", time: 42.7 },

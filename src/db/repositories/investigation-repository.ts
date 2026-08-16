@@ -81,7 +81,7 @@ export async function createInvestigationCase(input: { sessionId: string; title:
 
     const uniqueRows = uniqueRowsByInput(sourceRows);
     if (uniqueRows.length < 2) {
-      throw new ValidationError("Pilih setidaknya dua artefak berbeda. Pemeriksaan ulang atas input yang sama tidak menambah bukti.");
+      throw new ValidationError("Pilih setidaknya dua hasil berbeda. Pemeriksaan berulang atas isi yang sama hanya dihitung sekali.");
     }
 
     const summary = summarizeInvestigation(sourcesFromRows(uniqueRows));
@@ -177,10 +177,10 @@ export async function addScanToInvestigation(input: { caseId: string; sessionId:
       const existingRows = links.length ? await transaction.select().from(scans)
         .where(and(eq(scans.sessionId, input.sessionId), inArray(scans.id, links.map((link) => link.scanId)), gt(scans.expiresAt, new Date()))) : [];
       if (existingRows.length >= MAX_SCANS_PER_CASE) {
-        throw new ValidationError(`Maksimum ${MAX_SCANS_PER_CASE} artefak per kasus.`);
+        throw new ValidationError(`Maksimum ${MAX_SCANS_PER_CASE} hasil per perbandingan.`);
       }
       if (existingRows.some((scan) => scan.inputHash === newScan.inputHash)) {
-        throw new ValidationError("Pemeriksaan ini duplikat dari artefak yang sudah ada di kasus.");
+        throw new ValidationError("Isi pemeriksaan ini sama dengan hasil yang sudah dipilih.");
       }
 
       await transaction.insert(investigationCaseScans).values({ caseId: input.caseId, scanId: newScan.id });

@@ -49,7 +49,7 @@ export function SceneScan({ isPortrait = false }: SceneScanProps) {
               </span>
             </div>
             <div className={`font-mono text-[#635BFF] bg-[#635BFF]/10 rounded-lg font-semibold ${isPortrait ? "text-sm px-3 py-1" : "text-[11px] px-2 py-0.5"}`}>
-              🔒 Tautan diperiksa aman
+              Tautan tidak dibuka
             </div>
           </div>
 
@@ -59,7 +59,7 @@ export function SceneScan({ isPortrait = false }: SceneScanProps) {
                 Pemeriksaan Pesan Mencurigakan
               </span>
               <span className={`font-mono text-[#635BFF] font-bold ${isPortrait ? "text-base" : "text-xs"}`}>
-                PRIVASI TERJAGA
+                HAPUS DATA PRIBADI
               </span>
             </div>
 
@@ -71,15 +71,15 @@ export function SceneScan({ isPortrait = false }: SceneScanProps) {
               </p>
 
               <div className={`mt-5 flex items-center justify-between pt-4 border-t border-[#111111]/10 ${isPortrait ? "text-base" : "text-xs"} text-[#6f6c65]`}>
-                <span>Pemeriksaan Pola Kata &amp; Urgensi</span>
-                <span className="font-mono text-[#635BFF] font-bold">Data Tetap Privat</span>
+                <span>Mencari pola kata &amp; tekanan waktu</span>
+                <span className="font-mono text-[#635BFF] font-bold">KIRIM SEPERLUNYA</span>
               </div>
             </div>
 
             <div className="flex items-center justify-end gap-3 pt-2">
               <span className={`font-mono text-[#6f6c65] ${isPortrait ? "text-base" : "text-xs"}`}>Siap dianalisis</span>
               <div className={`scan-btn bg-[#635BFF] text-white font-bold rounded-xl shadow-md flex items-center gap-3 ${isPortrait ? "px-8 py-4 text-xl" : "px-6 py-2.5 text-sm"}`}>
-                <span>Periksa Risiko</span>
+                <span>Periksa sekarang</span>
                 <span className="font-mono text-base">→</span>
               </div>
             </div>
@@ -87,8 +87,8 @@ export function SceneScan({ isPortrait = false }: SceneScanProps) {
         </div>
 
         <div className={`w-full flex items-center justify-between font-mono text-[#6f6c65] pt-2 ${isPortrait ? "text-base px-4" : "text-xs"}`}>
-          <span>AMANKLIK DIGITAL SAFETY</span>
-          <span>INSPEKSI PESAN &amp; TAUTAN</span>
+          <span>AMANKLIK AI</span>
+          <span>PERIKSA PESAN &amp; TAUTAN</span>
         </div>
       </div>
     </div>

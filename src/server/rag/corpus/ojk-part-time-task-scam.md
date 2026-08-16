@@ -14,4 +14,4 @@ keywords: kerja paruh waktu,lowongan freelance,tugas like,tugas subscribe,pekerj
 
 Modus kerja paruh waktu dapat dimulai dari tugas sederhana seperti menyukai atau mengikuti konten, lalu memberi bayaran kecil untuk membangun kepercayaan. Risiko meningkat ketika tugas berikutnya mewajibkan deposit atau top up dengan janji komisi dan pengembalian yang lebih besar.
 
-Jangan mengirim deposit untuk membuka pekerjaan atau mencairkan komisi. Verifikasi perusahaan dan lowongan melalui kanal yang dicari sendiri, simpan percakapan serta bukti transaksi, dan gunakan kanal pelaporan resmi bila sudah dirugikan.
+Jangan mengirim uang muka untuk membuka pekerjaan atau mencairkan komisi. Periksa perusahaan dan lowongan melalui sumber yang kamu cari sendiri, simpan percakapan serta bukti transaksi, dan gunakan layanan pelaporan resmi bila sudah dirugikan.

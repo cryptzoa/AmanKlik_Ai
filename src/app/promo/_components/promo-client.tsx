@@ -120,7 +120,7 @@ export function PromoClient({ ratio, cut, mode }: PromoClientProps) {
             MODE REKAM SIAP
           </div>
           <p className="font-sans text-xs text-[#F3F1EA]/60 max-w-sm">
-            Tekan <kbd className="px-2 py-1 bg-white/10 rounded font-mono text-white">SPACE</kbd> atau klik di mana saja untuk memulai perekaman layar deterministik.
+            Tekan <kbd className="px-2 py-1 bg-white/10 rounded font-mono text-white">SPACE</kbd> atau klik di mana saja untuk memulai perekaman dengan urutan tetap.
           </p>
         </button>
       )}

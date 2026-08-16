@@ -12,13 +12,27 @@ export type CaseArtifact = {
   indicatorCount: number;
 };
 
+const inputLabels: Record<InputType, string> = {
+  text: "Pesan",
+  image: "Tangkapan layar",
+  url: "Tautan",
+  conversation: "Percakapan",
+};
+
+const riskLabels: Record<RiskLevel, string> = {
+  LOW: "Risiko rendah",
+  MEDIUM: "Risiko sedang",
+  HIGH: "Risiko tinggi",
+  VERY_HIGH: "Risiko sangat tinggi",
+};
+
 export function ArtifactsSection({ artifacts }: { artifacts: CaseArtifact[] }) {
   return (
     <ProductSection width="wide" className="investigation-source-section">
       <SectionHeading
-        eyebrow="Sumber kasus"
-        title="Buka artefak satu per satu"
-        description="Setiap ringkasan mengarah kembali ke hasil analisis milik sesi browser ini. Detail mentah tidak digabungkan ke dalam peta hubungan."
+        eyebrow="Hasil yang dibandingkan"
+        title="Buka setiap hasil untuk melihat rinciannya"
+        description="Setiap ringkasan mengarah kembali ke hasil pemeriksaan di sesi browser ini. Isi lengkap tidak disalin ke peta hubungan."
         id="source-heading"
       />
       <div className="investigation-source-list" aria-labelledby="source-heading">
@@ -28,16 +42,16 @@ export function ArtifactsSection({ artifacts }: { artifacts: CaseArtifact[] }) {
             prefetch={false}
             href={`/result/${artifact.id}`}
             className="investigation-source-row"
-            aria-label={`Buka hasil ${artifact.inputType}: ${artifact.summary}, skor ${artifact.finalScore} dari 100`}
+            aria-label={`Buka hasil ${inputLabels[artifact.inputType]}: ${artifact.summary}, skor ${artifact.finalScore} dari 100`}
           >
             <span className="investigation-source-row__kind">
-              {artifact.inputType.replaceAll("_", " ")}
+              {inputLabels[artifact.inputType]}
             </span>
             <span className="investigation-source-row__body">
               <strong>{artifact.summary}</strong>
               <span>
-                {artifact.indicatorCount} indikator ·{" "}
-                {artifact.riskLevel.replaceAll("_", " ")}
+                {artifact.indicatorCount} tanda ·{" "}
+                {riskLabels[artifact.riskLevel]}
               </span>
             </span>
             <span className="investigation-source-row__score" aria-hidden="true">

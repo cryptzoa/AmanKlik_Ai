@@ -212,7 +212,7 @@ export function ConversationClient() {
   const [formError, setFormError] = useState<string | null>(null);
   const [requestError, setRequestError] = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState(
-    "Dua pesan contoh sintetis dimuat.",
+    "Dua pesan contoh buatan sudah dimuat.",
   );
   const [focusMessageId, setFocusMessageId] = useState<string | null>(null);
 
@@ -273,7 +273,7 @@ export function ConversationClient() {
     setFieldErrors({});
     setFormError(null);
     setRequestError(null);
-    setAnnouncement("Contoh dibersihkan. Dua pesan kosong siap diisi.");
+    setAnnouncement("Contoh dihapus. Dua pesan kosong siap diisi.");
     setFocusMessageId("m1");
   }
 
@@ -397,9 +397,9 @@ export function ConversationClient() {
       if (isAbortError(error)) return;
       setRequestError(
         !navigator.onLine
-          ? "Koneksi terputus. Draft tetap tersimpan di halaman ini; sambungkan jaringan lalu coba lagi."
+          ? "Koneksi terputus. Isianmu tetap ada di halaman ini; sambungkan jaringan lalu coba lagi."
           : error instanceof TypeError
-          ? "Jaringan belum dapat menjangkau AmanKlik. Draft tetap tersimpan; coba lagi setelah koneksi stabil."
+          ? "Jaringan belum dapat menjangkau AmanKlik. Isianmu tetap ada; coba lagi setelah koneksi stabil."
           : error instanceof Error
           ? error.message
           : "Percakapan belum bisa dianalisis.",
@@ -427,8 +427,8 @@ export function ConversationClient() {
               <StatusBand tone="info" role="status">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <p className="max-w-xl text-sm leading-6">
-                    <strong>Contoh sintetis.</strong> Dua pesan ini hanya
-                    menunjukkan bentuk timeline dan bukan data milikmu.
+                    <strong>Contoh buatan.</strong> Dua pesan ini hanya
+                    menunjukkan urutan percakapan dan bukan data milikmu.
                   </p>
                   <button
                     type="button"
@@ -518,7 +518,7 @@ export function ConversationClient() {
                         placeholder="Tempel satu pesan yang sudah dihapus data sensitifnya…"
                       />
                       <p id={helpId} className="product-field-help">
-                        Masukkan satu pesan sesuai posisi kronologisnya.
+                        Masukkan satu pesan sesuai urutan waktunya.
                       </p>
                       {error ? (
                         <p id={errorId} className="product-field-error">
@@ -577,9 +577,9 @@ export function ConversationClient() {
             <div className="product-dark-inset mt-8 p-5 sm:p-6">
               <p className="product-eyebrow text-ai-soft">Sebelum mengirim</p>
               <p className="mt-3 text-sm leading-7 text-surface/75">
-                Dalam mode AI aktif, isi percakapan diproses oleh layanan AI
-                pihak ketiga Google. Hapus OTP, password, nomor rekening,
-                identitas, dan detail transaksi; kirim hanya konteks minimum.
+                Saat pemeriksaan AI digunakan, isi percakapan dapat diproses
+                oleh Google Gemini. Hapus OTP, kata sandi, nomor rekening,
+                identitas, dan detail transaksi. Kirim hanya bagian yang perlu.
               </p>
               <button
                 type="submit"
@@ -593,9 +593,9 @@ export function ConversationClient() {
             {loading ? (
               <div className="mt-5">
                 <StatusBand tone="loading" role="status">
-                  <strong>Menerima urutan → memeriksa pola → menyusun hasil</strong>
+                  <strong>Membaca urutan → mencari tanda bahaya → menyiapkan hasil</strong>
                   <p className="mt-1 text-sm">
-                    Draft tetap berada di halaman sampai hasil berhasil dibuat.
+                    Isian tetap berada di halaman sampai hasil berhasil dibuat.
                   </p>
                 </StatusBand>
               </div>
@@ -643,11 +643,11 @@ export function ConversationClient() {
                 </dd>
               </div>
             </dl>
-            <p className="product-eyebrow mt-8 text-muted">Batas analisis</p>
+            <p className="product-eyebrow mt-8 text-muted">Yang perlu diingat</p>
             <ul className="mt-4 space-y-3 text-sm leading-6 text-muted">
               <li>• Urutan dibaca, bukan identitas orang.</li>
               <li>• Tautan tetap dianalisis tanpa dibuka.</li>
-              <li>• Hasil dapat keliru dan perlu verifikasi resmi.</li>
+              <li>• Hasil dapat keliru. Tetap pastikan lewat sumber resmi.</li>
             </ul>
           </aside>
         </div>

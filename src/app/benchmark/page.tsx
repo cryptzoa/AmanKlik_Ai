@@ -8,9 +8,9 @@ import { runAdversarialEvaluation } from "@/lib/evaluation/adversarial-runner";
 import { runDeterministicEvaluation } from "@/lib/evaluation/runner";
 
 export const metadata: Metadata = {
-  title: "Benchmark transparansi — AmanKlik AI",
+  title: "Hasil pengujian — AmanKlik AI",
   description:
-    "Lihat pass rate fixture deterministik dan adversarial, kasus yang gagal, batas klaim, serta provenance pengujiannya.",
+    "Lihat hasil contoh pengujian internal, bagian yang sesuai harapan, dan bagian yang masih perlu diperbaiki.",
 };
 
 const benchmarkSnapshot = (() => {
@@ -38,18 +38,19 @@ export default function BenchmarkPage() {
   return (
     <PageFrame>
       <RouteIntro
-        eyebrow="11 / Benchmark"
-        title="Buktikan batasnya secara terbuka."
-        description="Baca apa yang diuji, berapa denominatornya, keluarga input mana yang bertahan, dan kasus mana yang masih gagal—tanpa mengubah pass rate fixture menjadi klaim akurasi universal."
+        eyebrow="Hasil pengujian"
+        title="Lihat kemampuan dan batas AmanKlik."
+        description="Halaman ini menunjukkan hasil contoh pengujian internal. Kamu bisa melihat bagian yang sudah sesuai harapan dan bagian yang masih perlu diperbaiki."
         annotation={
           <p>
-            Seluruh angka berasal dari fixture sintetis lokal. Halaman ini
-            tidak menjalankan Gemini atau membuka URL saat dirender.
+            Semua angka berasal dari contoh buatan yang disimpan di AmanKlik.
+            Halaman ini tidak mengirim data ke Gemini atau membuka tautan.
           </p>
         }
         pattern="analysis"
       >
-        {regression.total} regression · {adversarial.total} adversarial · {urlNetworkCalls} URL call
+        {regression.total} pengujian aturan · {adversarial.total} pengujian
+        variasi · {urlNetworkCalls} situs dibuka
       </RouteIntro>
 
       <BenchmarkSummarySection
@@ -71,25 +72,25 @@ export default function BenchmarkPage() {
         <div className="product-wide-canvas grid gap-8 lg:grid-cols-[minmax(0,0.45fr)_minmax(0,0.55fr)] lg:items-start">
           <div>
             <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-ai-soft">
-              Provenance
+              Asal angka
             </p>
             <h2
               id="benchmark-provenance-title"
               className="mt-4 text-2xl font-semibold tracking-[-0.035em] sm:text-3xl"
             >
-              Snapshot dibuat sekali saat modul server dimuat.
+              Angka dibuat dari satu rangkaian pengujian.
             </h2>
             <p className="mt-4 max-w-xl text-sm leading-7 text-white/60">
-              Timestamp tetap sama untuk seluruh render dari snapshot ini.
-              Perubahan fixture atau engine memerlukan snapshot baru agar angka
-              dan provenance bergerak bersama.
+              Waktu di bawah menunjukkan kapan rangkaian pengujian ini dibuat.
+              Jika contoh atau cara penilaian berubah, pengujian harus dijalankan
+              kembali agar angkanya ikut diperbarui.
             </p>
           </div>
 
           <dl className="grid gap-px border border-white/15 bg-white/15 text-sm sm:grid-cols-2">
             <div className="bg-ink p-5">
               <dt className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-white/45">
-                Generated
+                Dibuat pada
               </dt>
               <dd className="mt-2 leading-6">
                 <time dateTime={generatedAt}>
@@ -99,7 +100,7 @@ export default function BenchmarkPage() {
             </div>
             <div className="bg-ink p-5">
               <dt className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-white/45">
-                Deterministic command
+                Perintah uji aturan
               </dt>
               <dd className="mt-2 break-all font-mono text-xs leading-6">
                 pnpm eval:deterministic
@@ -107,7 +108,7 @@ export default function BenchmarkPage() {
             </div>
             <div className="bg-ink p-5">
               <dt className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-white/45">
-                Adversarial command
+                Perintah uji variasi
               </dt>
               <dd className="mt-2 break-all font-mono text-xs leading-6">
                 pnpm eval:adversarial
@@ -115,11 +116,11 @@ export default function BenchmarkPage() {
             </div>
             <div className="bg-ink p-5">
               <dt className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-white/45">
-                Live smoke test
+                Uji dengan layanan AI
               </dt>
               <dd className="mt-2 leading-6 text-white/65">
-                <code className="text-white">pnpm eval:live</code> dipisahkan,
-                tidak dijalankan oleh page render, dan dapat memakai kuota.
+                <code className="text-white">pnpm eval:live</code> dijalankan
+                secara terpisah karena dapat memakai kuota layanan AI.
               </dd>
             </div>
           </dl>

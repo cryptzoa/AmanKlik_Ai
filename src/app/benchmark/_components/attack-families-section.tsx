@@ -1,7 +1,12 @@
 import type { AdversarialSummary } from "@/lib/evaluation/adversarial-runner";
 
 function formatFamilyName(family: string): string {
-  return family.replaceAll("_", " ");
+  return {
+    obfuscation: "Tulisan yang disamarkan",
+    prompt_injection: "Perintah untuk mengelabui AI",
+    false_positive: "Pesan biasa yang seharusnya tidak dicurigai",
+    formatting: "Susunan tulisan yang tidak biasa",
+  }[family] ?? family.replaceAll("_", " ");
 }
 
 export function AttackFamiliesSection(
@@ -15,18 +20,18 @@ export function AttackFamiliesSection(
       <div className="grid gap-8 lg:grid-cols-[minmax(16rem,0.35fr)_minmax(0,0.65fr)] lg:gap-16">
         <div>
           <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-ai">
-            Attack families
+            Jenis variasi
           </p>
           <h2
             id="attack-families-title"
             className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.045em] sm:text-4xl"
           >
-            Variasi input dibandingkan satu per satu.
+            Setiap jenis diperiksa satu per satu.
           </h2>
           <p className="mt-5 max-w-md text-sm leading-7 text-muted">
-            Setiap bar menunjukkan fixture yang lolos dibagi seluruh fixture
-            dalam keluarga tersebut. Nilai ini bukan probabilitas kejadian di
-            dunia nyata.
+            Setiap batang menunjukkan jumlah contoh yang memberi hasil sesuai
+            harapan. Nilai ini tidak menggambarkan peluang kejadian di dunia
+            nyata.
           </p>
         </div>
 
@@ -51,8 +56,8 @@ export function AttackFamiliesSection(
                         {formatFamilyName(family.family)}
                       </span>
                       <span className="font-mono text-xs font-semibold tabular-nums text-muted">
-                        {family.passed}/{family.total} fixture
-                        {family.total > 0 ? ` · ${rate}%` : " · tanpa rate"}
+                        {family.passed}/{family.total} contoh
+                        {family.total > 0 ? ` · ${rate}%` : " · belum ada nilai"}
                       </span>
                     </div>
                     <div
@@ -87,12 +92,11 @@ export function AttackFamiliesSection(
         ) : (
           <div className="product-empty-state" role="status">
             <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
-              0 keluarga
+              0 jenis
             </p>
-            <h2>Belum ada keluarga serangan</h2>
+            <h2>Belum ada jenis variasi</h2>
             <p className="product-empty-state__copy">
-              Snapshot valid, tetapi belum memiliki fixture adversarial untuk
-              dibandingkan.
+              Belum ada contoh variasi sulit yang dapat dibandingkan.
             </p>
           </div>
         )}

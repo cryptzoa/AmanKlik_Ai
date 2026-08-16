@@ -40,7 +40,7 @@ const ALLOWED_IMAGE_TYPES = new Set([
 
 const tabs: Array<{ id: ScanMode; label: string }> = [
   { id: "text", label: "Pesan" },
-  { id: "image", label: "Screenshot" },
+  { id: "image", label: "Tangkapan layar" },
   { id: "url", label: "Tautan" },
 ];
 
@@ -75,13 +75,13 @@ function validateUrl(value: string): string | null {
 }
 
 function validateImage(candidate: File | null): string | null {
-  if (!candidate) return "Pilih satu screenshot terlebih dahulu.";
-  if (!candidate.size) return "File screenshot kosong.";
+  if (!candidate) return "Pilih satu tangkapan layar terlebih dahulu.";
+  if (!candidate.size) return "File tangkapan layar kosong.";
   if (!ALLOWED_IMAGE_TYPES.has(candidate.type)) {
     return "Gunakan file PNG, JPG, atau WEBP.";
   }
   if (candidate.size > MAX_IMAGE_BYTES) {
-    return "Ukuran screenshot melebihi batas 5 MB.";
+    return "Ukuran tangkapan layar melebihi batas 5 MB.";
   }
   return null;
 }
@@ -271,7 +271,7 @@ export function ScanClient(
     if (droppedFiles.length !== 1) {
       setErrors((current) => ({
         ...current,
-        image: "Tarik tepat satu screenshot untuk diperiksa.",
+        image: "Tarik satu tangkapan layar saja untuk diperiksa.",
       }));
       focusModeControl("image");
       return;
@@ -290,7 +290,7 @@ export function ScanClient(
 
     try {
       const response = await fetch(path, { signal: controller.signal });
-      if (!response.ok) throw new Error("Contoh screenshot belum tersedia.");
+      if (!response.ok) throw new Error("Contoh tangkapan layar belum tersedia.");
       const blob = await response.blob();
       const candidate = new File(
         [blob],
@@ -303,7 +303,7 @@ export function ScanClient(
       setRequestError(
         error instanceof Error
           ? error.message
-          : "Contoh screenshot belum tersedia.",
+          : "Contoh tangkapan layar belum tersedia.",
       );
       window.requestAnimationFrame(() => requestErrorRef.current?.focus());
     } finally {
@@ -408,7 +408,7 @@ export function ScanClient(
             <div
               className="product-tablist"
               role="tablist"
-              aria-label="Jenis input"
+              aria-label="Jenis yang ingin diperiksa"
               aria-orientation="horizontal"
             >
               {tabs.map((tab, index) => (
@@ -473,7 +473,7 @@ export function ScanClient(
                 placeholder="Contoh: pesan yang meminta OTP, transfer, atau membuka tautan…"
               />
               <p id="scan-text-help" className="product-field-help">
-                Sisakan konteks yang diperlukan, lalu hapus nama, nomor, dan
+                Sisakan bagian yang diperlukan. Hapus nama, nomor, dan data
                 rahasia sebelum mengirim.
               </p>
               {errors.text ? (
@@ -535,8 +535,8 @@ export function ScanClient(
                 placeholder="https://contoh.com/akun"
               />
               <p id="scan-url-help" className="product-field-help">
-                AmanKlik membaca struktur alamat dan konteks teksnya. Browser
-                tidak membuka atau menghubungi situs tujuan.
+                AmanKlik membaca susunan alamat dan teksnya tanpa membuka situs
+                tujuan.
               </p>
               {errors.url ? (
                 <p id="scan-url-error" className="product-field-error">
@@ -560,7 +560,7 @@ export function ScanClient(
               hidden={mode !== "image"}
               className="mt-7"
             >
-              <span className="product-field-label">Unggah screenshot pesan</span>
+              <span className="product-field-label">Unggah tangkapan layar pesan</span>
               <div
                 className={`mt-3 flex min-h-60 flex-col items-center justify-center border border-dashed px-5 py-7 text-center transition-colors ${
                   dragActive
@@ -579,7 +579,7 @@ export function ScanClient(
                     <img
                       className="max-h-64 max-w-full object-contain shadow-[8px_8px_0_rgba(17,17,17,0.1)]"
                       src={previewUrl}
-                      alt="Preview screenshot yang dipilih"
+                      alt="Pratinjau tangkapan layar yang dipilih"
                     />
                     <p className="mt-4 break-all text-sm text-muted">
                       {file?.name} · {((file?.size ?? 0) / 1024 / 1024).toFixed(2)} MB
@@ -588,7 +588,7 @@ export function ScanClient(
                 ) : (
                   <>
                     <span className="text-lg font-semibold">
-                      Tarik satu screenshot ke area ini
+                      Tarik satu tangkapan layar ke area ini
                     </span>
                     <span className="mt-2 max-w-sm text-sm leading-6 text-muted">
                       atau pilih PNG, JPG, atau WEBP hingga 5 MB
@@ -605,7 +605,7 @@ export function ScanClient(
                   }`}
                   onClick={() => imageInputRef.current?.click()}
                 >
-                  {previewUrl ? "Ganti screenshot" : "Pilih screenshot"}
+                  {previewUrl ? "Ganti tangkapan layar" : "Pilih tangkapan layar"}
                 </button>
               </div>
               <input
@@ -624,7 +624,7 @@ export function ScanClient(
               />
               <p id="scan-image-help" className="product-field-help">
                 File divalidasi berdasarkan ukuran dan format sebenarnya di
-                server. Screenshot asli tidak ditampilkan kembali di riwayat.
+                server. Gambar asli tidak ditampilkan kembali di riwayat.
               </p>
               {errors.image ? (
                 <p id="scan-image-error" className="product-field-error">
@@ -635,7 +635,7 @@ export function ScanClient(
 
             <fieldset className="mt-7 border-t border-line pt-5">
               <legend className="product-eyebrow text-muted">
-                Contoh sintetis · tanpa data nyata
+                Contoh buatan · tanpa data nyata
               </legend>
               <div className="mt-3 flex flex-wrap gap-2">
                 {mode === "text"
@@ -702,16 +702,16 @@ export function ScanClient(
                   disabled={busy}
                   onClick={clearCurrentInput}
                 >
-                  Bersihkan input aktif
+                  Hapus bahan yang dipilih
                 </button>
               ) : null}
             </fieldset>
 
             <div className="mt-8 border-t border-line pt-6">
               <p className="max-w-2xl text-sm leading-7 text-muted">
-                Dalam mode AI aktif, isi yang kamu kirim diproses oleh layanan
-                AI pihak ketiga Google. Kirim hanya konteks minimum yang sudah
-                kamu bersihkan dari data pribadi dan rahasia.
+                Saat pemeriksaan AI digunakan, isi yang kamu kirim dapat
+                diproses oleh Google Gemini. Kirim hanya bagian yang diperlukan
+                dan hapus data pribadi serta rahasia.
               </p>
               <button
                 type="submit"
@@ -719,17 +719,17 @@ export function ScanClient(
                 disabled={busy}
               >
                 {status === "submitting"
-                  ? "Memeriksa input…"
+                  ? "Sedang memeriksa…"
                   : demoLoading
                   ? "Memuat contoh…"
-                  : "Analisis sekarang"}
+                  : "Periksa sekarang"}
               </button>
             </div>
 
             {status === "submitting" ? (
               <div className="mt-5">
                 <StatusBand tone="loading" role="status">
-                  <strong>Menerima input → memeriksa sinyal → menyusun hasil</strong>
+                  <strong>Membaca isi → mencari tanda bahaya → menyiapkan hasil</strong>
                   <p className="mt-1 text-sm">
                     Jangan tutup halaman. Input tetap terlihat sampai hasil
                     berhasil dibuat.
@@ -758,22 +758,22 @@ export function ScanClient(
               <li className="py-4">
                 <strong className="block text-sm">Format dan batas</strong>
                 <span className="mt-1 block text-sm leading-6 text-muted">
-                  Ukuran, tipe file, panjang, dan struktur input divalidasi.
+                  Ukuran, jenis file, panjang, dan susunan isi diperiksa.
                 </span>
               </li>
               <li className="py-4">
-                <strong className="block text-sm">Sinyal yang dapat dijelaskan</strong>
+                <strong className="block text-sm">Tanda bahaya yang dapat dijelaskan</strong>
                 <span className="mt-1 block text-sm leading-6 text-muted">
-                  Pola pesan, struktur URL, dan konteks dipisahkan agar dapat
-                  diperiksa kembali.
+                  Pola pesan, susunan tautan, dan konteks dijelaskan secara
+                  terpisah agar mudah diperiksa kembali.
                 </span>
               </li>
             </ol>
             <p className="product-eyebrow mt-8 text-muted">Yang tidak dilakukan</p>
             <ul className="mt-4 space-y-3 text-sm leading-6 text-muted">
-              <li>• Tidak membuka atau menghubungi URL tujuan.</li>
+              <li>• Tidak membuka situs di dalam tautan.</li>
               <li>• Tidak menjamin sebuah pesan aman atau pasti penipuan.</li>
-              <li>• Tidak meminta OTP, password, PIN, atau identitas.</li>
+              <li>• Tidak meminta OTP, kata sandi, PIN, atau identitas.</li>
             </ul>
           </aside>
         </div>

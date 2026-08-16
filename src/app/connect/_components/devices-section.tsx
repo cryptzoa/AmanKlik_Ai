@@ -23,7 +23,8 @@ export function DevicesSection({
           Perangkat yang masih terhubung.
         </h2>
         <p>
-          Token yang kedaluwarsa atau sudah dicabut tidak dapat dipakai lagi.
+          Kode akses yang kedaluwarsa atau sudah dicabut tidak dapat dipakai
+          lagi.
         </p>
       </div>
 
@@ -94,7 +95,7 @@ export function DevicesSection({
         ) : (
           <div className="connect-device-state">
             <p>Belum ada perangkat yang terhubung.</p>
-            <span>Buat token di langkah pertama untuk memulai.</span>
+            <span>Buat kode akses di langkah pertama untuk memulai.</span>
           </div>
         )}
       </div>

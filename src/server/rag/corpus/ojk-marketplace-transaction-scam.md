@@ -12,6 +12,6 @@ keywords: marketplace,toko online palsu,bukti transfer palsu,barang tidak dikiri
 
 ## Status di chat bukan bukti pembayaran atau pesanan
 
-Penipu dapat memakai toko palsu, harga yang tidak wajar, bukti transfer yang diedit, atau alasan refund dan biaya pengiriman untuk memindahkan percakapan serta pembayaran ke luar marketplace. Periksa status pesanan dan dana masuk langsung di aplikasi atau rekening resmi, bukan dari screenshot pengirim.
+Penipu dapat memakai toko palsu, harga yang tidak wajar, bukti transfer yang diedit, atau alasan pengembalian dana dan biaya pengiriman untuk memindahkan percakapan serta pembayaran ke luar marketplace. Periksa status pesanan dan dana masuk langsung di aplikasi atau rekening resmi, bukan dari tangkapan layar pengirim.
 
-Jangan membayar biaya tambahan ke rekening pribadi hanya untuk membuka pengiriman, refund, atau pencairan penjualan. Pertahankan percakapan di kanal platform, hubungi dukungan melalui aplikasi yang dibuka sendiri, dan simpan bukti jika transaksi bermasalah.
+Jangan membayar biaya tambahan ke rekening pribadi hanya untuk membuka pengiriman, pengembalian dana, atau pencairan penjualan. Pertahankan percakapan di dalam aplikasi, hubungi dukungan melalui aplikasi yang kamu buka sendiri, dan simpan bukti jika transaksi bermasalah.

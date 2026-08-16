@@ -10,8 +10,8 @@ action_tags: do_not_click,verify_independently
 keywords: link,tautan,url,domain,subdomain,alamat situs,website,situs,login,https,ip address,alamat ip,phishing
 ---
 
-## Baca domain dari kanan ke kiri
+## Kenali alamat utama situs
 
-Nama merek yang muncul di subdomain atau path belum membuktikan bahwa sebuah situs dikelola oleh merek tersebut. Fokus pada domain utama dan ejaannya; perbedaan satu karakter, susunan kata yang janggal, atau host berupa alamat IP patut dicurigai.
+Nama merek yang muncul di awal atau bagian belakang alamat belum membuktikan bahwa situs itu dikelola oleh merek tersebut. Fokus pada alamat utama dan ejaannya. Perbedaan satu karakter, susunan kata yang janggal, atau alamat berupa deretan angka patut dicurigai.
 
 Untuk membuka layanan keuangan atau akun penting, ketik alamat yang sudah dikenal atau gunakan aplikasi resmi. Jangan menjadikan tautan dari pesan mencurigakan sebagai rujukan resmi.

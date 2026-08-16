@@ -24,7 +24,7 @@ export function ConversationTimeline(
           <p className="mt-5 text-sm leading-7 text-muted">
             {analysis.messageCount}{" "}
             pesan dibaca berdasarkan urutan. Potongan di bawah sudah disanitasi
-            dan bukan salinan percakapan mentah.
+            dan bukan salinan lengkap percakapanmu.
           </p>
         </div>
         <div>
@@ -41,10 +41,10 @@ export function ConversationTimeline(
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <p className="text-sm leading-7 text-muted">
-                  {item.redactedExcerpt || "Pesan tanpa preview."}
+                  {item.redactedExcerpt || "Cuplikan pesan tidak tersedia."}
                 </p>
                 <span className="font-mono text-xs text-ai">
-                  {item.signalIds.length} sinyal
+                  {item.signalIds.length} tanda
                 </span>
               </li>
             ))}

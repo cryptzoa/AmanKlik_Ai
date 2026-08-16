@@ -11,8 +11,8 @@ const ACTIONS: Record<string, ActionItem> = {
   do_not_share_credentials: {
     id: "do_not_share_credentials",
     priority: "now",
-    title: "Jangan bagikan password atau PIN",
-    body: "Jangan meneruskan password, PIN, atau kata sandi kepada pengirim.",
+    title: "Jangan bagikan kata sandi atau PIN",
+    body: "Jangan meneruskan kata sandi atau PIN kepada pengirim.",
   },
   do_not_share_otp: {
     id: "do_not_share_otp",
@@ -23,32 +23,32 @@ const ACTIONS: Record<string, ActionItem> = {
   verify_independently: {
     id: "verify_independently",
     priority: "next",
-    title: "Verifikasi lewat kanal lain",
-    body: "Buka aplikasi atau situs resmi secara mandiri, atau hubungi nomor yang sudah kamu percaya. Jangan memakai kontak dari pesan mencurigakan.",
+    title: "Periksa lewat sumber lain",
+    body: "Buka sendiri aplikasi atau situs resmi, atau hubungi nomor yang sudah kamu percaya. Jangan memakai kontak dari pesan mencurigakan.",
   },
   contact_provider: {
     id: "contact_provider",
     priority: "if_already_acted",
     title: "Hubungi penyedia terkait",
-    body: "Jika sudah memberikan data atau mengirim uang, segera hubungi penyedia layanan melalui kanal resminya.",
+    body: "Jika sudah memberikan data atau mengirim uang, segera hubungi penyedia melalui aplikasi, nomor, atau situs resminya.",
   },
   secure_account: {
     id: "secure_account",
     priority: "if_already_acted",
     title: "Amankan akun",
-    body: "Ganti kredensial melalui aplikasi resmi dan periksa aktivitas akun jika ada data yang sudah terlanjur diberikan.",
+    body: "Ganti kata sandi atau PIN melalui aplikasi resmi. Periksa aktivitas akun jika ada data yang sudah terlanjur diberikan.",
   },
   preserve_evidence: {
     id: "preserve_evidence",
     priority: "if_already_acted",
     title: "Simpan bukti",
-    body: "Simpan screenshot, kronologi, identitas transaksi, dan detail relevan untuk proses pelaporan resmi.",
+    body: "Simpan tangkapan layar, urutan kejadian, informasi transaksi, dan rincian yang diperlukan untuk laporan resmi.",
   },
   report_officially: {
     id: "report_officially",
     priority: "if_already_acted",
-    title: "Gunakan kanal pelaporan resmi",
-    body: "Gunakan kanal resmi penyedia layanan atau institusi terkait, bukan tautan pelaporan dari pesan mencurigakan.",
+    title: "Gunakan layanan pelaporan resmi",
+    body: "Buka layanan pelaporan dari aplikasi atau situs resmi lembaga terkait, bukan dari tautan dalam pesan mencurigakan.",
   },
 };
 

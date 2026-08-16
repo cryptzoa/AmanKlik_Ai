@@ -12,7 +12,7 @@ import { actionPlanFor } from "@/server/scan/actions";
 import type { KnowledgeMatch } from "@/server/rag/types";
 import { reportServerError } from "@/server/observability/report-error";
 
-export const DISCLAIMER = "Penilaian ini menunjukkan indikator risiko dan dapat keliru. Verifikasi melalui kanal resmi sebelum mengambil keputusan.";
+export const DISCLAIMER = "Hasil ini menunjukkan tanda bahaya dan dapat keliru. Pastikan informasi lewat sumber resmi yang kamu cari sendiri sebelum bertindak.";
 const RETENTION_CLEANUP_INTERVAL_MS = 900_000;
 let lastRetentionCleanup = 0;
 

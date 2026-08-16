@@ -66,7 +66,7 @@ export function SceneFamiliar({ isPortrait = false }: SceneFamiliarProps) {
             </div>
           </div>
           <span className={`font-mono text-[#6f6c65] uppercase ${isPortrait ? "text-sm" : "text-[10px]"}`}>
-            Sintetis
+            Contoh buatan
           </span>
         </div>
 

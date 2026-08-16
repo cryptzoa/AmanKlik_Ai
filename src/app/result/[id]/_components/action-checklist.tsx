@@ -8,7 +8,7 @@ import type { ActionProgressState } from "@/types/action-progress";
 const priorityLabels: Record<ActionItem["priority"], string> = {
   now: "Sekarang",
   next: "Berikutnya",
-  if_already_acted: "Jika sudah bertindak",
+  if_already_acted: "Jika sudah terlanjur mengikuti pesan",
 };
 
 type ActionApiEnvelope = {

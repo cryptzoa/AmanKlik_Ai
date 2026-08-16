@@ -49,7 +49,7 @@ export function SceneEnd({ isPortrait = false }: SceneEndProps) {
         </div>
 
         <p className={`end-disclaimer font-mono text-[#6f6c65] leading-relaxed ${isPortrait ? "mt-10 text-lg max-w-xl" : "mt-8 text-xs max-w-md"}`}>
-          AmanKlik membantu mengenali tanda bahaya manipulasi digital. Selalu lakukan verifikasi mandiri ke kanal resmi.
+          AmanKlik membantu mengenali tanda bahaya. Tetap pastikan informasi lewat sumber resmi yang kamu buka sendiri.
         </p>
       </div>
     </div>

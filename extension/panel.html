@@ -10,30 +10,30 @@
     <header>
       <img src="icons/icon-48.png" width="32" height="32" alt="" />
       <div><strong>AmanKlik AI</strong><span>Jeda sebelum bertindak.</span></div>
-      <button id="settings-toggle" class="icon-button" type="button" aria-expanded="false" aria-controls="settings">⚙</button>
+      <button id="settings-toggle" class="icon-button" type="button" aria-label="Buka pengaturan koneksi" aria-expanded="false" aria-controls="settings">⚙</button>
     </header>
 
     <main>
       <section id="settings" class="settings" hidden>
         <h1>Hubungkan AmanKlik</h1>
-        <label>Base URL<input id="base-url" type="url" placeholder="https://amanklik.example" /></label>
-        <label>Integration token<input id="token" type="password" autocomplete="off" placeholder="akx_…" /></label>
+        <label>Alamat server (Base URL)<input id="base-url" type="url" placeholder="https://amanklik.example" /></label>
+        <label>Kode akses<input id="token" type="password" autocomplete="off" placeholder="akx_…" /></label>
         <button id="save-settings" class="primary" type="button">Simpan koneksi</button>
         <p id="settings-status" class="status" role="status"></p>
       </section>
 
       <section id="scanner">
-        <div class="eyebrow">QUICK CHECK</div>
+        <div class="eyebrow">PEMERIKSAAN CEPAT</div>
         <h1>Periksa tanpa pindah konteks.</h1>
-        <div class="tabs" role="tablist" aria-label="Jenis input">
+        <div class="tabs" role="tablist" aria-label="Jenis bahan pemeriksaan">
           <button type="button" role="tab" aria-selected="true" data-mode="text">Teks</button>
-          <button type="button" role="tab" aria-selected="false" data-mode="url">URL</button>
+          <button type="button" role="tab" aria-selected="false" data-mode="url">Tautan</button>
         </div>
         <label id="input-label" for="scan-input">Pesan yang dipilih</label>
         <textarea id="scan-input" rows="8" maxlength="8000" placeholder="Blok pesan di halaman, atau tempel di sini."></textarea>
         <div class="input-actions">
-          <button id="capture-selection" class="secondary" type="button">Ambil pilihan</button>
-          <button id="use-page-url" class="secondary" type="button">Pakai URL tab</button>
+          <button id="capture-selection" class="secondary" type="button">Ambil teks terpilih</button>
+          <button id="use-page-url" class="secondary" type="button">Pakai tautan tab</button>
         </div>
         <p class="privacy">Hanya isi kotak ini yang dikirim setelah kamu menekan Periksa.</p>
         <button id="scan-button" class="primary" type="button">Periksa sekarang</button>

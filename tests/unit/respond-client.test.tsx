@@ -11,7 +11,7 @@ describe("RespondClient", () => {
       name: /Uang sudah terkirim/i,
     });
     const credential = screen.getByRole("button", {
-      name: /OTP, PIN, password/i,
+      name: /OTP, PIN, kata sandi/i,
     });
     fireEvent.click(transfer);
     fireEvent.click(credential);
@@ -105,7 +105,7 @@ describe("RespondClient", () => {
       name: /Uang sudah terkirim/i,
     });
     const credential = screen.getByRole("button", {
-      name: /OTP, PIN, password/i,
+      name: /OTP, PIN, kata sandi/i,
     });
 
     fireEvent.click(transfer);

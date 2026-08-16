@@ -57,7 +57,7 @@ function resultForText(text: string): AiSemanticResult {
     semanticRisk: Math.min(100, 58 + indicators.length * 9),
     confidence: "high",
     category: otp ? "otp_theft" : transfer ? "payment_request" : "impersonation",
-    summary: "Konteks memuat pola sosial yang perlu diverifikasi secara independen.",
+    summary: "Pesan memuat pola yang perlu diperiksa melalui sumber lain yang tepercaya.",
     claimedBrands: [],
     indicators,
     uncertainty: "Analisis mock hanya digunakan untuk pengujian lokal dan bukan hasil Gemini live.",
@@ -89,7 +89,7 @@ export class MockAiClient implements AiClient {
         semanticRisk: 62,
         confidence: "low",
         category: "social_engineering",
-        summary: "Screenshot sintetis memerlukan pemeriksaan konteks dan verifikasi independen.",
+        summary: "Contoh tangkapan layar ini masih perlu diperiksa melalui sumber lain yang tepercaya.",
         claimedBrands: [],
         indicators: [
           {
@@ -97,11 +97,11 @@ export class MockAiClient implements AiClient {
             label: "Konteks visual perlu diperiksa",
             technique: "multimodal review",
             severity: "medium",
-            evidence: "Screenshot sintetis",
-            explanation: "Hasil gambar lokal ini adalah fixture untuk pengujian alur multimodal.",
+            evidence: "Contoh tangkapan layar",
+            explanation: "Gambar ini hanya contoh buatan untuk menguji alur pemeriksaan gambar.",
           },
         ],
-        uncertainty: "Mode mock tidak membaca gambar secara semantik.",
+        uncertainty: "Yang belum bisa dipastikan: mode pengujian tidak benar-benar membaca isi gambar.",
         recommendedActionTags: ["verify_independently"],
       },
       meta: {

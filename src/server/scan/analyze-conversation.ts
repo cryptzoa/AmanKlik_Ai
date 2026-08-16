@@ -67,7 +67,7 @@ export async function analyzeConversation(input: { messages: ConversationMessage
     inputType: "conversation",
     score: fusion.finalScore,
     riskLevel: fusion.riskLevel,
-    summary: aiAnalysis?.result.summary ?? "Urutan pesan menunjukkan pola yang perlu diputus dengan verifikasi independen.",
+    summary: aiAnalysis?.result.summary ?? "Urutan pesan menunjukkan pola yang perlu dihentikan dan diperiksa lewat sumber lain.",
     confidence: aiAnalysis?.result.confidence ?? "low",
     analysisMode: fusion.analysisMode,
     aiAvailable: Boolean(aiAnalysis),
@@ -76,7 +76,7 @@ export async function analyzeConversation(input: { messages: ConversationMessage
     urlAnalysis,
     actionTags: aiAnalysis?.result.recommendedActionTags ?? ["verify_independently"],
     knowledge: knowledge.matches,
-    uncertainty: aiAnalysis?.result.uncertainty ?? "Analisis AI tidak tersedia; hasil hanya berdasarkan pola per pesan dan urutan percakapan.",
+    uncertainty: aiAnalysis?.result.uncertainty ?? "Yang belum bisa dipastikan: konteks lengkap percakapan. Hasil ini hanya memakai pola pada pesan dan urutannya.",
     scoreExplanation: fusion.scoreExplanation,
     conversationAnalysis: { messageCount: messages.length, progressionSummary: aiAnalysis?.result.progressionSummary ?? deterministic.progressionSummary, timeline },
   });

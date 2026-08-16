@@ -21,9 +21,9 @@ export function ConversationSection() {
         </p>
       </div>
       <SectionHeading
-        eyebrow="Timeline tekanan"
+        eyebrow="Urutan percakapan"
         title="Susun dari pesan pertama."
-        description="Setiap item memiliki pengirim dan isi sendiri. Tambahkan pesan baru setelah item terakhir agar kronologinya tetap jelas."
+        description="Tentukan siapa yang mengirim setiap pesan. Tambahkan pesan sesuai urutan aslinya agar perubahan percakapan mudah terlihat."
       />
       <ConversationClient />
     </ProductSection>

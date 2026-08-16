@@ -28,7 +28,7 @@ export function ScenePause({ isPortrait = false }: ScenePauseProps) {
             isPortrait ? "text-3xl max-w-2xl" : "text-sm md:text-lg max-w-lg"
           }`}
         >
-          Beri diri Anda jeda. Kenali polanya sebelum terlanjur melangkah.
+          Beri dirimu jeda. Kenali polanya sebelum terlanjur bertindak.
         </p>
       </div>
     </div>

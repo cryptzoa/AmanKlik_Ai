@@ -67,26 +67,26 @@ export function SiteFooter({ variant = "landing" }: SiteFooterProps) {
           <div className="footer-stagger">
             <p className="text-2xl font-bold text-white mb-4">AmanKlik AI</p>
             <p className="max-w-sm text-[#aaa9a2] text-lg leading-relaxed">
-              Risiko rendah bukan jaminan aman. Verifikasi tautan dan pesan mencurigakan melalui analitik AI yang transparan.
+              Risiko rendah belum tentu aman. Periksa alasannya, lalu pastikan lewat sumber resmi.
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:justify-items-end">
             <div className="footer-stagger flex flex-col gap-3 md:justify-self-start">
               <p className="font-mono text-xs uppercase tracking-widest text-[#aaa9a2] mb-2">Navigasi</p>
               <Link href="/" className="hover:text-white transition-colors duration-200">Beranda</Link>
-              <Link href="/scan" className="hover:text-white transition-colors duration-200">Periksa Tautan</Link>
-              <Link href="/investigate" className="hover:text-white transition-colors duration-200">Investigasi Lanjut</Link>
-              <Link href="/simulator" className="hover:text-white transition-colors duration-200">Simulator Phishing</Link>
+              <Link href="/scan" className="hover:text-white transition-colors duration-200">Mulai Periksa</Link>
+              <Link href="/investigate" className="hover:text-white transition-colors duration-200">Bandingkan Hasil</Link>
+              <Link href="/simulator" className="hover:text-white transition-colors duration-200">Latihan Aman</Link>
             </div>
             <div className="footer-stagger flex flex-col gap-3">
               <p className="font-mono text-xs uppercase tracking-widest text-[#aaa9a2] mb-2">Eksplorasi</p>
-              <Link href="/learn" className="hover:text-white transition-colors duration-200">Pusat Edukasi</Link>
-              <Link href="/benchmark" className="hover:text-white transition-colors duration-200">Benchmark AI</Link>
-              <Link href="/history" className="hover:text-white transition-colors duration-200">Riwayat Anda</Link>
+              <Link href="/learn" className="hover:text-white transition-colors duration-200">Pelajari Polanya</Link>
+              <Link href="/benchmark" className="hover:text-white transition-colors duration-200">Hasil Pengujian</Link>
+              <Link href="/history" className="hover:text-white transition-colors duration-200">Riwayat Kamu</Link>
             </div>
             <div className="footer-stagger flex flex-col gap-3 col-span-2 md:col-span-1 mt-4 md:mt-0">
               <p className="font-mono text-xs uppercase tracking-widest text-[#aaa9a2] mb-2">Legal</p>
-              <Link href="/privacy" className="hover:text-white transition-colors duration-200">Privacy Policy</Link>
+              <Link href="/privacy" className="hover:text-white transition-colors duration-200">Penjelasan Privasi — Draf</Link>
             </div>
           </div>
         </div>

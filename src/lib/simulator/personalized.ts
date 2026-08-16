@@ -39,19 +39,19 @@ const FAMILY_RULES: FamilyRule[] = [
     categories: ["otp_request", "credential_request"],
     family: "credential_secrecy",
     templateId: "bank-otp",
-    objective: "OTP, PIN, password, dan data kartu bukan bahan verifikasi lewat telepon atau pesan.",
+    objective: "OTP, PIN, kata sandi, dan data kartu tidak boleh dipakai untuk membuktikan identitas melalui telepon atau pesan.",
   },
   {
     categories: ["identity_document"],
     family: "identity_data_protection",
     templateId: "part-time-task",
-    objective: "Data identitas hanya diberikan setelah tujuan, pihak, dan kanalnya terverifikasi.",
+    objective: "Data identitas hanya diberikan setelah tujuan dan pihak penerimanya dipastikan melalui sumber resmi.",
   },
   {
     categories: ["verification_link", "brand_domain_mismatch", "url_obfuscation", "shortener", "excessive_subdomain", "plain_http", "ip_host"],
     family: "domain_recognition",
     templateId: "parcel-link",
-    objective: "Gunakan aplikasi resmi dan baca domain utama sebelum memasukkan data atau membayar.",
+    objective: "Gunakan aplikasi resmi dan baca alamat utama situs sebelum memasukkan data atau membayar.",
   },
   {
     categories: ["prize", "investment"],
@@ -63,19 +63,19 @@ const FAMILY_RULES: FamilyRule[] = [
     categories: ["payment_request"],
     family: "payment_pause",
     templateId: "family-new-number",
-    objective: "Permintaan uang harus dihentikan sampai identitas dan tujuan pembayaran terverifikasi.",
+    objective: "Permintaan uang harus dihentikan sampai identitas dan tujuan pembayaran dapat dipastikan.",
   },
   {
     categories: ["impersonation", "secrecy", "unexpected_channel"],
     family: "identity_verification",
     templateId: "family-new-number",
-    objective: "Identitas harus diuji melalui kanal lama atau pihak tepercaya lain.",
+    objective: "Identitas harus diperiksa melalui nomor lama atau orang tepercaya lain.",
   },
   {
     categories: ["threat", "urgency"],
     family: "urgency_resistance",
     templateId: "bank-otp",
-    objective: "Tekanan waktu bukan bukti; jeda memberi ruang untuk berpindah ke kanal resmi.",
+    objective: "Tekanan waktu bukan bukti; berhenti sejenak memberi ruang untuk membuka aplikasi atau situs resmi.",
   },
 ];
 

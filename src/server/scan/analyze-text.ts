@@ -60,7 +60,7 @@ export async function analyzeText(input: { text: string; sessionId?: string }) {
     inputType: "text",
     score: fusion.finalScore,
     riskLevel: fusion.riskLevel,
-    summary: aiAnalysis?.result.summary ?? "Pemeriksaan pola deterministik selesai, tetapi analisis konteks AI sedang terbatas.",
+    summary: aiAnalysis?.result.summary ?? "Pola pesan sudah diperiksa, tetapi AI sedang tidak dapat membaca konteksnya.",
     confidence: aiAnalysis?.result.confidence ?? "low",
     analysisMode: fusion.analysisMode,
     aiAvailable: Boolean(aiAnalysis),
@@ -70,7 +70,7 @@ export async function analyzeText(input: { text: string; sessionId?: string }) {
     urlAnalysis,
     actionTags: aiAnalysis?.result.recommendedActionTags,
     knowledge: knowledge.matches,
-    uncertainty: aiAnalysis?.result.uncertainty ?? "Analisis AI tidak tersedia; hasil hanya berdasarkan pola dan struktur yang terdeteksi.",
+    uncertainty: aiAnalysis?.result.uncertainty ?? "Yang belum bisa dipastikan: konteks lengkap pesan. Hasil ini hanya memakai pola dan susunan yang ditemukan.",
     scoreExplanation: fusion.scoreExplanation,
   });
 

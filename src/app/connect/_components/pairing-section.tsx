@@ -38,14 +38,14 @@ export function PairingSection({
   return (
     <section className="connect-pairing" aria-labelledby="pairing-heading">
       <div>
-        <p className="product-eyebrow text-ai">01 / Pasangkan extension</p>
+        <p className="product-eyebrow text-ai">01 / Hubungkan perangkat</p>
         <h2 id="pairing-heading" className="connect-section-title">
-          Beri nama setiap akses.
+          Beri nama perangkatmu.
         </h2>
         <p className="connect-section-copy">
-          Token hanya mengizinkan extension mengirim pemeriksaan ke AmanKlik.
-          Token tidak berisi kunci Gemini. Kamu dapat mencabutnya dari browser
-          penerbit selama sesi anonim ini masih tersedia.
+          Kode akses hanya mengizinkan ekstensi mengirim bahan pemeriksaan ke
+          AmanKlik. Kode ini bukan kunci Gemini. Kamu dapat mencabut aksesnya
+          dari browser yang membuat kode selama sesi ini masih tersedia.
         </p>
       </div>
 
@@ -71,8 +71,8 @@ export function PairingSection({
             onChange={(event) => onNameChange(event.target.value)}
           />
           <p id="device-name-help" className="product-field-help">
-            Gunakan nama yang membantumu mengenali perangkat saat mencabut
-            akses. Jangan masukkan token atau data rahasia.
+            Gunakan nama yang mudah kamu kenali, misalnya “Laptop rumah”.
+            Jangan masukkan kode akses atau data rahasia.
           </p>
           <p id="device-name-error" className="product-field-error">
             {nameError ?? "\u00a0"}
@@ -82,7 +82,7 @@ export function PairingSection({
             className="product-button product-button--primary mt-5"
             disabled={createPending || Boolean(nameError)}
           >
-            {createPending ? "Membuat token…" : "Buat token extension"}
+            {createPending ? "Membuat kode akses…" : "Buat kode akses"}
           </button>
         </form>
 
@@ -106,7 +106,7 @@ export function PairingSection({
                 className="product-button bg-ai text-white"
                 onClick={() => onCopy(token)}
               >
-                Salin token
+              Salin kode akses
               </button>
               <button
                 type="button"

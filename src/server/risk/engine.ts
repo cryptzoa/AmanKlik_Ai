@@ -101,21 +101,21 @@ export function fuseRisk(input: RiskFusionInput): RiskFusionOutput {
       source: "rule" as const,
       band: contributionBand(rulesScore),
       label: "Pola pesan",
-      explanation: "Sinyal deterministik membaca kata, pola permintaan, dan tekanan di dalam input.",
+      explanation: "Aturan keamanan memeriksa kata, jenis permintaan, dan desakan di dalam pesan.",
       signalCount: ruleSignals.length,
     } : null,
     urlScore > 0 ? {
       source: "url" as const,
       band: contributionBand(urlScore),
       label: "Struktur tautan",
-      explanation: "Alamat diperiksa secara statis, termasuk domain utama, host, dan pola URL.",
+      explanation: "Susunan alamat diperiksa tanpa membuka situs, termasuk alamat utama dan pola tautannya.",
       signalCount: urlSignals.length,
     } : null,
     semanticRisk != null ? {
       source: "ai" as const,
       band: contributionBand(semanticRisk),
       label: "Konteks AI",
-      explanation: "AI membantu membaca konteks sosial; skor akhir tetap dihitung oleh aplikasi.",
+      explanation: "AI membantu membaca konteks percakapan. Skor akhir tetap dihitung oleh AmanKlik.",
       signalCount: aiSignals.length,
     } : null,
   ].filter((contribution): contribution is NonNullable<typeof contribution> => Boolean(contribution));
@@ -124,7 +124,7 @@ export function fuseRisk(input: RiskFusionInput): RiskFusionOutput {
     hasOtp && input.claimedFinanceContext ? "Permintaan OTP dalam konteks finansial" : null,
     hasOtp && hasFinance && hasThreat && hasUrgency ? "OTP, ancaman, dan tekanan waktu muncul bersama" : null,
     hasRemoteAccess && hasFinance ? "Akses jarak jauh disertai permintaan finansial" : null,
-    hasBrandMismatch && hasCredentialRequest ? "Ketidakcocokan domain disertai permintaan kredensial" : null,
+    hasBrandMismatch && hasCredentialRequest ? "Alamat utama tidak cocok dan pesan meminta kata sandi, PIN, atau data masuk lain" : null,
   ].filter((label): label is string => Boolean(label));
 
   const strongestSignalIds = [...allSignals]
@@ -146,8 +146,8 @@ export function fuseRisk(input: RiskFusionInput): RiskFusionOutput {
       strongestSignalIds,
       adjustmentLabels,
       explanation: adjustmentLabels.length
-        ? "Beberapa sinyal muncul bersamaan sehingga aplikasi menerapkan kehati-hatian tambahan."
-        : "Hasil menggabungkan sinyal yang tersedia; ini bukan kepastian bahwa konten aman atau penipuan.",
+        ? "Beberapa tanda bahaya muncul bersamaan, sehingga skor dinaikkan sebagai langkah kehati-hatian."
+        : "Hasil menggabungkan tanda yang ditemukan. Ini bukan kepastian bahwa isinya aman atau merupakan penipuan.",
     },
   };
 }

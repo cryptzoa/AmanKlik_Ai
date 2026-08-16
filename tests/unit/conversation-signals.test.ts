@@ -10,7 +10,7 @@ describe("conversation progression signals", () => {
     ]);
 
     expect(result.signals.map((item) => item.category)).toEqual(expect.arrayContaining(["impersonation", "payment_request", "conversation_progression"]));
-    expect(result.progressionSummary).toContain("eskalasi");
+    expect(result.progressionSummary).toContain("Desakan");
     expect(result.timeline[0].redactedExcerpt).toContain("nomor");
   });
 

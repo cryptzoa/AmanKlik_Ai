@@ -55,7 +55,7 @@ export function ClosingCtaSection() {
     <section ref={root} className="relative overflow-hidden bg-transparent z-10 px-5 py-24 text-ink sm:px-10 sm:py-32 lg:px-16 flex flex-col items-center text-center">
       <div className="relative z-10 mx-auto w-full max-w-[1320px] flex flex-col items-center">
         <p ref={subtitleRef} className="font-mono text-xs uppercase tracking-[0.2em] text-muted">
-          Langkah Akhir
+          Sebelum bertindak
         </p>
         
         <h2 ref={titleRef} className="mt-8 text-[4rem] leading-[0.85] tracking-[-0.07em] font-extrabold sm:text-[7rem] lg:text-[9rem] max-w-[1200px] mx-auto text-balance">
@@ -76,7 +76,7 @@ export function ClosingCtaSection() {
               className="min-h-16 px-8 text-lg sm:text-xl font-bold bg-transparent text-inherit"
               href="/scan"
             >
-              Periksa Sekarang
+              Mulai periksa
             </MotionButton>
           </div>
         </div>

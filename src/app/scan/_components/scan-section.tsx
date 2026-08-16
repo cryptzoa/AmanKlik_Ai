@@ -9,9 +9,9 @@ export function ScanSection({ initialError }: { initialError: string | null }) {
   return (
     <ProductSection width="task" className="pt-12 sm:pt-16 lg:pt-20">
       <SectionHeading
-        eyebrow="Meja pemeriksaan"
-        title="Mulai dari bentuk buktinya."
-        description="Pilih satu jenis input. Penjelasan format dan batas pemeriksaan mengikuti pilihanmu tanpa mengubah tujuan analisis."
+        eyebrow="Mulai periksa"
+        title="Pilih yang ingin kamu periksa."
+        description="Pilih pesan, tangkapan layar, atau tautan. Petunjuk dan batas ukuran akan menyesuaikan pilihanmu."
       />
       <ScanClient initialError={initialError} />
       <div className="mt-10 flex flex-col gap-4 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">

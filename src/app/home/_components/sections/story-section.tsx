@@ -23,7 +23,7 @@ const storyBeats = [
   {
     number: "03",
     title: "Identitas berubah",
-    body: "Nomor baru meminta kamu langsung menerima identitas tanpa melakukan verifikasi.",
+    body: "Nomor baru meminta kamu langsung percaya tanpa memeriksa identitasnya.",
     highlightIndex: 1,
   },
   {
@@ -35,7 +35,7 @@ const storyBeats = [
   {
     number: "05",
     title: "Pola dijelaskan",
-    body: "AmanKlik secara otomatis memisahkan indikator risiko ini agar kamu bisa menilai dengan tenang.",
+    body: "AmanKlik memisahkan tanda bahaya ini agar kamu bisa menilainya dengan tenang.",
     highlightIndex: 4,
   }
 ];

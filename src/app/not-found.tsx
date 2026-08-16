@@ -11,10 +11,10 @@ export default function NotFound() {
       code="404"
       eyebrow="Halaman tidak ditemukan"
       title="Jalurnya berhenti di sini."
-      description="Alamatnya mungkin tidak valid, hasilnya sudah kedaluwarsa, atau resource ini tidak tersedia untuk sesi browsermu. Kamu dapat langsung memulai pemeriksaan baru."
+      description="Alamatnya mungkin salah, hasilnya sudah kedaluwarsa, atau hasil ini berasal dari browser lain. Kamu dapat langsung memulai pemeriksaan baru."
       primaryAction={(
         <Link className={systemStateStyles.actionPrimary} href="/scan">
-          Buka scanner
+          Mulai periksa
         </Link>
       )}
       secondaryAction={(

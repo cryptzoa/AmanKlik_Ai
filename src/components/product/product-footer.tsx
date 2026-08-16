@@ -2,11 +2,11 @@ import Link from "next/link";
 
 const navigation = [
   ["/scan", "Periksa"],
-  ["/investigate", "Investigasi"],
+  ["/investigate", "Bandingkan hasil"],
   ["/simulator", "Latihan"],
   ["/learn", "Pelajari"],
   ["/history", "Riwayat"],
-  ["/privacy", "Privasi"],
+  ["/privacy", "Privasi — draf"],
 ] as const;
 
 export function ProductFooter() {
@@ -18,7 +18,7 @@ export function ProductFooter() {
             <p className="product-footer__brand">AmanKlik AI</p>
             <p className="product-footer__promise">
               Risiko rendah bukan jaminan aman. Berhenti sejenak, periksa
-              buktinya, lalu verifikasi melalui kanal resmi.
+              buktinya, lalu periksa melalui aplikasi, nomor, atau situs resmi.
             </p>
           </div>
           <nav aria-label="Navigasi footer">

@@ -12,6 +12,6 @@ keywords: investasi ilegal,profit pasti,keuntungan tinggi,tanpa risiko,robot tra
 
 ## Nilai pihak, izin, dan cara keuntungannya
 
-Nama perusahaan, aplikasi yang rapi, atau figur promosi tidak membuktikan suatu investasi berizin. Periksa siapa badan hukumnya, otoritas yang relevan, dan apakah kegiatan yang ditawarkan sesuai dengan izin tersebut melalui kanal regulator yang dicari secara mandiri.
+Nama perusahaan, aplikasi yang rapi, atau tokoh dalam promosi tidak membuktikan suatu investasi berizin. Periksa badan hukumnya, lembaga pengawas yang sesuai, dan kecocokan kegiatan dengan izin melalui situs resmi yang kamu cari sendiri.
 
 Waspadai keuntungan tinggi yang digambarkan pasti atau minim risiko, kewajiban deposit, serta bonus yang terutama bergantung pada perekrutan anggota. Jangan memindahkan dana atau aset kripto hanya karena saldo dan keuntungan terlihat di aplikasi milik pengirim.

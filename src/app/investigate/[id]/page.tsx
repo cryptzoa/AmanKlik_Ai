@@ -14,8 +14,8 @@ import { reportServerError } from "@/server/observability/report-error";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Detail investigasi | AmanKlik",
-  description: "Bandingkan artefak dan pola berulang dalam kasus AmanKlik.",
+  title: "Detail perbandingan | AmanKlik",
+  description: "Lihat hasil pemeriksaan dan pola yang muncul berulang.",
   robots: { index: false, follow: false },
 };
 
@@ -42,19 +42,19 @@ export default async function InvestigationDetailPage(
   return (
     <PageFrame>
       <RouteIntro
-        eyebrow="07 / Detail investigasi"
+        eyebrow="Detail perbandingan"
         title={investigation.title}
         description={investigation.summary}
         pattern="analysis"
         annotation={
           <dl className="investigation-case-facts">
             <div>
-              <dt>Tingkat kasus</dt>
-              <dd>{investigation.riskLevel.replaceAll("_", " ")}</dd>
+              <dt>Tingkat risiko</dt>
+              <dd>{{ LOW: "Rendah", MEDIUM: "Sedang", HIGH: "Tinggi", VERY_HIGH: "Sangat tinggi" }[investigation.riskLevel]}</dd>
             </div>
             <div>
-              <dt>Ruang banding</dt>
-              <dd>{investigation.scans.length} artefak</dd>
+              <dt>Jumlah hasil</dt>
+              <dd>{investigation.scans.length} hasil</dd>
             </div>
             <div>
               <dt>Pola bersama</dt>

@@ -7,7 +7,7 @@ import {
 } from "@/lib/response/catalog";
 import type { AffectedAsset, IncidentType, ResponsePlan, ResponseStep } from "@/lib/response/types";
 
-const DISCLAIMER = "AmanKlik memberikan panduan awal, bukan layanan darurat, bank, penegak hukum, atau jaminan pemulihan. Hubungi penyedia terkait melalui kanal resmi yang kamu cari sendiri.";
+const DISCLAIMER = "AmanKlik memberikan panduan awal, bukan layanan darurat, bank, penegak hukum, atau jaminan pemulihan. Hubungi penyedia melalui aplikasi, nomor, atau situs resmi yang kamu cari sendiri.";
 
 function uniqueIncidents(incidents: IncidentType[]): IncidentType[] {
   const unique = [...new Set(incidents)].filter((incident) => incident in INCIDENT_LABELS);

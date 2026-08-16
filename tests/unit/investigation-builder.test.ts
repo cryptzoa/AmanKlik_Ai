@@ -50,7 +50,7 @@ describe("investigation builder", () => {
     const graph = buildInvestigationGraph("case-2", "Duplikat", [sources[0], duplicate]);
 
     expect(summary.finalScore).toBe(99);
-    expect(summary.summary).toContain("1 artefak unik");
+    expect(summary.summary).toContain("1 hasil berbeda");
     expect(summary.topCategories).toEqual([]);
     expect(graph.nodes.filter((node) => node.kind === "scan")).toHaveLength(1);
     expect(graph.nodes.filter((node) => node.kind === "signal")).toHaveLength(0);

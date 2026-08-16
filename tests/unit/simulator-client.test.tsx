@@ -45,7 +45,7 @@ describe("SimulatorClient", () => {
     );
     fireEvent.click(
       screen.getByRole("button", {
-        name: /Berhenti sampai orangnya bisa dikonfirmasi/i,
+        name: /Berhenti sampai orangnya bisa dipastikan/i,
       }),
     );
     fireEvent.click(
@@ -55,7 +55,7 @@ describe("SimulatorClient", () => {
     expect(screen.getByText(/^67$/)).toBeVisible();
     expect(
       screen.getByRole("heading", {
-        name: /Suara, foto, dan jawaban di chat bukan verifikasi/i,
+        name: /Suara, foto, dan jawaban di chat bukan bukti identitas/i,
       }),
     ).toBeVisible();
     expect(screen.getByText(/2 aman · 0 belum cukup · 1 berisiko/i))

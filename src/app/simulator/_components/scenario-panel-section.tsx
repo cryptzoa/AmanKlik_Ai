@@ -25,13 +25,13 @@ const LEVEL_COPY: Record<
   developing: {
     eyebrow: "Mulai terbentuk",
     title:
-      "Beberapa keputusanmu sudah menciptakan jeda, tetapi verifikasinya belum selalu independen.",
+      "Beberapa keputusanmu sudah menciptakan jeda, tetapi belum selalu diperiksa lewat sumber yang berbeda.",
     body:
       "Tinjau momen yang bertanda Belum cukup atau Berisiko, lalu ulangi skenarionya.",
   },
   retry: {
     eyebrow: "Perlu diulang",
-    title: "Tekanan skenario masih berhasil mengarahkan keputusanmu.",
+    title: "Beberapa pilihan masih terpengaruh oleh tekanan dalam situasi ini.",
     body:
       "Ini latihan, bukan kegagalan. Baca aturan utamanya lalu coba lagi tanpa terburu-buru.",
   },
@@ -96,7 +96,7 @@ export function ScenarioPanelSection(
       ) : null}
       {practiceState === "unavailable" ? (
         <p className="relative z-10 mb-5 rounded-[16px] border-l-4 border-warning bg-warning-soft p-4 text-sm leading-6" role="status">
-          Personalisasi belum tersedia. Latihan lokal tetap dapat digunakan
+          Latihan yang disesuaikan belum tersedia. Latihan biasa tetap dapat digunakan
           tanpa kehilangan pilihanmu.
         </p>
       ) : null}
@@ -111,7 +111,7 @@ export function ScenarioPanelSection(
       <div className="relative z-10 flex flex-wrap items-start justify-between gap-5 border-b border-line pb-6">
         <div className="max-w-2xl">
           <div className="flex flex-wrap items-center gap-2 font-mono text-xs uppercase tracking-[0.12em]">
-            <span className="text-ai">Skenario sintetis</span>
+            <span className="text-ai">Situasi latihan</span>
             <span className="text-muted">
               · {scenario.tag} · ±{scenario.estimatedMinutes} menit
             </span>
@@ -157,7 +157,7 @@ export function ScenarioPanelSection(
                 </h3>
                 <p className="mt-3 max-w-2xl text-sm leading-7 text-white/75">
                   Tinjau keputusan pada skenario ini, lalu ulangi skenario yang
-                  masih terasa sulit. Tidak ada streak atau peringkat yang perlu
+                  masih terasa sulit. Tidak ada rekor harian atau peringkat yang perlu
                   dipertahankan.
                 </p>
               </section>

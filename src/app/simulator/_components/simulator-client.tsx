@@ -191,7 +191,7 @@ export function SimulatorClient(
 
         <div className="mt-6 border-t border-line pt-5 text-sm leading-7 text-muted">
           <strong className="text-ink">Bukan tes hafalan.</strong>{" "}
-          Pilih respons yang benar-benar akan kamu lakukan. Feedback muncul
+          Pilih respons yang benar-benar akan kamu lakukan. Penjelasan muncul
           setelah setiap keputusan.
         </div>
         <p className="mt-4 font-mono text-xs text-muted" aria-live="polite">

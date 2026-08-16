@@ -8,11 +8,11 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const stages = [
-  { step: "01", category: "RULES", title: "Pola Pesan", desc: "Pemeriksaan pola deterministik dari struktur pesan yang masuk untuk mendeteksi anomali." },
-  { step: "02", category: "URL", title: "Struktur Domain", desc: "Analisis anatomi tautan untuk membongkar teknik penyamaran domain yang sering digunakan phisher." },
-  { step: "03", category: "AI", title: "Konteks Bahasa", desc: "Kecerdasan buatan membaca intensi, gaya bahasa, dan taktik manipulasi psikologis dalam teks." },
-  { step: "04", category: "RISK ENGINE", title: "Logika Aplikasi", desc: "Mesin risiko menggabungkan seluruh temuan menjadi satu kesimpulan holistik." },
-  { step: "05", category: "RESULT", title: "Skor & Aksi", desc: "Hasil akhir berupa skor bahaya, alasan transparan, dan rekomendasi tindakan." },
+  { step: "01", category: "PESAN", title: "Mencari pola", desc: "AmanKlik mencari kata dan pola yang sering muncul dalam pesan penipuan." },
+  { step: "02", category: "TAUTAN", title: "Membaca alamat", desc: "Bagian alamat dipisahkan agar alamat utama lebih mudah dikenali." },
+  { step: "03", category: "AI", title: "Memahami konteks", desc: "AI membantu membaca cara pesan mendesak, membujuk, atau meminta sesuatu yang sensitif." },
+  { step: "04", category: "PENILAIAN", title: "Menggabungkan temuan", desc: "Semua tanda bahaya dinilai bersama agar tidak bergantung pada satu petunjuk saja." },
+  { step: "05", category: "HASIL", title: "Menjelaskan langkah", desc: "Kamu mendapat tingkat risiko, alasan yang bisa diperiksa, dan tindakan yang disarankan." },
 ];
 
 const stageTops = [15, 32.5, 50, 67.5, 85] as const;
@@ -228,10 +228,10 @@ export function LandingPipelineSection() {
       <div className="relative z-10 mx-auto max-w-[1320px] px-5 sm:px-10 lg:px-16 pt-24 sm:pt-32">
         <div className="flex flex-col items-center text-center">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-ai-text">
-            03 / Hybrid intelligence
+            03 / Cara AmanKlik memeriksa
           </p>
           <h2 className="section-title mt-5 max-w-3xl">
-            Bukan sekadar tebakan AI mentah.
+            Tidak hanya mengandalkan tebakan AI.
           </h2>
         </div>
       </div>

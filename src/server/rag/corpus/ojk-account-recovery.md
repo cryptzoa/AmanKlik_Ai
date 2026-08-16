@@ -12,6 +12,6 @@ keywords: data terlanjur,bocor akun,ambil alih akun,ganti password,ganti pin,blo
 
 ## Putus akses dan periksa aktivitas
 
-Jika data pribadi atau kredensial sudah terlanjur diberikan, hubungi penyedia layanan melalui kanal resmi, amankan akun, dan periksa transaksi atau aktivitas yang tidak dikenali. Ubah password atau PIN dari perangkat dan aplikasi yang dipercaya.
+Jika data pribadi, kata sandi, atau PIN sudah terlanjur diberikan, hubungi penyedia melalui aplikasi, nomor, atau situs resminya. Amankan akun dan periksa transaksi atau aktivitas yang tidak dikenali. Ubah kata sandi atau PIN dari perangkat yang dipercaya.
 
-Simpan bukti percakapan dan catatan tindakan yang sudah dilakukan. Gunakan kanal pengaduan resmi lembaga terkait; jangan mengikuti instruksi pemulihan yang datang dari pengirim mencurigakan.
+Simpan bukti percakapan dan catatan tindakan yang sudah dilakukan. Gunakan layanan pengaduan resmi lembaga terkait; jangan mengikuti petunjuk pemulihan dari pengirim mencurigakan.

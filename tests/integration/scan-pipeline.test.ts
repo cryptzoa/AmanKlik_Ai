@@ -94,7 +94,7 @@ describe("mock scan pipeline", () => {
 
     expect(output.result.inputType).toBe("conversation");
     expect(output.result.conversationAnalysis?.messageCount).toBe(2);
-    expect(output.result.conversationAnalysis?.progressionSummary).toContain("eskalasi");
+    expect(output.result.conversationAnalysis?.progressionSummary).toContain("Desakan");
     expect(output.result.previewRedacted).toBeNull();
     expect(repositoryMocks.createScan).toHaveBeenCalledOnce();
   });

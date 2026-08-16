@@ -12,6 +12,6 @@ keywords: transfer,kirim uang,rekening,pembayaran,terlanjur,bukti transfer,lapor
 
 ## Bertindak cepat dan simpan bukti
 
-Jika uang sudah terlanjur dikirim karena dugaan penipuan, segera hubungi penyedia layanan keuangan melalui kanal resminya. Laporkan kejadian melalui Indonesia Anti-Scam Centre dan kepada penegak hukum sesuai petunjuk resmi.
+Jika uang sudah terlanjur dikirim karena dugaan penipuan, segera hubungi penyedia layanan keuangan melalui aplikasi, nomor, atau situs resminya. Laporkan kejadian melalui Indonesia Anti-Scam Centre dan kepada penegak hukum sesuai petunjuk resmi.
 
-Siapkan bukti transfer, data rekening tujuan, kronologi, dan screenshot percakapan. Jangan mengedit bukti asli; simpan salinan dan catat waktu kejadian agar proses pelaporan lebih jelas.
+Siapkan bukti transfer, data rekening tujuan, urutan kejadian, dan tangkapan layar percakapan. Jangan mengedit bukti asli; simpan salinan dan catat waktu kejadian agar proses pelaporan lebih jelas.

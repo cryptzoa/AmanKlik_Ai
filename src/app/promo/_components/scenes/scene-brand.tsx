@@ -56,7 +56,7 @@ export function SceneBrand({ isPortrait = false }: SceneBrandProps) {
               isPortrait ? "text-xl" : "text-xs md:text-sm"
             }`}
           >
-            Periksa Pesan · Pahami Tanda Bahaya · Ambil Langkah Aman
+            Periksa pesan · Pahami tandanya · Ambil langkah aman
           </p>
         </div>
       </div>

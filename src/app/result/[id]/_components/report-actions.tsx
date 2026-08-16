@@ -36,7 +36,7 @@ export function ReportActions({ result }: { result: AnalysisResult }) {
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="font-mono text-xs uppercase tracking-[0.16em] text-ai">
-            05 / Retain safely
+            05 / Simpan dengan aman
           </p>
           <h2
             id="report-actions-heading"
@@ -45,7 +45,7 @@ export function ReportActions({ result }: { result: AnalysisResult }) {
             Simpan langkahnya, bukan isi pesannya.
           </h2>
           <p className="mt-2 text-sm leading-6 text-muted">
-            Ringkasan lokal tidak menyertakan pesan, screenshot, URL lengkap,
+            Ringkasan yang disalin tidak menyertakan pesan, tangkapan layar, tautan lengkap,
             atau rahasia.
           </p>
         </div>

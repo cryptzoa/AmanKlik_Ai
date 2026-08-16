@@ -4,9 +4,9 @@ import { PageFrame } from "@/components/product/page-frame";
 import { RouteIntro } from "@/components/product/route-intro";
 
 export const metadata: Metadata = {
-  title: "Periksa pesan — AmanKlik AI",
+  title: "Periksa pesan atau tautan — AmanKlik AI",
   description:
-    "Periksa pesan, screenshot, atau tautan mencurigakan tanpa membuka situs tujuan dan dengan batas privasi yang jelas.",
+    "Periksa pesan, tangkapan layar, atau tautan mencurigakan tanpa membuka situs tujuan dan dengan batas privasi yang jelas.",
 };
 
 export default async function ScanPage(
@@ -24,21 +24,21 @@ export default async function ScanPage(
   return (
     <PageFrame>
       <RouteIntro
-        eyebrow="01 / Periksa"
+        eyebrow="Periksa pesan atau tautan"
         title="Apa yang ingin kamu periksa?"
-        description="Tempel pesan, unggah screenshot, atau masukkan tautan. Tugas utamanya tetap sama: berhenti sebentar, pisahkan sinyalnya, lalu tentukan langkah aman."
+        description="Tempel pesan, unggah tangkapan layar, atau masukkan tautan. Berhenti sebentar, lihat tanda bahayanya, lalu tentukan langkah yang aman."
         annotation={
           <p>
-            Tautan tidak dibuka. Hindari mengirim OTP, password, identitas,
+            Tautan tidak dibuka. Hindari mengirim OTP, kata sandi, identitas,
             atau detail transaksi.
           </p>
         }
       >
-        Pesan · screenshot · tautan
+        Pesan · tangkapan layar · tautan
       </RouteIntro>
       <ScanSection
         initialError={shareFailed
-          ? "Konten dari menu Share belum dapat diproses. Pastikan teks cukup panjang atau gunakan PNG, JPG, atau WEBP hingga 5 MB."
+          ? "Isi dari menu Bagikan belum dapat diperiksa. Pastikan teksnya cukup panjang atau gunakan gambar PNG, JPG, atau WEBP hingga 5 MB."
           : null}
       />
     </PageFrame>

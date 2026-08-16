@@ -66,9 +66,8 @@ export function HistorySection(
           </p>
           <h2>Riwayat belum dapat dibaca</h2>
           <p className="product-empty-state__copy">
-            Penyimpanan server sedang tidak dapat diakses. AmanKlik tidak
-            mengganti kondisi ini dengan daftar kosong, dan hasil baru belum
-            tentu dapat ditemukan kembali sampai layanan pulih.
+            Tempat penyimpanan sedang tidak dapat diakses. Hasil baru mungkin
+            belum bisa ditemukan kembali sampai layanan pulih.
           </p>
         </div>
       ) : rows.length > 0 ? (
@@ -104,7 +103,7 @@ export function HistorySection(
                     {riskLabels[row.riskLevel]}
                   </strong>
                   <span className="mt-2 block break-words text-sm leading-6 text-muted [overflow-wrap:anywhere]">
-                    {row.previewRedacted ?? "Preview teks tidak tersedia."}
+                    {row.previewRedacted ?? "Cuplikan teks tidak tersedia."}
                   </span>
                 </span>
 
@@ -135,9 +134,8 @@ export function HistorySection(
           </p>
           <h2>Belum ada pemeriksaan di sesi ini</h2>
           <p className="product-empty-state__copy">
-            Hasil yang terhubung ke cookie sesi anonim browser ini akan muncul
-            di sini setelah pemeriksaan selesai. Ini bukan inbox atau akun, dan
-            data sesi dicocokkan oleh server.
+            Hasil dari browser ini akan muncul setelah pemeriksaan selesai.
+            Riwayat ini bukan akun dan tidak mengambil isi kotak masuk pesanmu.
           </p>
           <div className="product-empty-state__action">
             <Link

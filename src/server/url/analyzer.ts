@@ -65,7 +65,7 @@ export function analyzeUrl(input: string, claimedBrand?: string | null): UrlAnal
         severity: "high",
         weight: 22,
         evidence: hostname,
-        explanation: "Tautan memakai alamat IP, bukan nama domain yang mudah diverifikasi.",
+        explanation: "Tautan memakai deretan angka sebagai alamat, bukan nama situs yang mudah dikenali.",
       }),
     );
   }
@@ -75,11 +75,11 @@ export function analyzeUrl(input: string, claimedBrand?: string | null): UrlAnal
       signal({
         id: "url-punycode",
         category: "url_obfuscation",
-        label: "Domain menggunakan punycode",
+        label: "Nama situs memakai format khusus",
         severity: "high",
         weight: 20,
         evidence: hostname,
-        explanation: "Format punycode dapat membuat nama domain terlihat mirip dengan identitas lain.",
+        explanation: "Format khusus ini dapat membuat nama situs terlihat mirip dengan nama lain.",
       }),
     );
   }
@@ -89,10 +89,10 @@ export function analyzeUrl(input: string, claimedBrand?: string | null): UrlAnal
       signal({
         id: "url-credentials",
         category: "url_obfuscation",
-        label: "URL memuat komponen kredensial",
+        label: "Ada teks sebelum tanda @ pada tautan",
         severity: "high",
         weight: 18,
-        explanation: "Komponen sebelum tanda @ dapat menyamarkan tujuan domain sebenarnya.",
+        explanation: "Teks sebelum tanda @ dapat mengalihkan perhatian dari alamat tujuan yang sebenarnya.",
       }),
     );
   }
@@ -120,7 +120,7 @@ export function analyzeUrl(input: string, claimedBrand?: string | null): UrlAnal
         severity: "medium",
         weight: 8,
         evidence: domain,
-        explanation: "Tujuan akhir tidak terlihat dari alamat pendek ini, jadi verifikasi tambahan diperlukan.",
+        explanation: "Tujuan akhir tidak terlihat dari alamat pendek ini, jadi perlu diperiksa melalui sumber lain.",
       }),
     );
   }
@@ -131,11 +131,11 @@ export function analyzeUrl(input: string, claimedBrand?: string | null): UrlAnal
       signal({
         id: "url-excessive-subdomain",
         category: "excessive_subdomain",
-        label: "Subdomain bertingkat cukup panjang",
+        label: "Bagian depan alamat terlalu panjang",
         severity: "medium",
         weight: 6,
         evidence: subdomain ?? undefined,
-        explanation: "Banyak tingkat subdomain dapat membuat domain utama lebih sulit dikenali.",
+        explanation: "Banyak bagian sebelum alamat utama dapat membuat tujuan sebenarnya lebih sulit dikenali.",
       }),
     );
   }
@@ -145,11 +145,11 @@ export function analyzeUrl(input: string, claimedBrand?: string | null): UrlAnal
       signal({
         id: "url-many-hyphens",
         category: "url_obfuscation",
-        label: "Hostname memiliki banyak tanda hubung",
+        label: "Nama situs memiliki banyak tanda hubung",
         severity: "low",
         weight: 5,
         evidence: hostname,
-        explanation: "Pola nama yang rumit dapat menyulitkan pemeriksaan visual domain.",
+        explanation: "Pola nama yang rumit dapat membuat alamat utama lebih sulit dikenali.",
       }),
     );
   }
@@ -159,10 +159,10 @@ export function analyzeUrl(input: string, claimedBrand?: string | null): UrlAnal
       signal({
         id: "url-encoded-pattern",
         category: "url_obfuscation",
-        label: "URL memuat pola encoding",
+        label: "Alamat memuat karakter yang disamarkan",
         severity: "medium",
         weight: 8,
-        explanation: "Encoding pada alamat dapat menyamarkan bagian tautan yang perlu diperiksa.",
+        explanation: "Karakter yang diubah ke format khusus dapat menyamarkan bagian penting dari tautan.",
       }),
     );
   }
@@ -173,11 +173,11 @@ export function analyzeUrl(input: string, claimedBrand?: string | null): UrlAnal
       signal({
         id: "url-sensitive-subdomain",
         category: "brand_domain_mismatch",
-        label: "Kata sensitif berada di subdomain",
+        label: "Kata sensitif berada sebelum alamat utama",
         severity: "medium",
         weight: 24,
         evidence: subdomain ?? undefined,
-        explanation: `Kata di subdomain tidak mengubah domain utama: ${domain}.`,
+        explanation: `Kata di bagian depan tidak mengubah alamat utama: ${domain}.`,
       }),
     );
   }
@@ -191,11 +191,11 @@ export function analyzeUrl(input: string, claimedBrand?: string | null): UrlAnal
         signal({
           id: "url-claimed-brand-mismatch",
           category: "brand_domain_mismatch",
-          label: "Identitas yang diklaim tidak sama dengan domain utama",
+          label: "Nama yang disebut tidak sama dengan alamat utama",
           severity: "high",
           weight: 30,
           evidence: `${claimedBrand} / ${domain}`,
-          explanation: `Pesan mengklaim identitas ${claimedBrand}, sementara domain utamanya ${domain}.`,
+          explanation: `Pesan menyebut ${claimedBrand}, sementara alamat utamanya ${domain}.`,
         }),
       );
     }

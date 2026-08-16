@@ -49,7 +49,7 @@ export function SystemState({
         </div>
 
         <p className={styles.boundary}>
-          Detail internal tidak ditampilkan untuk menjaga keamanan.
+          Rincian teknis tidak ditampilkan untuk menjaga keamanan.
         </p>
       </section>
     </main>

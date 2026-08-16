@@ -65,12 +65,12 @@ export function LearnSection({ topics }: { topics: LearnTopic[] }) {
         {topics.length === 0 ? (
           <div className="product-empty-state" role="status">
             <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
-              Indeks valid · 0 bacaan
+              Belum ada bacaan
             </p>
             <h2>Belum ada topik untuk dibaca</h2>
             <p className="product-empty-state__copy">
-              Indeks pengetahuan berhasil dimuat, tetapi belum memiliki potongan
-              bacaan. Coba lagi setelah indeks diperbarui.
+              Materi berhasil dimuat, tetapi belum ada bacaan yang tersedia.
+              Coba lagi nanti.
             </p>
           </div>
         ) : (
@@ -145,19 +145,18 @@ export function LearnSection({ topics }: { topics: LearnTopic[] }) {
                           aria-labelledby="learn-model-title"
                         >
                           <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-ai-soft">
-                            Model mental
+                            Prinsip sederhana
                           </p>
                           <h3
                             id="learn-model-title"
                             className="mt-4 text-2xl font-semibold leading-tight tracking-[-0.04em] sm:text-3xl"
                           >
-                            Pisahkan klaim dari cara memverifikasinya.
+                            Periksa klaim lewat sumber yang berbeda.
                           </h3>
                           <p className="mt-4 max-w-[60ch] leading-7 text-white/65 print:text-black">
-                            Jangan memakai nomor, tautan, file, atau petunjuk yang
-                            datang bersama klaim sebagai bukti klaim itu benar.
-                            Buka kanal resmi yang sudah kamu percaya secara
-                            mandiri.
+                            Jangan memakai nomor, tautan, file, atau petunjuk dari
+                            pesan sebagai satu-satunya bukti. Buka sendiri aplikasi,
+                            situs, atau nomor resmi yang sudah kamu percaya.
                           </p>
                         </aside>
                       ) : null}
@@ -173,8 +172,8 @@ export function LearnSection({ topics }: { topics: LearnTopic[] }) {
                   Terapkan pada satu pesan
                 </p>
                 <p className="mt-3 max-w-2xl text-xl font-semibold leading-snug tracking-[-0.025em]">
-                  Gunakan prinsipnya untuk berhenti, memeriksa sinyal, dan
-                  memilih kanal verifikasi yang terpisah.
+                  Gunakan prinsipnya untuk berhenti, memeriksa tanda bahaya, dan
+                  memilih sumber pemeriksaan yang terpisah.
                 </p>
               </div>
               <Link

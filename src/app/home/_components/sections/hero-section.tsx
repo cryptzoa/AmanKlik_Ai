@@ -116,7 +116,7 @@ export function LandingHeroSection() {
       </svg>
       <div className="relative z-10 mx-auto w-full max-w-6xl text-center">
         <p className="eyebrow-label text-ai-text">
-          AMAN KLIK AI / DIGITAL SAFETY COMPANION
+          AMANKLIK AI / TEMAN CEK PESAN MENCURIGAKAN
         </p>
         <h1 className="reference-hero-title mt-7 text-balanced">
           <span data-hero-line className="block overflow-hidden pb-[0.1em]">
@@ -137,7 +137,7 @@ export function LandingHeroSection() {
             className="reference-hero-cta editorial-button mt-9"
             href="/scan"
           >
-            Periksa pesan
+            Mulai periksa
           </MotionButton>
           <p className="mt-5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
             Tidak membuka tautan tujuan · Skor dijelaskan dengan bukti

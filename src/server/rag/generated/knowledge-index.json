@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-11T15:42:15.177Z",
+  "generatedAt": "2026-08-16T03:23:32.181Z",
   "embeddingModel": null,
   "embeddingDimension": null,
   "chunks": [
@@ -39,13 +39,13 @@
         "aplikasi pembayaran resmi",
         "qr dari pesan"
       ],
-      "text": "Kode QR dapat mengarahkan pengguna ke halaman pencuri kredensial, aplikasi berbahaya, atau tujuan pembayaran yang bukan milik merchant. Hindari memindai QR dari pesan pribadi atau sumber yang tidak jelas dan gunakan aplikasi pembayaran resmi.\n\nSetelah memindai QRIS, cocokkan nama merchant dan nominal yang tampil di aplikasi sebelum menyetujui transaksi. Jika identitas tujuan berbeda atau QR terlihat ditimpa, batalkan pembayaran, beri tahu merchant, dan simpan bukti tanpa meneruskan QR tersebut.",
+      "text": "Kode QR dapat mengarahkan pengguna ke halaman pencuri kata sandi, aplikasi berbahaya, atau tujuan pembayaran yang bukan milik penjual. Hindari memindai QR dari pesan pribadi atau sumber yang tidak jelas dan gunakan aplikasi pembayaran resmi.\n\nSetelah memindai QRIS, cocokkan nama penjual dan jumlah yang tampil di aplikasi sebelum menyetujui transaksi. Jika tujuan berbeda atau QR terlihat ditimpa, batalkan pembayaran, beri tahu penjual, dan simpan bukti tanpa meneruskan QR tersebut.",
       "embedding": []
     },
     {
       "id": "google-security-alert-verification-1",
       "documentId": "google-security-alert-verification",
-      "title": "Sebuah alert perlu diverifikasi, bukan langsung dipercaya atau diabaikan",
+      "title": "Peringatan perlu diperiksa, bukan langsung dipercaya atau diabaikan",
       "documentTitle": "Periksa peringatan keamanan Google dari pengaturan akun",
       "publisher": "Google Account Help",
       "sourceUrl": "https://support.google.com/accounts/answer/6063333?hl=en",
@@ -78,7 +78,7 @@
         "security checkup",
         "myaccount"
       ],
-      "text": "Penyedia akun memang dapat mengirim peringatan ketika mendeteksi aktivitas login yang tidak biasa, tetapi penipu juga dapat meniru tampilannya. Jangan menentukan keaslian hanya dari logo, nama pengirim, nada mendesak, atau tautan di dalam pesan.\n\nBuka pengaturan keamanan akun Google secara mandiri untuk memeriksa aktivitas terbaru. Jangan membacakan kode verifikasi, membagikan password, atau menyetujui permintaan login yang tidak kamu mulai; jika ada aktivitas asing, amankan akun dari perangkat yang dipercaya.",
+      "text": "Penyedia akun memang dapat mengirim peringatan ketika mendeteksi upaya masuk yang tidak biasa, tetapi penipu juga dapat meniru tampilannya. Jangan menentukan keaslian hanya dari logo, nama pengirim, nada mendesak, atau tautan di dalam pesan.\n\nBuka pengaturan keamanan akun Google sendiri untuk memeriksa aktivitas terbaru. Jangan membacakan kode verifikasi, membagikan kata sandi, atau menyetujui permintaan masuk yang tidak kamu mulai. Jika ada aktivitas asing, amankan akun dari perangkat yang dipercaya.",
       "embedding": []
     },
     {
@@ -113,7 +113,7 @@
         "iasc",
         "kronologi"
       ],
-      "text": "Jika uang sudah terlanjur dikirim karena dugaan penipuan, segera hubungi penyedia layanan keuangan melalui kanal resminya. Laporkan kejadian melalui Indonesia Anti-Scam Centre dan kepada penegak hukum sesuai petunjuk resmi.\n\nSiapkan bukti transfer, data rekening tujuan, kronologi, dan screenshot percakapan. Jangan mengedit bukti asli; simpan salinan dan catat waktu kejadian agar proses pelaporan lebih jelas.",
+      "text": "Jika uang sudah terlanjur dikirim karena dugaan penipuan, segera hubungi penyedia layanan keuangan melalui aplikasi, nomor, atau situs resminya. Laporkan kejadian melalui Indonesia Anti-Scam Centre dan kepada penegak hukum sesuai petunjuk resmi.\n\nSiapkan bukti transfer, data rekening tujuan, urutan kejadian, dan tangkapan layar percakapan. Jangan mengedit bukti asli; simpan salinan dan catat waktu kejadian agar proses pelaporan lebih jelas.",
       "embedding": []
     },
     {
@@ -148,7 +148,7 @@
         "aktivitas akun",
         "lapor bank"
       ],
-      "text": "Jika data pribadi atau kredensial sudah terlanjur diberikan, hubungi penyedia layanan melalui kanal resmi, amankan akun, dan periksa transaksi atau aktivitas yang tidak dikenali. Ubah password atau PIN dari perangkat dan aplikasi yang dipercaya.\n\nSimpan bukti percakapan dan catatan tindakan yang sudah dilakukan. Gunakan kanal pengaduan resmi lembaga terkait; jangan mengikuti instruksi pemulihan yang datang dari pengirim mencurigakan.",
+      "text": "Jika data pribadi, kata sandi, atau PIN sudah terlanjur diberikan, hubungi penyedia melalui aplikasi, nomor, atau situs resminya. Amankan akun dan periksa transaksi atau aktivitas yang tidak dikenali. Ubah kata sandi atau PIN dari perangkat yang dipercaya.\n\nSimpan bukti percakapan dan catatan tindakan yang sudah dilakukan. Gunakan layanan pengaduan resmi lembaga terkait; jangan mengikuti petunjuk pemulihan dari pengirim mencurigakan.",
       "embedding": []
     },
     {
@@ -193,7 +193,7 @@
     {
       "id": "ojk-credential-secrets-1",
       "documentId": "ojk-credential-secrets",
-      "title": "Rahasia autentikasi tidak boleh dibagikan",
+      "title": "Data rahasia akun tidak boleh dibagikan",
       "documentTitle": "Lindungi OTP, PIN, dan password",
       "publisher": "Otoritas Jasa Keuangan",
       "sourceUrl": "https://www.ojk.go.id/id/Fungsi-Utama/ITSK/Informasi-IAKD/Digital-Financial-Literacy/Documents/2.%20Proteksi%20Diri%20dari%20Kejahatan%20Digital.pdf",
@@ -222,13 +222,13 @@
         "petugas bank",
         "akun diblokir"
       ],
-      "text": "OTP, PIN, password, dan kode verifikasi adalah rahasia autentikasi. Jangan memberikannya kepada siapa pun, termasuk orang yang mengaku sebagai pegawai bank, marketplace, kurir, atau layanan digital.\n\nPermintaan yang mendesak, ancaman pemblokiran akun, atau janji hadiah tidak mengubah aturan ini. Jika data sudah terlanjur diberikan, buka aplikasi resmi secara mandiri, ganti kredensial yang relevan, dan periksa aktivitas akun.",
+      "text": "OTP, PIN, kata sandi, dan kode verifikasi adalah data rahasia akun. Jangan memberikannya kepada siapa pun, termasuk orang yang mengaku sebagai pegawai bank, marketplace, kurir, atau layanan digital.\n\nPermintaan yang mendesak, ancaman pemblokiran akun, atau janji hadiah tidak mengubah aturan ini. Jika data sudah terlanjur diberikan, buka aplikasi resmi sendiri, ganti kata sandi atau PIN yang terdampak, dan periksa aktivitas akun.",
       "embedding": []
     },
     {
       "id": "ojk-domain-caution-1",
       "documentId": "ojk-domain-caution",
-      "title": "Baca domain dari kanan ke kiri",
+      "title": "Kenali alamat utama situs",
       "documentTitle": "Periksa alamat layanan sebelum membuka tautan",
       "publisher": "Otoritas Jasa Keuangan",
       "sourceUrl": "https://sikapiuangmu.ojk.go.id/FrontEnd/images/FileDownload/417_Perbankan-4a%20mudah%20dan%20aman%20dengan%20internet%20banking%20dan%20mobile%20banking_2018_small.pdf",
@@ -259,14 +259,14 @@
         "alamat ip",
         "phishing"
       ],
-      "text": "Nama merek yang muncul di subdomain atau path belum membuktikan bahwa sebuah situs dikelola oleh merek tersebut. Fokus pada domain utama dan ejaannya; perbedaan satu karakter, susunan kata yang janggal, atau host berupa alamat IP patut dicurigai.\n\nUntuk membuka layanan keuangan atau akun penting, ketik alamat yang sudah dikenal atau gunakan aplikasi resmi. Jangan menjadikan tautan dari pesan mencurigakan sebagai rujukan resmi.",
+      "text": "Nama merek yang muncul di awal atau bagian belakang alamat belum membuktikan bahwa situs itu dikelola oleh merek tersebut. Fokus pada alamat utama dan ejaannya. Perbedaan satu karakter, susunan kata yang janggal, atau alamat berupa deretan angka patut dicurigai.\n\nUntuk membuka layanan keuangan atau akun penting, ketik alamat yang sudah dikenal atau gunakan aplikasi resmi. Jangan menjadikan tautan dari pesan mencurigakan sebagai rujukan resmi.",
       "embedding": []
     },
     {
       "id": "ojk-independent-verification-1",
       "documentId": "ojk-independent-verification",
-      "title": "Pisahkan klaim dari kanal verifikasi",
-      "documentTitle": "Verifikasi melalui kanal resmi yang dicari sendiri",
+      "title": "Periksa klaim melalui sumber lain",
+      "documentTitle": "Periksa melalui sumber resmi yang dicari sendiri",
       "publisher": "Otoritas Jasa Keuangan",
       "sourceUrl": "https://sikapiuangmu.ojk.go.id/FrontEnd/images/FileDownload/417_Perbankan-4a%20mudah%20dan%20aman%20dengan%20internet%20banking%20dan%20mobile%20banking_2018_small.pdf",
       "retrievedAt": "2026-08-08",
@@ -292,7 +292,7 @@
         "kanal resmi",
         "hubungi bank"
       ],
-      "text": "Jangan memverifikasi sebuah pesan dengan nomor telepon, tautan, atau kontak yang disediakan oleh pesan itu sendiri. Cari kanal resmi secara mandiri melalui aplikasi, kartu, dokumen, atau situs yang sudah dikenal.\n\nUntuk pesan yang mengaku berasal dari keluarga, atasan, bank, atau penyedia layanan, hubungi kembali lewat nomor atau akun yang sebelumnya sudah dipercaya. Perubahan nomor dan permintaan mendadak perlu dikonfirmasi sebelum bertindak.",
+      "text": "Jangan memeriksa kebenaran pesan dengan nomor telepon, tautan, atau kontak dari pesan itu sendiri. Cari sumber resmi sendiri melalui aplikasi, kartu, dokumen, atau situs yang sudah dikenal.\n\nUntuk pesan yang mengaku berasal dari keluarga, atasan, bank, atau penyedia layanan, hubungi kembali lewat nomor atau akun yang sebelumnya sudah dipercaya. Perubahan nomor dan permintaan mendadak perlu dikonfirmasi sebelum bertindak.",
       "embedding": []
     },
     {
@@ -332,7 +332,7 @@
         "transfer crypto",
         "bonus berjenjang"
       ],
-      "text": "Nama perusahaan, aplikasi yang rapi, atau figur promosi tidak membuktikan suatu investasi berizin. Periksa siapa badan hukumnya, otoritas yang relevan, dan apakah kegiatan yang ditawarkan sesuai dengan izin tersebut melalui kanal regulator yang dicari secara mandiri.\n\nWaspadai keuntungan tinggi yang digambarkan pasti atau minim risiko, kewajiban deposit, serta bonus yang terutama bergantung pada perekrutan anggota. Jangan memindahkan dana atau aset kripto hanya karena saldo dan keuntungan terlihat di aplikasi milik pengirim.",
+      "text": "Nama perusahaan, aplikasi yang rapi, atau tokoh dalam promosi tidak membuktikan suatu investasi berizin. Periksa badan hukumnya, lembaga pengawas yang sesuai, dan kecocokan kegiatan dengan izin melalui situs resmi yang kamu cari sendiri.\n\nWaspadai keuntungan tinggi yang digambarkan pasti atau minim risiko, kewajiban deposit, serta bonus yang terutama bergantung pada perekrutan anggota. Jangan memindahkan dana atau aset kripto hanya karena saldo dan keuntungan terlihat di aplikasi milik pengirim.",
       "embedding": []
     },
     {
@@ -371,7 +371,7 @@
         "biaya kurir",
         "bea cukai paket"
       ],
-      "text": "Penipu dapat memakai toko palsu, harga yang tidak wajar, bukti transfer yang diedit, atau alasan refund dan biaya pengiriman untuk memindahkan percakapan serta pembayaran ke luar marketplace. Periksa status pesanan dan dana masuk langsung di aplikasi atau rekening resmi, bukan dari screenshot pengirim.\n\nJangan membayar biaya tambahan ke rekening pribadi hanya untuk membuka pengiriman, refund, atau pencairan penjualan. Pertahankan percakapan di kanal platform, hubungi dukungan melalui aplikasi yang dibuka sendiri, dan simpan bukti jika transaksi bermasalah.",
+      "text": "Penipu dapat memakai toko palsu, harga yang tidak wajar, bukti transfer yang diedit, atau alasan pengembalian dana dan biaya pengiriman untuk memindahkan percakapan serta pembayaran ke luar marketplace. Periksa status pesanan dan dana masuk langsung di aplikasi atau rekening resmi, bukan dari tangkapan layar pengirim.\n\nJangan membayar biaya tambahan ke rekening pribadi hanya untuk membuka pengiriman, pengembalian dana, atau pencairan penjualan. Pertahankan percakapan di dalam aplikasi, hubungi dukungan melalui aplikasi yang kamu buka sendiri, dan simpan bukti jika transaksi bermasalah.",
       "embedding": []
     },
     {
@@ -410,7 +410,7 @@
         "like video",
         "subscribe youtube"
       ],
-      "text": "Modus kerja paruh waktu dapat dimulai dari tugas sederhana seperti menyukai atau mengikuti konten, lalu memberi bayaran kecil untuk membangun kepercayaan. Risiko meningkat ketika tugas berikutnya mewajibkan deposit atau top up dengan janji komisi dan pengembalian yang lebih besar.\n\nJangan mengirim deposit untuk membuka pekerjaan atau mencairkan komisi. Verifikasi perusahaan dan lowongan melalui kanal yang dicari sendiri, simpan percakapan serta bukti transaksi, dan gunakan kanal pelaporan resmi bila sudah dirugikan.",
+      "text": "Modus kerja paruh waktu dapat dimulai dari tugas sederhana seperti menyukai atau mengikuti konten, lalu memberi bayaran kecil untuk membangun kepercayaan. Risiko meningkat ketika tugas berikutnya mewajibkan deposit atau top up dengan janji komisi dan pengembalian yang lebih besar.\n\nJangan mengirim uang muka untuk membuka pekerjaan atau mencairkan komisi. Periksa perusahaan dan lowongan melalui sumber yang kamu cari sendiri, simpan percakapan serta bukti transaksi, dan gunakan layanan pelaporan resmi bila sudah dirugikan.",
       "embedding": []
     }
   ]

@@ -7,26 +7,26 @@ import { RouteIntro } from "@/components/product/route-intro";
 import styles from "./privacy.module.css";
 
 export const metadata: Metadata = {
-  title: "Privasi — Draf teknis AmanKlik AI",
+  title: "Penjelasan privasi — Draf AmanKlik AI",
   description:
-    "Penjelasan teknis tentang pemrosesan data AmanKlik AI yang belum disetujui sebagai kebijakan privasi publik.",
+    "Penjelasan tentang data yang diproses, disimpan, dan dikirim saat menggunakan AmanKlik AI.",
   robots: {
     index: false,
     follow: false,
   },
 };
 
-const DOCUMENT_VERSION = "Draf teknis 0.1";
+const DOCUMENT_VERSION = "Draf 0.1";
 const AUDIT_DATE = "14 Agustus 2026";
 
 const contents = [
   ["01", "Data yang masuk", "data-yang-masuk"],
-  ["02", "Aliran dan batas sistem", "aliran-data"],
-  ["03", "AI dan mode analisis", "ai-dan-mode"],
-  ["04", "Penyimpanan dan retensi", "penyimpanan"],
-  ["05", "Sesi dan pencocokan", "sesi"],
-  ["06", "Screenshot, berbagi, extension", "kanal-tambahan"],
-  ["07", "Sumber dan pencatatan error", "sumber-dan-log"],
+  ["02", "Ke mana data diproses", "aliran-data"],
+  ["03", "Cara AI digunakan", "ai-dan-mode"],
+  ["04", "Penyimpanan data", "penyimpanan"],
+  ["05", "Sesi browser", "sesi"],
+  ["06", "Gambar, menu berbagi, dan ekstensi", "kanal-tambahan"],
+  ["07", "Sumber luar dan catatan gangguan", "sumber-dan-log"],
   ["08", "Kontrol dan batas layanan", "kontrol"],
   ["09", "Status draf", "status-draf"],
 ] as const;
@@ -34,23 +34,23 @@ const contents = [
 const flow = [
   {
     index: "A",
-    title: "Browser atau extension",
-    body: "Kamu memilih pesan, URL, percakapan, atau screenshot. Cookie sesi atau bearer token menghubungkan permintaan dengan sesi anonim.",
+    title: "Browser atau ekstensi",
+    body: "Kamu memilih pesan, tautan, percakapan, atau tangkapan layar. Penanda sesi menghubungkan permintaan dengan browsermu tanpa membuat akun.",
   },
   {
     index: "B",
     title: "Server AmanKlik",
-    body: "Server memvalidasi ukuran dan format, menjalankan aturan deterministik, membuat fingerprint HMAC, serta menyusun hasil.",
+    body: "Server memeriksa ukuran dan jenis data, mencari tanda bahaya dengan aturan, membuat penanda khusus, lalu menyusun hasil.",
   },
   {
     index: "C",
     title: "Google Gemini, bila digunakan",
-    body: "Pada analisis AI live yang bukan cache hit, teks yang dinormalisasi, percakapan, atau gambar yang sudah diproses dapat dikirim ke Gemini.",
+    body: "Saat AI diperlukan dan belum ada hasil sebelumnya, teks, percakapan, atau gambar yang sudah diproses dapat dikirim ke Gemini.",
   },
   {
     index: "D",
     title: "Penyimpanan aplikasi",
-    body: "PostgreSQL menyimpan fingerprint, preview yang dimasking, hasil turunan, metadata analisis, dan waktu kedaluwarsa—bukan kolom input mentah atau blob screenshot asli.",
+    body: "Penyimpanan AmanKlik mencatat penanda isi, cuplikan yang sudah disamarkan, hasil pemeriksaan, dan waktu kedaluwarsa. File gambar asli tidak disimpan di basis data aplikasi.",
   },
 ] as const;
 
@@ -59,9 +59,9 @@ export default function PrivacyPage() {
     <PageFrame>
       <div className={styles.page}>
         <RouteIntro
-          eyebrow="Privasi / Draf teknis"
+          eyebrow="Penjelasan privasi / Draf"
           title="Apa yang terjadi pada data yang kamu kirim."
-          description="Halaman ini menerjemahkan perilaku yang dapat dibuktikan dari kode AmanKlik. Ini belum menjadi kebijakan privasi publik dan belum memuat klaim hukum atau operasional yang belum diverifikasi."
+          description="Halaman ini menjelaskan apa yang dilakukan AmanKlik berdasarkan kode yang tersedia. Isinya masih draf dan belum menjadi kebijakan privasi resmi."
           annotation={(
             <dl className={styles.documentMeta}>
               <div>
@@ -73,7 +73,7 @@ export default function PrivacyPage() {
                 <dd>{DOCUMENT_VERSION}</dd>
               </div>
               <div>
-                <dt>Tanggal audit teknis</dt>
+                <dt>Terakhir diperiksa</dt>
                 <dd>{AUDIT_DATE}</dd>
               </div>
             </dl>
@@ -81,14 +81,14 @@ export default function PrivacyPage() {
           pattern="reading"
         >
           <p>
-            Tidak untuk diindeks · Dapat dibaca dan dicetak tanpa JavaScript
+            Tidak muncul di mesin pencari · Dapat dibaca dan dicetak tanpa JavaScript
           </p>
         </RouteIntro>
 
         <section className={styles.summary} aria-labelledby="summary-title">
           <div className={`product-container ${styles.summaryInner}`}>
             <div className={styles.summaryHeading}>
-              <p className="product-eyebrow text-ai">Ringkasan awal</p>
+              <p className="product-eyebrow text-ai">Ringkasan singkat</p>
               <h2 id="summary-title">Tiga hal sebelum kamu memeriksa sesuatu.</h2>
             </div>
             <div className={styles.summaryGrid}>
@@ -96,9 +96,9 @@ export default function PrivacyPage() {
                 <span>01</span>
                 <h3>Yang diproses</h3>
                 <p>
-                  Isi yang kamu pilih—pesan, URL, screenshot, atau rangkaian
-                  percakapan—beserta metadata teknis untuk sesi, rate limit,
-                  dan hasil analisis.
+                  Isi yang kamu pilih—pesan, tautan, tangkapan layar, atau
+                  percakapan—beserta data teknis yang diperlukan untuk
+                  menjalankan pemeriksaan dan menjaga layanan tetap aman.
                 </p>
               </article>
               <article>
@@ -106,8 +106,8 @@ export default function PrivacyPage() {
                 <h3>Yang tidak diminta</h3>
                 <p>
                   AmanKlik tidak menyediakan akun pengguna dan tidak
-                  memerlukan nama, email, password, PIN, atau OTP untuk masuk.
-                  Jangan sengaja menyertakan rahasia itu dalam materi scan.
+                  memerlukan nama, email, kata sandi, PIN, atau OTP untuk masuk.
+                  Hapus informasi rahasia itu sebelum mengirim bahan pemeriksaan.
                 </p>
               </article>
               <article>
@@ -115,17 +115,18 @@ export default function PrivacyPage() {
                 <h3>Kontrol yang tersedia</h3>
                 <p>
                   Kamu memilih materi yang dikirim, dapat menyalin ringkasan
-                  aman, dan dapat mencabut token extension dari sesi penerbit.
+                  aman, dan dapat mencabut akses ekstensi dari browser yang
+                  membuatnya.
                   Belum ada tombol untuk menghapus seluruh data sesi.
                 </p>
               </article>
             </div>
             <div className={styles.draftNotice} role="note">
-              <strong>Draf ini sengaja belum menyebut masa retensi final.</strong>
+              <strong>Lama penyimpanan belum menjadi janji resmi.</strong>
               <p>
-                Kode memiliki nilai bawaan dan mekanisme kedaluwarsa, tetapi
-                konfigurasi deployment, backup, serta kebijakan provider belum
-                diverifikasi sebagai komitmen publik.
+                Kode memiliki waktu kedaluwarsa bawaan. Namun, pengaturan server,
+                salinan cadangan, dan aturan penyedia layanan belum diperiksa
+                untuk dijadikan komitmen publik.
               </p>
             </div>
           </div>
@@ -151,32 +152,32 @@ export default function PrivacyPage() {
               <SectionHeading
                 number="01"
                 title="Data yang masuk dimulai dari pilihanmu."
-                lead="Scanner menerima empat jenis materi. Setiap jenis dibatasi dan divalidasi di server sebelum dianalisis."
+                lead="AmanKlik menerima empat jenis bahan. Ukuran dan jenisnya diperiksa di server sebelum diproses."
               />
               <div className={styles.factRows}>
                 <FactRow
                   term="Pesan"
-                  detail="Teks sepanjang 8–8.000 karakter. Spasi dan bentuk Unicode dinormalisasi sebelum aturan, fingerprint, dan analisis dijalankan."
+                  detail="Teks sepanjang 8–8.000 karakter. Spasi dan bentuk tulisan dirapikan sebelum tanda bahaya dicari."
                 />
                 <FactRow
-                  term="URL"
-                  detail="Alamat sepanjang maksimal 2.048 karakter dan hanya protokol HTTP atau HTTPS. Analyzer membaca struktur domain secara statis; ia tidak membuka situs tujuan."
+                  term="Tautan"
+                  detail="Alamat maksimal 2.048 karakter dan harus memakai HTTP atau HTTPS. AmanKlik hanya membaca susunan alamat; situs tujuan tidak dibuka."
                 />
                 <FactRow
                   term="Percakapan"
                   detail="Dua sampai dua belas pesan berurutan, maksimal 4.000 karakter per pesan dan 16.000 karakter secara keseluruhan."
                 />
                 <FactRow
-                  term="Screenshot"
-                  detail="PNG, JPEG, atau WebP yang lolos pemeriksaan signature file, dengan batas bawaan 5 MiB dan 40 juta piksel."
+                  term="Tangkapan layar"
+                  detail="Gambar PNG, JPEG, atau WebP yang jenis filenya dapat dikenali, dengan batas bawaan 5 MiB dan 40 juta piksel."
                 />
               </div>
               <div className={styles.inlineNote}>
                 <p>
-                  Redaction aplikasi menutupi pola tertentu—email, nomor HP
+                  AmanKlik menyamarkan pola tertentu—email, nomor HP
                   Indonesia, rangkaian angka panjang, dan kode OTP dalam
-                  konteks tertentu. Redaction ini bukan anonimisasi lengkap:
-                  nama, alamat, URL, atau data lain yang tidak cocok dengan pola
+                  konteks tertentu. Penyaringan ini tidak menghapus semua data
+                  pribadi: nama, alamat, tautan, atau data lain yang tidak cocok dengan pola
                   masih dapat muncul dalam hasil turunan.
                 </p>
               </div>
@@ -188,8 +189,8 @@ export default function PrivacyPage() {
             >
               <SectionHeading
                 number="02"
-                title="Empat batas yang dilalui data."
-                lead="Jalur ke provider AI bersifat kondisional. Jalur ke penyimpanan menyimpan hasil turunan dan metadata, bukan sebuah salinan file screenshot asli."
+                title="Data dapat melewati empat tempat."
+                lead="Data hanya dikirim ke penyedia AI saat diperlukan. Penyimpanan aplikasi mencatat hasil pemeriksaan, bukan salinan file gambar asli."
                 inverse
               />
               <ol className={styles.flow} aria-label="Aliran pemrosesan data">
@@ -202,8 +203,8 @@ export default function PrivacyPage() {
                 ))}
               </ol>
               <p className={styles.flowFootnote}>
-                Tautan sumber resmi berada di luar aliran ini. Server tidak
-                membuka sumber tersebut saat scan; browser baru mengunjungi
+                Tautan sumber resmi berada di luar proses ini. Server tidak
+                membuka sumber tersebut saat pemeriksaan; browser baru mengunjungi
                 situs eksternal ketika kamu memilih tautannya.
               </p>
             </section>
@@ -211,57 +212,56 @@ export default function PrivacyPage() {
             <section id="ai-dan-mode" className={styles.section}>
               <SectionHeading
                 number="03"
-                title="AI bukan satu-satunya lapisan analisis."
-                lead="AmanKlik memisahkan aturan deterministik, pemeriksaan struktur URL, cache, dan konteks AI. Skor akhir dihitung oleh aplikasi, bukan ditentukan langsung oleh model."
+                title="AI bukan satu-satunya cara AmanKlik memeriksa."
+                lead="AmanKlik menggabungkan aturan tetap, pemeriksaan bentuk tautan, hasil sebelumnya, dan bantuan AI. Skor akhir dihitung oleh aplikasi."
               />
               <div className={styles.modeGrid}>
                 <article>
-                  <p>Hybrid</p>
+                  <p>Aturan + AI</p>
                   <h3>Gemini memberi konteks; aplikasi menghitung skor.</h3>
                   <span>
-                    Dalam mode live, teks yang dinormalisasi, percakapan, atau
-                    gambar yang sudah diproses dapat dikirim ke Google Gemini.
-                    Model utama dan fallback dapat diubah melalui konfigurasi.
+                    Teks yang sudah dirapikan, percakapan, atau gambar yang sudah
+                    diproses dapat dikirim ke Google Gemini. Jenis model yang
+                    dipakai dapat berubah sesuai pengaturan layanan.
                   </span>
                 </article>
                 <article>
-                  <p>Cached hybrid</p>
+                  <p>Hasil sebelumnya</p>
                   <h3>Hasil AI sebelumnya dipakai kembali.</h3>
                   <span>
-                    Jika fingerprint yang sama masih memiliki cache valid,
-                    permintaan itu tidak menjalankan panggilan analisis Gemini
-                    utama lagi. Hasil mendapat ID scan baru untuk sesi aktif.
+                    Jika isi yang sama masih memiliki hasil yang berlaku,
+                    AmanKlik dapat memakainya kembali tanpa meminta analisis
+                    utama dari Gemini. Pemeriksaan tetap mendapat nomor hasil baru.
                   </span>
                 </article>
                 <article>
-                  <p>Rules only</p>
-                  <h3>Hasil hanya memakai sinyal deterministik yang tersedia.</h3>
+                  <p>Aturan saja</p>
+                  <h3>Hasil hanya memakai tanda yang ditemukan oleh aturan.</h3>
                   <span>
-                    Label ini tidak membuktikan bahwa data tidak pernah mencapai
-                    provider. Pada pesan, URL, atau percakapan, mode ini dapat
-                    muncul setelah percobaan AI gagal.
+                    Label ini tidak selalu berarti data belum pernah dikirim ke
+                    penyedia AI. Pada pesan, tautan, atau percakapan, kondisi ini
+                    juga dapat muncul setelah percobaan AI gagal.
                   </span>
                 </article>
               </div>
               <p>
-                Pada panggilan analisis utama, masking kutipan bukti dilakukan
-                setelah respons AI diparse—bukan sebelum materi dikirim ke
-                Gemini. Karena itu, hapus rahasia dari input sebelum scan.
+                Saat memakai analisis AI utama, kutipan bukti baru disamarkan
+                setelah jawaban AI diterima—bukan sebelum bahan dikirim ke
+                Gemini. Karena itu, hapus rahasia dari bahan sebelum diperiksa.
               </p>
               <p>
-                Pencarian pengetahuan juga dapat memakai embedding Gemini bila
-                deployment membangun index embedding. Query untuk jalur itu
-                dimasking dengan redaction yang sama dan dipotong hingga 1.500
-                karakter. Index yang tersimpan di repository saat audit ini
-                memakai pencarian keyword lokal, tetapi hasil build deployment
-                belum dikonfirmasi.
+                Fitur pencarian materi dapat memakai Gemini jika server dibuat
+                dengan fitur tersebut. Teks pencarian disamarkan dengan cara
+                yang sama dan dibatasi hingga 1.500 karakter. Saat halaman ini
+                diperiksa, proyek memakai pencarian kata kunci lokal; pengaturan
+                server yang sedang digunakan belum dikonfirmasi.
               </p>
               <div className={styles.warningNote} role="note">
-                <strong>Batas klaim provider</strong>
+                <strong>Hal yang belum diketahui tentang penyedia AI</strong>
                 <p>
                   Kode tidak menentukan wilayah pemrosesan, masa simpan di
-                  Google, penggunaan untuk pelatihan, subprocessor, atau
-                  mekanisme penghapusan provider. Draf ini tidak membuat janji
+                  Google, penggunaan untuk pelatihan, pihak lain yang membantu
+                  pemrosesan, atau cara penghapusan mereka. Draf ini tidak membuat janji
                   tentang hal-hal tersebut.
                 </p>
               </div>
@@ -270,46 +270,46 @@ export default function PrivacyPage() {
             <section id="penyimpanan" className={styles.section}>
               <SectionHeading
                 number="04"
-                title="Yang disimpan lebih luas dari sebuah fingerprint."
-                lead="Input mentah tidak memiliki kolom khusus, tetapi database menyimpan hasil turunan yang dapat memuat kutipan yang sudah dimasking serta metadata sesi."
+                title="AmanKlik menyimpan penanda dan hasil pemeriksaan."
+                lead="Isi asli tidak memiliki tempat penyimpanan khusus. Namun, basis data menyimpan hasil yang dapat berisi kutipan yang sudah disamarkan serta data teknis sesi."
               />
               <dl className={styles.storageList}>
                 <StorageRow
-                  term="Hasil scan"
-                  detail="ID scan dan sesi, jenis input, fingerprint HMAC, preview yang dimasking, skor, tingkat risiko, mode analisis, status AI/cache, ID model, latensi provider, hasil turunan, serta waktu dibuat dan kedaluwarsa."
+                  term="Hasil pemeriksaan"
+                  detail="Nomor hasil dan sesi, jenis bahan, penanda khusus untuk isi, cuplikan yang disamarkan, skor, tingkat risiko, cara pemeriksaan, informasi model AI, waktu proses, hasil pemeriksaan, serta waktu dibuat dan kedaluwarsa."
                 />
                 <StorageRow
-                  term="Cache bersama"
-                  detail="Fingerprint, jenis input, seluruh hasil turunan, ID model, mode, dan waktu kedaluwarsa. Cache tidak terikat ke satu sesi dan dapat dipakai kembali untuk input yang sama."
+                  term="Hasil yang dapat dipakai kembali"
+                  detail="Penanda isi, jenis bahan, hasil pemeriksaan, informasi model, cara pemeriksaan, dan waktu kedaluwarsa. Data ini tidak terikat ke satu sesi dan dapat dipakai untuk isi yang sama."
                 />
                 <StorageRow
                   term="Fitur lanjutan"
-                  detail="Komentar feedback, judul dan ringkasan kasus investigasi, hubungan antar-scan, serta status checklist tindakan dapat masuk ke database."
+                  detail="Tanggapan pengguna, judul dan ringkasan perbandingan, hubungan antarhasil, serta status daftar tindakan dapat masuk ke basis data."
                 />
                 <StorageRow
-                  term="Metadata keamanan"
-                  detail="Token extension disimpan sebagai HMAC beserta nama perangkat dan timestamp. Rate limit menyimpan fingerprint subjek dan, bila tersedia, fingerprint alamat jaringan—bukan alamat mentah pada tabel aplikasi."
+                  term="Data untuk keamanan layanan"
+                  detail="Kode akses ekstensi disimpan sebagai penanda yang tidak menampilkan kode aslinya, bersama nama perangkat dan waktu. Pembatasan penggunaan juga menyimpan penanda pengguna dan, bila tersedia, penanda alamat jaringan—bukan alamat aslinya di tabel aplikasi."
                 />
               </dl>
               <div className={styles.retentionBlock}>
-                <p className="product-eyebrow">Retensi yang dapat dibuktikan</p>
+                <p className="product-eyebrow">Lama penyimpanan yang terlihat di kode</p>
                 <div>
-                  <h3>Nilai bawaan scan dan cache adalah 24 jam.</h3>
+                  <h3>Waktu penyimpanan bawaan untuk hasil adalah 24 jam.</h3>
                   <p>
-                    Deployment dapat mengubah nilai itu. Setelah kedaluwarsa,
-                    record tidak dikembalikan oleh query aplikasi. Penghapusan
-                    fisik berjalan secara oportunistik ketika scan berikutnya
-                    disimpan, dengan jeda pemeriksaan minimal 15 menit per
-                    proses—bukan tepat pada detik kedaluwarsa.
+                    Pengaturan server dapat mengubah waktu itu. Setelah
+                    kedaluwarsa, data tidak ditampilkan oleh aplikasi.
+                    Penghapusan dari basis data dilakukan saat pemeriksaan lain
+                    disimpan dan paling sering dicek setiap 15 menit, jadi tidak
+                    selalu tepat pada detik kedaluwarsa.
                   </p>
                 </div>
                 <div>
                   <h3>Tidak semua tabel mengikuti waktu itu.</h3>
                   <p>
-                    Kasus investigasi belum memiliki waktu kedaluwarsa atau
-                    tombol hapus. Token berhenti valid setelah 90 hari atau saat
-                    dicabut, tetapi record token yang kedaluwarsa atau dicabut
-                    tidak dihapus secara otomatis oleh kode aplikasi saat ini.
+                    Perbandingan hasil belum memiliki waktu kedaluwarsa atau
+                    tombol hapus. Kode akses berhenti berlaku setelah 90 hari
+                    atau saat dicabut, tetapi catatannya belum otomatis dihapus
+                    oleh aplikasi.
                   </p>
                 </div>
               </div>
@@ -318,43 +318,42 @@ export default function PrivacyPage() {
             <section id="sesi" className={styles.section}>
               <SectionHeading
                 number="05"
-                title="Sesi anonim adalah pengikat akses, bukan identitas akun."
-                lead="AmanKlik tidak mempunyai alur daftar atau masuk. Sebuah UUID acak di cookie menghubungkan browser dengan hasil miliknya."
+                title="Sesi browser menghubungkan hasil tanpa membuat akun."
+                lead="AmanKlik tidak memiliki proses daftar atau masuk. Penanda acak di cookie menghubungkan browser dengan hasil miliknya."
               />
               <div className={styles.sessionGrid}>
                 <div>
                   <p className="product-eyebrow">Cookie</p>
                   <h3><code>amanklik_sid</code></h3>
                   <p>
-                    Cookie berlaku 30 hari, tidak dapat dibaca JavaScript
-                    aplikasi karena <code>HttpOnly</code>, memakai
-                    <code>SameSite=Lax</code>, berlaku di seluruh path, dan hanya
-                    dikirim melalui HTTPS ketika aplikasi berjalan di produksi.
+                    Cookie berlaku 30 hari dan tidak dapat dibaca oleh kode yang
+                    berjalan di halaman. Cookie dikirim ke seluruh bagian
+                    AmanKlik dan hanya melalui koneksi HTTPS pada layanan produksi.
                   </p>
                 </div>
                 <div>
-                  <p className="product-eyebrow">Ownership</p>
-                  <h3>Resource asing dan hilang tampak sama.</h3>
+                  <p className="product-eyebrow">Kepemilikan hasil</p>
+                  <h3>Hasil milik browser lain tidak dapat dibuka.</h3>
                   <p>
-                    Hasil, kasus, progres, feedback, dan token dibaca dengan ID
-                    sesi aktif. Resource yang tidak ada dan resource milik sesi
-                    lain tidak dibedakan kepada pengguna.
+                    Hasil, perbandingan, kemajuan latihan, tanggapan, dan kode
+                    akses dibaca memakai sesi aktif. AmanKlik memberi tampilan
+                    yang sama untuk data yang tidak ada dan data milik sesi lain.
                   </p>
                 </div>
               </div>
               <p>
-                Menghapus cookie membuat browser kehilangan pengikat akses itu,
-                tetapi tidak menghapus record server. Karena UUID sesi masih
-                tersimpan dalam database selama recordnya ada, istilah
+                Menghapus cookie membuat browser kehilangan akses ke hasilnya,
+                tetapi tidak menghapus data di server. Karena penanda sesi masih
+                tersimpan dalam basis data selama datanya ada, istilah
                 “anonim” di sini tidak berarti data telah dianonimkan secara
                 permanen.
               </p>
               <div className={styles.matchNotice}>
-                <span>Ambang privasi: 3 sesi</span>
+                <span>Jumlah baru terlihat setelah 3 sesi</span>
                 <p>
                   Halaman hasil menghitung jumlah sesi berbeda dengan
-                  fingerprint input yang sama, hanya untuk scan yang masih
-                  aktif dan dibuat dalam jendela paling lama 30 hari. Jumlah
+                  penanda isi yang sama, hanya untuk hasil yang masih
+                  aktif dan dibuat dalam waktu paling lama 30 hari. Jumlah
                   tidak ditampilkan sebelum mencapai tiga sesi. Dengan nilai
                   kedaluwarsa bawaan 24 jam, jendela efektifnya lebih pendek
                   daripada 30 hari.
@@ -365,45 +364,44 @@ export default function PrivacyPage() {
             <section id="kanal-tambahan" className={styles.section}>
               <SectionHeading
                 number="06"
-                title="Kanal berbeda, pipeline yang sama."
-                lead="Screenshot, share target PWA, dan extension masuk ke analyzer yang sama, tetapi masing-masing memiliki detail penyimpanan yang perlu diketahui."
+                title="Cara masuk berbeda, proses pemeriksaannya sama."
+                lead="Tangkapan layar, menu berbagi, dan ekstensi masuk ke pemeriksaan yang sama. Masing-masing memiliki cara pengolahan yang perlu diketahui."
               />
               <div className={styles.channelList}>
                 <article>
-                  <span>Screenshot</span>
-                  <h3>File diputar, diperkecil, lalu di-encode ulang.</h3>
+                  <span>Tangkapan layar</span>
+                  <h3>Gambar disesuaikan, diperkecil, lalu dibuat ulang.</h3>
                   <p>
                     Dimensi maksimum hasil adalah 1.600 × 1.600 tanpa
-                    memperbesar gambar kecil. Kode aplikasi tidak menyimpan blob
-                    file asli maupun blob hasil proses di database. Gambar hasil
+                    memperbesar gambar kecil. Aplikasi tidak menyimpan file asli
+                    atau file hasil proses di basis data. Gambar hasil
                     proses dapat dikirim ke Gemini, dan teks yang diekstrak serta
-                    bukti turunannya dapat disimpan setelah redaction.
+                    bukti turunannya dapat disimpan setelah data pribadi disamarkan.
                   </p>
                 </article>
                 <article>
-                  <span>Share target PWA</span>
-                  <h3>Memilih AmanKlik di menu berbagi langsung memulai scan.</h3>
+                  <span>Menu berbagi</span>
+                  <h3>Memilih AmanKlik di menu berbagi langsung memulai pemeriksaan.</h3>
                   <p>
-                    Sistem menerima judul, teks, URL, atau gambar dari share
-                    sheet, memakai atau membuat sesi anonim, lalu mengarahkan ke
-                    hasil. Materi mengikuti validasi, AI, cache, dan retensi yang
-                    sama seperti scanner.
+                    Sistem menerima judul, teks, tautan, atau gambar dari menu
+                    berbagi, memakai atau membuat sesi browser, lalu membuka
+                    hasil. Bahan mengikuti pemeriksaan, AI, penggunaan hasil
+                    sebelumnya, dan waktu penyimpanan yang sama.
                   </p>
                 </article>
                 <article>
-                  <span>Extension</span>
-                  <h3>Bearer token ditampilkan sekali oleh server.</h3>
+                  <span>Ekstensi browser</span>
+                  <h3>Kode akses hanya ditampilkan sekali.</h3>
                   <p>
-                    Token acak diawali <code>akx_</code>. Server menyimpan HMAC,
-                    nama perangkat, waktu dibuat, terakhir dipakai, dicabut, dan
-                    kedaluwarsa. Nilai mentah disimpan oleh extension di
-                    <code>chrome.storage.local</code> dan dikirim pada header
-                    Authorization saat kamu menjalankan scan teks atau URL.
+                    Kode acak diawali <code>akx_</code>. Server menyimpan penanda
+                    kode, nama perangkat, serta waktu dibuat, terakhir dipakai,
+                    dicabut, dan kedaluwarsa. Kode asli disimpan oleh ekstensi di
+                    browser dan dikirim saat kamu memeriksa teks atau tautan.
                   </p>
                   <p>
-                    Token dapat dicabut dari sesi browser yang menerbitkannya.
-                    Jika cookie sesi itu hilang, UI saat ini tidak menyediakan
-                    jalur kepemilikan alternatif untuk mencabut token lama.
+                    Kode akses dapat dicabut dari browser yang membuatnya. Jika
+                    cookie sesi hilang, tampilan saat ini belum menyediakan cara
+                    lain untuk mencabut kode lama.
                   </p>
                 </article>
               </div>
@@ -412,18 +410,18 @@ export default function PrivacyPage() {
             <section id="sumber-dan-log" className={styles.section}>
               <SectionHeading
                 number="07"
-                title="Sumber eksternal dan log memiliki batas terpisah."
-                lead="Materi edukasi disimpan sebagai katalog lokal. Situs eksternal hanya menerima kunjungan ketika kamu sendiri membuka tautannya."
+                title="Sumber luar hanya dibuka saat kamu memilihnya."
+                lead="Materi belajar disimpan sebagai daftar di AmanKlik. Situs lain baru menerima kunjungan ketika kamu membuka tautannya sendiri."
               />
               <div className={styles.splitColumns}>
                 <div>
                   <h3>Sumber yang dikurasi</h3>
                   <p>
                     Katalog saat audit memuat materi OJK dan IASC, Bank
-                    Indonesia, Komdigi, serta Google Account Help. Daftar host
-                    diperiksa oleh test atau allowlist fitur terkait; builder
-                    index pengetahuan sendiri mempercayai metadata yang sudah
-                    masuk repository.
+                    Indonesia, Komdigi, serta Bantuan Akun Google. Alamat situs
+                    diperiksa melalui pengujian atau daftar sumber yang
+                    diizinkan. Daftar materi memakai informasi yang sudah
+                    disimpan di proyek AmanKlik.
                   </p>
                   <p>
                     Tautan dibuka di tab baru tanpa referrer dari komponen produk.
@@ -441,19 +439,19 @@ export default function PrivacyPage() {
                   </div>
                 </div>
                 <div>
-                  <h3>Log error aplikasi</h3>
+                  <h3>Catatan gangguan aplikasi</h3>
                   <p>
-                    Logger permintaan yang dibuat AmanKlik mencatat level,
-                    konteks bernama, nama kelas error, kode, status dapat dicoba
-                    lagi, dan timestamp. Logger itu tidak memasukkan message
-                    error, stack, input, URL, ID sesi, token, screenshot, atau
-                    kutipan bukti.
+                    Catatan AmanKlik menyimpan tingkat gangguan, bagian yang
+                    terganggu, jenis dan kode kesalahan, apakah proses dapat
+                    dicoba lagi, serta waktu kejadian. Catatan itu tidak
+                    memasukkan isi pesan, rincian kode kesalahan, tautan, nomor
+                    sesi, kode akses, tangkapan layar, atau kutipan bukti.
                   </p>
                   <p>
-                    Repository tidak mendeklarasikan SDK analytics atau
-                    telemetry. Hal ini tidak membuktikan apa yang dicatat oleh
-                    hosting, proxy, database, browser, atau Google; konfigurasi
-                    dan masa simpan mereka belum diverifikasi.
+                    Proyek tidak memasang alat analitik atau pemantauan tambahan.
+                    Hal ini tidak membuktikan apa yang dicatat oleh layanan
+                    hosting, penghubung jaringan, basis data, browser, atau Google; pengaturan
+                    dan masa simpan mereka belum diperiksa.
                   </p>
                 </div>
               </div>
@@ -462,35 +460,35 @@ export default function PrivacyPage() {
             <section id="kontrol" className={styles.section}>
               <SectionHeading
                 number="08"
-                title="Kontrol yang ada harus dibedakan dari yang belum ada."
-                lead="Draf ini tidak mengubah keterbatasan produk menjadi janji."
+                title="Lihat apa yang bisa dan belum bisa kamu kendalikan."
+                lead="Bagian ini menjelaskan kemampuan AmanKlik saat ini tanpa membuat janji yang belum tersedia."
               />
               <div className={styles.controlGrid}>
                 <div>
                   <p className="product-eyebrow text-safe">Tersedia sekarang</p>
                   <ul>
-                    <li>Memilih materi yang akan dikirim dan menghapus rahasia sebelum scan.</li>
-                    <li>Menyalin atau mencetak ringkasan turunan yang tidak menyertakan preview dan kutipan bukti.</li>
-                    <li>Mencabut token extension dari sesi browser penerbit.</li>
-                    <li>Menghapus cookie atau data extension dari browser untuk memutus akses lokal.</li>
+                    <li>Memilih bahan yang akan dikirim dan menghapus rahasia sebelum diperiksa.</li>
+                    <li>Menyalin atau mencetak ringkasan yang tidak menyertakan cuplikan isi dan kutipan bukti.</li>
+                    <li>Mencabut kode akses ekstensi dari browser yang membuatnya.</li>
+                    <li>Menghapus cookie atau data ekstensi dari browser untuk memutus akses di perangkat.</li>
                   </ul>
                 </div>
                 <div>
                   <p className="product-eyebrow text-risk">Belum tersedia</p>
                   <ul>
-                    <li>Tombol untuk menghapus seluruh scan, kasus, feedback, progres, dan record sesi di server.</li>
+                    <li>Tombol untuk menghapus seluruh hasil, perbandingan, tanggapan, kemajuan latihan, dan data sesi di server.</li>
                     <li>Ekspor lengkap seluruh data sesi atau pemulihan sesi setelah cookie hilang.</li>
-                    <li>Jaminan bahwa menghapus cookie juga menghapus record server.</li>
-                    <li>Pilihan pengguna untuk memaksa mode tanpa AI pada scanner live.</li>
+                    <li>Jaminan bahwa menghapus cookie juga menghapus data di server.</li>
+                    <li>Pilihan untuk menjalankan pemeriksaan tanpa AI.</li>
                   </ul>
                 </div>
               </div>
               <div className={styles.limitBand}>
                 <p className="product-eyebrow">Batas layanan</p>
-                <h3>AmanKlik menilai indikator; AmanKlik tidak menjalankan tindakan.</h3>
+                <h3>AmanKlik menunjukkan tanda bahaya, bukan mengambil tindakan.</h3>
                 <p>
-                  Analyzer URL tidak membuka, mengikuti redirect, melakukan DNS
-                  probe, atau mengambil screenshot situs yang dikirim. AmanKlik
+                  AmanKlik tidak membuka tautan, mengikuti pengalihan, mencari
+                  informasi jaringan situs, atau mengambil gambar situs tujuan. AmanKlik
                   tidak menghubungi bank, polisi, platform, atau keluarga; tidak
                   masuk ke akun; tidak memindahkan uang; tidak membuat laporan;
                   dan tidak menjamin skor, keamanan, pemulihan, atau hasil hukum.
@@ -501,23 +499,23 @@ export default function PrivacyPage() {
             <section id="status-draf" className={styles.section}>
               <SectionHeading
                 number="09"
-                title="Mengapa halaman ini masih berstatus draf."
-                lead="Kode menjelaskan mekanisme teknis, tetapi kebijakan publik membutuhkan fakta operasional dan persetujuan yang berada di luar repository."
+                title="Mengapa halaman ini masih berupa draf."
+                lead="Kode menjelaskan cara kerja aplikasi, tetapi kebijakan resmi membutuhkan fakta operasional dan persetujuan di luar proyek kode."
               />
               <div className={styles.blockerList}>
                 <p>Hal-hal berikut belum dapat dijanjikan oleh halaman ini:</p>
                 <ol>
-                  <li>Identitas badan hukum, alamat, kontak privasi, DPO, yurisdiksi, dasar hukum, atau mekanisme pengaduan.</li>
-                  <li>Region deployment, konfigurasi produksi aktual, retensi access log, backup, snapshot, dan prosedur penghapusan infrastruktur.</li>
-                  <li>Retensi, pelatihan, subprocessor, wilayah pemrosesan, dan penghapusan data di Google.</li>
-                  <li>Masa retensi tunggal untuk seluruh tabel atau mekanisme penghapusan mandiri yang belum tersedia di produk.</li>
+                  <li>Identitas badan hukum, alamat, kontak privasi, penanggung jawab data, wilayah hukum, dasar hukum, dan cara mengajukan keluhan.</li>
+                  <li>Lokasi server, pengaturan layanan yang sedang dipakai, lama penyimpanan catatan akses dan salinan cadangan, serta cara menghapus data dari infrastruktur.</li>
+                  <li>Lama penyimpanan, penggunaan untuk pelatihan, pihak lain yang membantu, wilayah pemrosesan, dan penghapusan data di Google.</li>
+                  <li>Satu masa simpan untuk seluruh jenis data atau fitur hapus mandiri yang belum tersedia.</li>
                 </ol>
               </div>
               <p>
-                Karena itu halaman ini diberi instruksi <code>noindex</code> dan
-                <code>nofollow</code>. Status baru dapat berubah setelah fakta
-                deployment diverifikasi, gap retensi dan kontrol diputuskan,
-                serta pemilik kebijakan menyetujui isi final.
+                Karena itu halaman ini tidak ditampilkan di mesin pencari.
+                Statusnya baru dapat berubah setelah pengaturan layanan
+                diperiksa, aturan penyimpanan dan kendali pengguna diputuskan,
+                serta pemilik kebijakan menyetujui isi akhir.
               </p>
               <div className={styles.closing}>
                 <div>
@@ -530,7 +528,7 @@ export default function PrivacyPage() {
                 </div>
                 <div className={styles.closingActions}>
                   <Link className="product-button product-button--primary" href="/scan">
-                    Buka scanner
+                    Mulai periksa
                   </Link>
                   <Link className="product-button product-button--secondary" href="/">
                     Kembali ke beranda

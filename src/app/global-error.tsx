@@ -46,17 +46,17 @@ export default function GlobalError({
               AmanKlik belum dapat dimuat.
             </h1>
             <p className="description">
-              Aplikasi berhenti sebelum antarmuka tersedia. Coba muat ulang,
-              atau buka scanner melalui jalur langsung.
+              AmanKlik tidak berhasil dimuat. Coba muat ulang atau buka
+              halaman pemeriksaan secara langsung.
             </p>
             <div className="actions">
               <button onClick={retry} type="button">
                 Muat ulang aplikasi
               </button>
-              <a href="/scan">Buka scanner</a>
+              <a href="/scan">Mulai periksa</a>
             </div>
             <p className="boundary">
-              Detail internal tidak ditampilkan untuk menjaga keamanan.
+              Rincian teknis tidak ditampilkan untuk menjaga keamanan.
             </p>
           </section>
         </main>

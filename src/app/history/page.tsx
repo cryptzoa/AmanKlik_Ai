@@ -9,7 +9,7 @@ import { getAnonymousSessionId } from "@/server/session/anonymous-session";
 export const metadata: Metadata = {
   title: "Riwayat pemeriksaan — AmanKlik AI",
   description:
-    "Temukan kembali hasil pemeriksaan yang terhubung ke sesi anonim browser ini tanpa menampilkan input mentah.",
+    "Temukan kembali hasil pemeriksaan dari browser ini tanpa menampilkan isi lengkap yang pernah dikirim.",
   robots: {
     index: false,
     follow: false,
@@ -37,20 +37,20 @@ export default async function HistoryPage() {
   return (
     <PageFrame>
       <RouteIntro
-        eyebrow="04 / Riwayat"
-        title="Jejak pemeriksaanmu."
-        description="Temukan kembali hasil yang masih terhubung ke cookie sesi anonim browser ini. Riwayat disimpan dan dicocokkan di server; AmanKlik tidak membuat akun atau membaca inbox kamu."
+        eyebrow="Riwayat pemeriksaan"
+        title="Pemeriksaan sebelumnya."
+        description="Buka kembali hasil pemeriksaan dari browser ini. AmanKlik tidak membuat akun dan tidak membaca kotak masuk pesanmu."
         annotation={
           <p>
-            Teks mentah dan screenshot tidak ditampilkan kembali. Mengganti
-            atau menghapus cookie dapat memutus akses ke hasil sesi sebelumnya.
+            Isi lengkap dan tangkapan layar tidak ditampilkan kembali. Jika data
+            situs dihapus, hasil sebelumnya mungkin tidak dapat dibuka lagi.
           </p>
         }
         pattern="reading"
       >
         {storageUnavailable
           ? "Status penyimpanan tidak tersedia"
-          : `${rows.length} hasil · preview telah disamarkan`}
+          : `${rows.length} hasil · cuplikan telah disamarkan`}
       </RouteIntro>
 
       <div className="product-section">

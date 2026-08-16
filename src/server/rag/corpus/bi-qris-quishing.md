@@ -12,6 +12,6 @@ keywords: qris palsu,qr palsu,kode qr,quishing,nama merchant,scan qris,scan qr,b
 
 ## Konfirmasi merchant sebelum menyetujui pembayaran
 
-Kode QR dapat mengarahkan pengguna ke halaman pencuri kredensial, aplikasi berbahaya, atau tujuan pembayaran yang bukan milik merchant. Hindari memindai QR dari pesan pribadi atau sumber yang tidak jelas dan gunakan aplikasi pembayaran resmi.
+Kode QR dapat mengarahkan pengguna ke halaman pencuri kata sandi, aplikasi berbahaya, atau tujuan pembayaran yang bukan milik penjual. Hindari memindai QR dari pesan pribadi atau sumber yang tidak jelas dan gunakan aplikasi pembayaran resmi.
 
-Setelah memindai QRIS, cocokkan nama merchant dan nominal yang tampil di aplikasi sebelum menyetujui transaksi. Jika identitas tujuan berbeda atau QR terlihat ditimpa, batalkan pembayaran, beri tahu merchant, dan simpan bukti tanpa meneruskan QR tersebut.
+Setelah memindai QRIS, cocokkan nama penjual dan jumlah yang tampil di aplikasi sebelum menyetujui transaksi. Jika tujuan berbeda atau QR terlihat ditimpa, batalkan pembayaran, beri tahu penjual, dan simpan bukti tanpa meneruskan QR tersebut.

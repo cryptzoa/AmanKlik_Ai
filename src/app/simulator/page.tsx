@@ -6,7 +6,7 @@ import { RouteIntro } from "@/components/product/route-intro";
 export const metadata: Metadata = {
   title: "Latihan Keputusan Aman — AmanKlik AI",
   description:
-    "Latih respons aman melalui delapan skenario sintetis tanpa data atau konsekuensi nyata.",
+    "Latih respons aman melalui delapan situasi buatan tanpa data atau akibat nyata.",
 };
 
 export default async function SimulatorPage({
@@ -18,14 +18,14 @@ export default async function SimulatorPage({
   return (
     <PageFrame>
       <RouteIntro
-        eyebrow="02 / Latihan"
+        eyebrow="Latihan aman"
         title="Latih refleks amanmu, satu keputusan pada satu waktu."
-        description="Hadapi delapan situasi sintetis yang dekat dengan pengguna Indonesia. Pilih tindakan yang benar-benar akan kamu ambil, lalu pelajari dampaknya setelah setiap keputusan."
+        description="Hadapi delapan situasi latihan yang dekat dengan keseharian di Indonesia. Pilih tindakan yang benar-benar akan kamu ambil, lalu pelajari dampaknya setelah setiap keputusan."
         annotation="Tanpa timer · tanpa skor kompetitif · tanpa data atau konsekuensi nyata"
         pattern="task"
       >
-        Evaluasi berjalan lokal dan deterministik. Personalisasi opsional dari
-        hasil pemeriksaan tetap memakai skenario sintetis.
+        Penilaian berjalan di perangkat dengan aturan tetap. Latihan dari hasil
+        pemeriksaan tetap memakai situasi buatan, bukan pesan aslimu.
       </RouteIntro>
       <div className="product-section">
         <div className="product-wide-canvas">

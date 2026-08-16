@@ -22,7 +22,7 @@ export function SceneExplain({ isPortrait = false }: SceneExplainProps) {
             AmanKlik menjelaskan kenapa.
           </p>
           <p className={`explain-desc text-[#F3F1EA]/70 mt-2 leading-relaxed ${isPortrait ? "text-xl max-w-xl mx-auto" : "text-xs md:text-sm"}`}>
-            Bukan sekadar tebak-tebakan. AmanKlik tunjukkan bagian mana yang janggal dan apa maksud di baliknya.
+            AmanKlik menunjukkan bagian yang janggal dan menjelaskan bagaimana pesan mencoba memengaruhimu.
           </p>
         </div>
 
@@ -45,7 +45,7 @@ export function SceneExplain({ isPortrait = false }: SceneExplainProps) {
                 <div className="flex items-center gap-3">
                   <span className="w-3 h-3 rounded-full bg-[#E9362F]" />
                   <span className={`font-bold text-[#F3F1EA] ${isPortrait ? "text-xl" : "text-xs sm:text-sm"}`}>
-                    Mengaku Keluarga Pakai Nomor Asing
+                    Mengaku keluarga dari nomor baru
                   </span>
                 </div>
                 <div className={`font-mono bg-[#E9362F]/20 text-[#FF8F8A] rounded-lg border border-[#E9362F]/30 ${isPortrait ? "text-base px-3 py-1" : "text-[11px] px-2 py-0.5"}`}>
@@ -57,7 +57,7 @@ export function SceneExplain({ isPortrait = false }: SceneExplainProps) {
                 <div className="flex items-center gap-3">
                   <span className="w-3 h-3 rounded-full bg-[#E9362F]" />
                   <span className={`font-bold text-[#F3F1EA] ${isPortrait ? "text-xl" : "text-xs sm:text-sm"}`}>
-                    Memaksa Transfer Tanpa Berpikir
+                    Mendesak untuk segera transfer
                   </span>
                 </div>
                 <div className={`font-mono bg-[#E9362F]/20 text-[#FF8F8A] rounded-lg border border-[#E9362F]/30 ${isPortrait ? "text-base px-3 py-1" : "text-[11px] px-2 py-0.5"}`}>
@@ -69,7 +69,7 @@ export function SceneExplain({ isPortrait = false }: SceneExplainProps) {
                 <div className="flex items-center gap-3">
                   <span className="w-3 h-3 rounded-full bg-[#E9362F]" />
                   <span className={`font-bold text-[#F3F1EA] ${isPortrait ? "text-xl" : "text-xs sm:text-sm"}`}>
-                    Mencegah Verifikasi Lewat Telepon
+                    Melarang kamu menelepon
                   </span>
                 </div>
                 <div className={`font-mono bg-[#E9362F]/20 text-[#FF8F8A] rounded-lg border border-[#E9362F]/30 ${isPortrait ? "text-base px-3 py-1" : "text-[11px] px-2 py-0.5"}`}>

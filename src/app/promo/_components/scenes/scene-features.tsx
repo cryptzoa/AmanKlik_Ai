@@ -25,11 +25,11 @@ export function SceneFeatures({ isPortrait = false }: SceneFeaturesProps) {
               PERIKSA
             </h3>
             <p className={`text-[#6f6c65] leading-relaxed ${isPortrait ? "text-lg" : "text-xs md:text-sm"}`}>
-              Cek pesan mencurigakan, tangkapan layar chat, atau link tanpa perlu membukanya.
+              Periksa pesan, tangkapan layar, atau tautan tanpa membuka situs tujuan.
             </p>
           </div>
           <div className={`pt-3 border-t border-[#111111]/10 font-mono text-[#111111] font-semibold flex items-center justify-between ${isPortrait ? "mt-4 text-base" : "mt-6 text-xs"}`}>
-            <span>Cek Pesan &amp; Link</span>
+            <span>Periksa pesan &amp; tautan</span>
             <span>→</span>
           </div>
         </div>
@@ -47,11 +47,11 @@ export function SceneFeatures({ isPortrait = false }: SceneFeaturesProps) {
               PAHAMI
             </h3>
             <p className={`text-[#6f6c65] leading-relaxed ${isPortrait ? "text-lg" : "text-xs md:text-sm"}`}>
-              Ketahui persis trik yang dipakai pelaku dan alasan kenapa pesan itu berbahaya.
+              Lihat tanda bahaya yang ditemukan dan alasan pesan itu perlu dicurigai.
             </p>
           </div>
           <div className={`pt-3 border-t border-[#111111]/10 font-mono text-[#111111] font-semibold flex items-center justify-between ${isPortrait ? "mt-4 text-base" : "mt-6 text-xs"}`}>
-            <span>Penjelasan Transparan</span>
+            <span>Alasan yang jelas</span>
             <span>→</span>
           </div>
         </div>
@@ -69,11 +69,11 @@ export function SceneFeatures({ isPortrait = false }: SceneFeaturesProps) {
               BERTINDAK
             </h3>
             <p className={`text-[#6f6c65] leading-relaxed ${isPortrait ? "text-lg" : "text-xs md:text-sm"}`}>
-              Sudah terlanjur transfer? Dapatkan panduan darurat dan kontak resmi bank seketika.
+              Sudah terlanjur transfer? Ikuti langkah awal dan buka sumber resmi terkait.
             </p>
           </div>
           <div className={`pt-3 border-t border-[#111111]/10 font-mono text-[#111111] font-semibold flex items-center justify-between ${isPortrait ? "mt-4 text-base" : "mt-6 text-xs"}`}>
-            <span>Langkah Darurat</span>
+            <span>Langkah pertama</span>
             <span>→</span>
           </div>
         </div>
@@ -91,7 +91,7 @@ export function SceneFeatures({ isPortrait = false }: SceneFeaturesProps) {
               LATIH
             </h3>
             <p className={`text-[#6f6c65] leading-relaxed ${isPortrait ? "text-lg" : "text-xs md:text-sm"}`}>
-              Asah insting lewat simulasi kasus nyata agar Anda dan keluarga makin sulit dikecoh.
+              Latih kewaspadaan lewat situasi buatan dari pola penipuan yang umum.
             </p>
           </div>
           <div className={`pt-3 border-t border-[#111111]/10 font-mono text-[#111111] font-semibold flex items-center justify-between ${isPortrait ? "mt-4 text-base" : "mt-6 text-xs"}`}>

@@ -63,12 +63,12 @@ export function summarizeInvestigation(sources: InvestigationSource[]): Investig
     .slice(0, 4);
   const patternText = topCategories.length
     ? topCategories.slice(0, 3).map((item) => item.label.toLocaleLowerCase("id-ID")).join(", ")
-    : "belum ada pola yang berulang lintas artefak";
+    : "belum ada pola yang muncul di beberapa hasil";
 
   return {
     finalScore,
     riskLevel: riskLevelForScore(finalScore),
-    summary: `Kasus menggabungkan ${uniqueSources.length} artefak unik. Pola lintas sumber: ${patternText}.`,
+    summary: `${uniqueSources.length} hasil berbeda dibandingkan. Pola yang muncul berulang: ${patternText}.`,
     topCategories,
   };
 }
@@ -76,6 +76,12 @@ export function summarizeInvestigation(sources: InvestigationSource[]): Investig
 type SharedEvidenceNode = Omit<EvidenceNode, "sourceIds"> & { sourceIds: Set<string> };
 
 export function buildInvestigationGraph(caseId: string, title: string, sources: InvestigationSource[]): InvestigationGraph {
+  const inputLabels: Record<InvestigationSource["inputType"], string> = {
+    text: "Pesan",
+    url: "Tautan",
+    image: "Tangkapan layar",
+    conversation: "Percakapan",
+  };
   const uniqueSources = uniqueInvestigationSources(sources);
   const summary = summarizeInvestigation(uniqueSources);
   const nodes: EvidenceNode[] = [{
@@ -94,7 +100,7 @@ export function buildInvestigationGraph(caseId: string, title: string, sources: 
     nodes.push({
       id: scanNodeId,
       kind: "scan",
-      label: `${source.inputType.toLocaleUpperCase("id-ID")} ${String(index + 1).padStart(2, "0")}`,
+      label: `${inputLabels[source.inputType]} ${String(index + 1).padStart(2, "0")}`,
       detail: source.result.summary,
       riskLevel: source.result.riskLevel,
     });
@@ -133,7 +139,7 @@ export function buildInvestigationGraph(caseId: string, title: string, sources: 
   for (const node of sharedNodes) {
     nodes.push(node);
     for (const sourceId of node.sourceIds ?? []) {
-      edges.push({ id: `edge-${sourceId}-${node.id}`, source: sourceId, target: node.id, label: node.kind === "domain" ? "domain" : "indikator" });
+      edges.push({ id: `edge-${sourceId}-${node.id}`, source: sourceId, target: node.id, label: node.kind === "domain" ? "alamat utama" : "tanda bahaya" });
     }
   }
 

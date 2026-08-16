@@ -19,6 +19,13 @@ const inputLabels: Record<ScanItem["inputType"], string> = {
   conversation: "Percakapan",
 };
 
+const riskLabels: Record<ScanItem["riskLevel"], string> = {
+  LOW: "Risiko rendah",
+  MEDIUM: "Risiko sedang",
+  HIGH: "Risiko tinggi",
+  VERY_HIGH: "Risiko sangat tinggi",
+};
+
 export function ComparisonBuilderSection({
   scans,
   selected,
@@ -37,19 +44,19 @@ export function ComparisonBuilderSection({
     : titleLength < 3
     ? "Beri nama kasus minimal 3 karakter."
     : selected.length < 2
-    ? `Pilih ${2 - selected.length} artefak unik lagi.`
+    ? `Pilih ${2 - selected.length} hasil berbeda lagi.`
     : selected.length >= 8
-    ? "Batas 8 artefak sudah tercapai."
+    ? "Batas 8 hasil sudah tercapai."
     : "Kasus siap dibuat.";
 
   return (
     <section className="investigation-builder" aria-labelledby="case-builder-heading">
       <div className="investigation-builder__intro">
         <p className="product-eyebrow text-ai">01 / Susun bukti</p>
-        <h2 id="case-builder-heading">Pilih artefak yang memang berbeda.</h2>
+        <h2 id="case-builder-heading">Pilih hasil pemeriksaan yang berbeda.</h2>
         <p>
-          Pemeriksaan ulang atas input yang sama sudah disaring di server dan
-          tidak dihitung sebagai bukti tambahan.
+          Pemeriksaan berulang atas isi yang sama hanya dihitung sekali agar
+          perbandingannya tidak menyesatkan.
         </p>
       </div>
 
@@ -90,10 +97,10 @@ export function ComparisonBuilderSection({
           </span>
         </div>
 
-        <div className="investigation-selection-rail" aria-label="Artefak terpilih">
+        <div className="investigation-selection-rail" aria-label="Hasil terpilih">
           <div>
             <p className="product-eyebrow">Pilihan aktif</p>
-            <strong>{selected.length} / 8 artefak</strong>
+            <strong>{selected.length} / 8 hasil</strong>
           </div>
           <div className="investigation-selection-rail__items">
             {selectedScans.length ? (
@@ -103,13 +110,13 @@ export function ComparisonBuilderSection({
                 </span>
               ))
             ) : (
-              <span>Belum ada artefak dipilih.</span>
+              <span>Belum ada hasil yang dipilih.</span>
             )}
           </div>
         </div>
 
         <p className="sr-only" aria-live="polite" aria-atomic="true">
-          {selected.length} dari 8 artefak dipilih. {disabledReason}
+          {selected.length} dari 8 hasil dipilih. {disabledReason}
         </p>
 
         <div className="investigation-artifact-list">
@@ -130,10 +137,10 @@ export function ComparisonBuilderSection({
                   </span>
                   <span className="min-w-0">
                     <span className="investigation-artifact-row__meta">
-                      {inputLabels[scan.inputType]} · {scan.riskLevel.replace("_", " ")}
+                      {inputLabels[scan.inputType]} · {riskLabels[scan.riskLevel]}
                     </span>
                     <span className="investigation-artifact-row__preview">
-                      {scan.preview ?? "Tanpa preview teks"}
+                      {scan.preview ?? "Cuplikan teks tidak tersedia"}
                     </span>
                     <time dateTime={scan.createdAt}>
                       {new Date(scan.createdAt).toLocaleString("id-ID")}
@@ -148,10 +155,10 @@ export function ComparisonBuilderSection({
             })
           ) : (
             <div className="investigation-artifact-empty">
-              <h3>Belum ada artefak dalam sesi ini.</h3>
+              <h3>Belum ada hasil yang bisa dibandingkan.</h3>
               <p>
-                Lakukan sedikitnya dua pemeriksaan dengan input berbeda sebelum
-                membuat kasus.
+                Lakukan sedikitnya dua pemeriksaan dengan isi yang berbeda
+                sebelum membuat perbandingan.
               </p>
             </div>
           )}
@@ -163,7 +170,7 @@ export function ComparisonBuilderSection({
             disabled={!canCreate}
             className="product-button product-button--primary"
           >
-            {loading ? "Menyusun kasus…" : `Buat kasus dari ${selected.length} artefak`}
+            {loading ? "Menyiapkan perbandingan…" : `Bandingkan ${selected.length} hasil`}
           </button>
           <TransitionLink
             className="product-button product-button--secondary"

@@ -5,7 +5,7 @@ export default function InvestigationLoading() {
     <ProductLoadingPage
       eyebrow="06 / Investigasi"
       title="Menyiapkan ruang perbandingan."
-      description="AmanKlik sedang mengambil artefak dan kasus milik sesi browser ini."
+      description="AmanKlik sedang mengambil hasil dan perbandingan milik browser ini."
     />
   );
 }

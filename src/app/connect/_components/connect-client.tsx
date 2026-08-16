@@ -85,17 +85,17 @@ export function ConnectClient({ appBaseUrl }: { appBaseUrl: string }) {
         !body.ok ||
         typeof body.data?.token !== "string"
       ) {
-        throw new Error(body.error?.message ?? "Token belum dibuat.");
+        throw new Error(body.error?.message ?? "Kode akses belum dibuat.");
       }
       setToken(body.data.token);
       setStatus({
-        message: "Token dibuat. Salin lalu tutup tampilan satu-kali ini.",
+        message: "Kode akses dibuat. Salin sebelum menutup tampilan ini.",
         isError: false,
       });
       await load();
     } catch (error) {
       setStatus({
-        message: requestFailureMessage(error, "Token belum dibuat."),
+        message: requestFailureMessage(error, "Kode akses belum dibuat."),
         isError: true,
       });
     } finally {
@@ -140,11 +140,13 @@ export function ConnectClient({ appBaseUrl }: { appBaseUrl: string }) {
       if (!navigator.clipboard) throw new Error("Clipboard unavailable");
       await navigator.clipboard.writeText(value);
       setStatus({
-        message: label === "token" ? "Token tersalin." : "Base URL tersalin.",
+        message: label === "token"
+          ? "Kode akses tersalin."
+          : "Alamat server tersalin.",
         isError: false,
       });
     } catch {
-      setStatus({ message: "Clipboard tidak tersedia.", isError: true });
+      setStatus({ message: "Fitur salin tidak tersedia.", isError: true });
     }
   }
 
@@ -164,7 +166,7 @@ export function ConnectClient({ appBaseUrl }: { appBaseUrl: string }) {
         onDismissToken={() => {
           setToken(null);
           setStatus({
-            message: "Tampilan token sudah ditutup dari halaman.",
+            message: "Tampilan kode akses sudah ditutup.",
             isError: false,
           });
         }}

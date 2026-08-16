@@ -60,7 +60,7 @@ export async function analyzeSubmittedUrl(input: { url: string; sessionId?: stri
     inputType: "url",
     score: fusion.finalScore,
     riskLevel: fusion.riskLevel,
-    summary: aiAnalysis?.result.summary ?? "Pemeriksaan struktur tautan selesai; analisis konteks AI sedang terbatas.",
+    summary: aiAnalysis?.result.summary ?? "Susunan tautan sudah diperiksa, tetapi AI sedang tidak dapat membaca konteksnya.",
     confidence: aiAnalysis?.result.confidence ?? "low",
     analysisMode: fusion.analysisMode,
     aiAvailable: Boolean(aiAnalysis),
@@ -70,7 +70,7 @@ export async function analyzeSubmittedUrl(input: { url: string; sessionId?: stri
     urlAnalysis,
     actionTags: ["do_not_click", "verify_independently", ...(aiAnalysis?.result.recommendedActionTags ?? [])],
     knowledge: knowledge.matches,
-    uncertainty: aiAnalysis?.result.uncertainty ?? "Analisis AI tidak tersedia; hasil hanya berdasarkan struktur URL.",
+    uncertainty: aiAnalysis?.result.uncertainty ?? "Yang belum bisa dipastikan: tujuan dan pemilik situs. Hasil ini hanya memakai susunan alamat tautan.",
     scoreExplanation: fusion.scoreExplanation,
   });
 

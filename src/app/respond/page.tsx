@@ -13,10 +13,10 @@ export default function RespondPage() {
   return (
     <PageFrame>
       <RouteIntro
-        eyebrow="04 / Tindakan"
+        eyebrow="Langkah pemulihan"
         title="Sudah terlanjur? Kerjakan yang pertama."
         description="Pilih dampaknya, lalu kerjakan tiga tindakan pertama. Panduan ini berjalan tanpa AI dan tidak meminta rahasia, identitas, atau detail transaksi."
-        annotation="Hentikan kerugian · amankan akses · simpan bukti · laporkan melalui kanal resmi"
+        annotation="Hentikan kerugian · amankan akses · simpan bukti · gunakan layanan laporan resmi"
         pattern="task"
       >
         Pilihanmu hanya dipakai di halaman ini dan tidak disimpan.

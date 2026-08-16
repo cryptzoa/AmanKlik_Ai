@@ -3,13 +3,13 @@ import type { RiskSignal } from "@/types/analysis";
 const sourceLabels: Record<RiskSignal["source"], string> = {
   rule: "Pola terdeteksi",
   url: "Struktur tautan",
-  ai: "Konteks AI",
+  ai: "Konteks dari AI",
 };
 
 const severityLabels: Record<RiskSignal["severity"], string> = {
-  low: "Dampak rendah",
-  medium: "Dampak sedang",
-  high: "Dampak tinggi",
+  low: "Perlu perhatian ringan",
+  medium: "Perlu perhatian",
+  high: "Perlu segera diperiksa",
 };
 
 export function EvidenceSection({ signals }: { signals: RiskSignal[] }) {
@@ -25,7 +25,7 @@ export function EvidenceSection({ signals }: { signals: RiskSignal[] }) {
             Kenapa hasilnya seperti ini?
           </h2>
           <p className="result-evidence__intro">
-            Periksa setiap alasan. Tidak adanya sinyal spesifik bukan berarti
+            Periksa setiap alasan. Tidak adanya tanda tertentu bukan berarti
             pesan pasti aman.
           </p>
         </div>
@@ -57,10 +57,10 @@ export function EvidenceSection({ signals }: { signals: RiskSignal[] }) {
             ))
           ) : (
             <div className="result-evidence__empty">
-              <h3>Belum ada indikator spesifik.</h3>
+              <h3>Belum ada tanda khusus yang ditemukan.</h3>
               <p>
-                Tetap verifikasi pengirim, alamat, dan permintaan melalui kanal
-                resmi yang kamu buka sendiri.
+                Tetap periksa pengirim, alamat, dan permintaan melalui aplikasi,
+                nomor, atau situs resmi yang kamu buka sendiri.
               </p>
             </div>
           )}

@@ -6,7 +6,7 @@ export function CaseScoreSection({ score }: { score: number }) {
   return (
     <ProductSection width="wide" className="investigation-case-score">
       <div className="investigation-case-score__value">
-        <p className="product-eyebrow">Skor kasus</p>
+        <p className="product-eyebrow">Skor tertinggi</p>
         <p aria-label={`${score} dari 100`}>
           <strong>{score}</strong>
           <span>/100</span>
@@ -15,12 +15,12 @@ export function CaseScoreSection({ score }: { score: number }) {
       <div className="investigation-case-score__explanation">
         <h2>Cara membaca angka ini</h2>
         <p>
-          Skor kasus mengikuti risiko tertinggi di antara artefak agar indikator
-          penting tidak tertutup oleh rata-rata. Angka ini membantu prioritas
-          verifikasi—bukan probabilitas atau kepastian penipuan.
+          Angka ini mengikuti skor tertinggi dari hasil yang dibandingkan agar
+          tanda penting tidak tertutup oleh nilai rata-rata. Gunakan untuk
+          menentukan apa yang perlu diperiksa lebih dulu, bukan sebagai kepastian.
         </p>
         <Link className="product-button product-button--secondary" href="/investigate">
-          ← Kembali ke semua kasus
+          ← Kembali ke semua perbandingan
         </Link>
       </div>
     </ProductSection>

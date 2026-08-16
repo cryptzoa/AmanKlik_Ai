@@ -3,9 +3,9 @@ import { TransitionLink } from "@/components/site/transition-link";
 import type { AnalysisResult, RiskLevel } from "@/types/analysis";
 
 const modeLabels: Record<AnalysisResult["analysisMode"], string> = {
-  hybrid: "AI + pola deterministik",
-  cached_hybrid: "Hasil analisis tersimpan",
-  rules_only: "Pemeriksaan pola saja",
+  hybrid: "Diperiksa oleh AI dan aturan keamanan",
+  cached_hybrid: "Menggunakan hasil pemeriksaan yang tersimpan",
+  rules_only: "Diperiksa dengan aturan keamanan",
 };
 
 const riskLabels: Record<RiskLevel, string> = {
@@ -30,7 +30,7 @@ export function ResultSummarySection({ result }: { result: AnalysisResult }) {
           <p className="result-summary__uncertainty">{result.uncertainty}</p>
           <div className="result-summary__provenance">
             <span>{modeLabels[result.analysisMode]}</span>
-            {result.cacheHit ? <span>Hasil cache</span> : null}
+            {result.cacheHit ? <span>Hasil yang pernah disimpan</span> : null}
             <time dateTime={result.createdAt}>
               {new Date(result.createdAt).toLocaleString("id-ID")}
             </time>
@@ -39,8 +39,8 @@ export function ResultSummarySection({ result }: { result: AnalysisResult }) {
         <div className="result-summary__score">
           <RiskScore score={result.finalScore} level={result.riskLevel} />
           <p>
-            Skor menggabungkan aturan aplikasi, struktur tautan bila ada, dan
-            konteks AI bila tersedia. Ini bukan confidence AI atau vonis.
+            Skor menggabungkan tanda pada pesan, susunan tautan bila ada, dan
+            konteks dari AI bila tersedia. Angka ini bukan kepastian atau vonis.
           </p>
         </div>
       </div>

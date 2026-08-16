@@ -22,7 +22,7 @@ const primaryNavigation = [
 ] as const;
 
 const secondaryNavigation = [
-  ["/investigate", "Investigasi", "Bandingkan bukti"],
+  ["/investigate", "Bandingkan", "Temukan pola bersama"],
   ["/learn", "Pelajari", "Kenali polanya"],
   ["/history", "Riwayat", "Lihat pemeriksaan"],
 ] as const;
@@ -844,7 +844,7 @@ export function SiteHeader({ variant }: { variant: "landing" | "interior" }) {
               className="motion-button group/navitem hidden min-h-12 items-center gap-2 rounded-full bg-ink px-5 text-[14px] font-medium tracking-[-0.015em] text-white shadow-[0_8px_22px_rgba(17,17,17,0.16)] sm:flex"
               href="/scan"
             >
-              <span className="motion-button__label">Periksa</span>
+              <span className="motion-button__label">Mulai periksa</span>
               <MotionArrowIcon />
             </Link>
           </div>
@@ -896,7 +896,7 @@ export function SiteHeader({ variant }: { variant: "landing" | "interior" }) {
               onClick={() => closeMobileMenu(false)}
               className="flex h-14 items-center justify-center gap-3 rounded-full bg-white px-8 text-ink font-semibold text-lg hover:bg-ai hover:text-white transition-colors"
             >
-              Mulai Periksa
+              Mulai periksa
               <span className="text-xl leading-none">→</span>
             </Link>
             <span>AmanKlik AI © {new Date().getFullYear()}</span>

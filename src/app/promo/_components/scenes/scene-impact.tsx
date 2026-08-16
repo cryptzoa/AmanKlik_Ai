@@ -27,7 +27,7 @@ export function SceneImpact({ isPortrait = false }: SceneImpactProps) {
             fontSize: isPortrait ? "72px" : "clamp(2.5rem, 5.5vw, 4.8rem)",
           }}
         >
-          Verifikasi lewat kanal resmi.
+          Pastikan lewat sumber resmi.
         </div>
 
         <div
@@ -36,7 +36,7 @@ export function SceneImpact({ isPortrait = false }: SceneImpactProps) {
             fontSize: isPortrait ? "72px" : "clamp(2.5rem, 5.5vw, 4.8rem)",
           }}
         >
-          Ambil keputusan dengan konteks.
+          Putuskan setelah memahami alasannya.
         </div>
       </div>
     </div>

@@ -7,9 +7,9 @@ const sourceLabels = {
 } as const;
 
 const bandLabels = {
-  minor: "minor",
-  moderate: "moderat",
-  major: "utama",
+  minor: "pengaruh kecil",
+  moderate: "pengaruh sedang",
+  major: "pengaruh besar",
 } as const;
 
 export function ScoreBreakdown(
@@ -28,7 +28,7 @@ export function ScoreBreakdown(
       <div className="grid gap-8 lg:grid-cols-[0.38fr_0.62fr]">
         <div>
           <p className="font-mono text-xs uppercase tracking-[0.18em] text-ai">
-            02 / Score logic
+            02 / Cara skor dihitung
           </p>
           <h2
             id="score-breakdown-heading"
@@ -37,8 +37,9 @@ export function ScoreBreakdown(
             Bagaimana skor ini terbentuk?
           </h2>
           <p className="mt-5 text-sm leading-7 text-muted">
-            Ini adalah penjelasan heuristik, bukan probabilitas dan bukan vonis.
-            AI membantu membaca konteks; aplikasi menghitung skor akhirnya.
+            Skor ini adalah perkiraan berdasarkan tanda yang ditemukan, bukan
+            peluang pasti dan bukan vonis. AI membantu membaca konteks, lalu
+            AmanKlik menghitung skor akhirnya.
           </p>
         </div>
         <div>
@@ -54,7 +55,7 @@ export function ScoreBreakdown(
                 <p className="text-sm leading-6 text-muted">
                   {contribution.explanation}{" "}
                   <span className="text-ink">
-                    ({contribution.signalCount} sinyal)
+                    ({contribution.signalCount} tanda)
                   </span>
                 </p>
                 <span className="font-mono text-xs uppercase tracking-[0.12em] text-ai">
@@ -79,7 +80,7 @@ export function ScoreBreakdown(
             ? (
               <div className="mt-5 flex flex-wrap gap-2">
                 <span className="w-full text-xs uppercase tracking-[0.12em] text-muted">
-                  Sinyal terkuat
+                  Tanda yang paling berpengaruh
                 </span>
                 {explanation.strongestSignalIds.map((signalId) => {
                   const signal = signals.find((item) => item.id === signalId);

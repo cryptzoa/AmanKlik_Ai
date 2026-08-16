@@ -6,9 +6,9 @@ import { env } from "@/lib/env";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
-  title: "Hubungkan extension — AmanKlik AI",
+  title: "Hubungkan ekstensi browser — AmanKlik AI",
   description:
-    "Buat token terbatas untuk extension AmanKlik dan cabut akses perangkat dari sesi anonim ini.",
+    "Hubungkan ekstensi browser AmanKlik dan atur perangkat yang masih boleh menggunakannya.",
   robots: { index: false, follow: false },
 };
 
@@ -16,14 +16,14 @@ export default function ConnectPage() {
   return (
     <PageFrame>
       <RouteIntro
-        eyebrow="10 / Hubungkan"
-        title="AmanKlik di tempat pesan datang, dengan akses yang bisa kamu putus."
-        description="Hubungkan extension AmanKlik dengan token terbatas yang ditampilkan sekali, disimpan dalam bentuk fingerprint di server, dan dapat dicabut dari sesi penerbitnya."
-        annotation="Token bukan kunci Gemini · satu nama untuk tiap akses · jangan kirim melalui chat"
+        eyebrow="Hubungkan ekstensi"
+        title="Periksa pesan langsung dari browser."
+        description="Hubungkan ekstensi AmanKlik dengan kode akses khusus. Kode hanya ditampilkan sekali dan aksesnya dapat kamu cabut dari halaman ini."
+        annotation="Kode akses bukan kunci Gemini · beri nama tiap perangkat · jangan bagikan kode melalui chat"
         pattern="task"
       >
-        Halaman ini tidak muncul di navigasi publik selama extension masih
-        didistribusikan melalui mode developer.
+        Ekstensi masih dalam tahap pengembangan dan perlu dipasang secara
+        manual.
       </RouteIntro>
       <div className="product-section">
         <div className="product-task-canvas">

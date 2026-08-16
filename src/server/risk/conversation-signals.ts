@@ -37,19 +37,19 @@ export function detectConversationSignals(input: ConversationMessageInput[]): Co
   const identity = firstMessage(messages, new Set(["impersonation"]));
   const payment = identity ? firstMessage(messages, new Set(["payment_request"]), identity.order - 1) : undefined;
   if (identity && payment) {
-    progressionSignals.push(signal("progression-identity-payment", "conversation_progression", "Identitas berganti sebelum permintaan uang", "Urutan perubahan identitas lalu permintaan uang perlu diuji melalui kanal independen.", [identity.id, payment.id], 20, "escalation"));
+    progressionSignals.push(signal("progression-identity-payment", "conversation_progression", "Identitas berubah sebelum meminta uang", "Perubahan identitas yang diikuti permintaan uang perlu diperiksa lewat nomor atau sumber lain yang sudah dipercaya.", [identity.id, payment.id], 20, "escalation"));
   }
 
   const pressure = firstMessage(messages, new Set(["urgency", "threat"]));
   const secret = pressure ? firstMessage(messages, new Set(["otp_request", "credential_request", "payment_request"]), pressure.order - 1) : undefined;
   if (pressure && secret) {
-    progressionSignals.push(signal("progression-pressure-request", "conversation_progression", "Tekanan meningkat sebelum permintaan sensitif", "Tekanan waktu atau ancaman yang diikuti permintaan rahasia dapat mempersempit ruang verifikasi.", [pressure.id, secret.id], 18, "escalation"));
+    progressionSignals.push(signal("progression-pressure-request", "conversation_progression", "Desakan meningkat sebelum meminta data rahasia", "Desakan waktu atau ancaman dapat membuat kamu bertindak sebelum sempat memeriksa kebenarannya.", [pressure.id, secret.id], 18, "escalation"));
   }
 
   const secrecy = firstMessage(messages, new Set(["secrecy", "unexpected_channel"]));
   const laterRequest = secrecy ? firstMessage(messages, new Set(["payment_request", "otp_request", "credential_request"]), secrecy.order - 1) : undefined;
   if (secrecy && laterRequest) {
-    progressionSignals.push(signal("progression-channel-secret", "conversation_progression", "Kanal atau percakapan diisolasi sebelum permintaan", "Perpindahan kanal atau larangan menghubungi pihak lain dapat menghambat verifikasi mandiri.", [secrecy.id, laterRequest.id], 14, "pressure"));
+    progressionSignals.push(signal("progression-channel-secret", "conversation_progression", "Pengirim membatasi cara kamu memeriksa pesan", "Ajakan pindah aplikasi atau larangan menghubungi orang lain dapat menghalangi pemeriksaan melalui sumber tepercaya.", [secrecy.id, laterRequest.id], 14, "pressure"));
   }
 
   const allSignals = [...perMessageSignals, ...progressionSignals];
@@ -62,8 +62,8 @@ export function detectConversationSignals(input: ConversationMessageInput[]): Co
   return {
     messageCount: messages.length,
     progressionSummary: progressionSignals.length
-      ? "Urutan pesan menunjukkan eskalasi yang perlu diputus dengan verifikasi independen."
-      : "Belum terlihat pola eskalasi deterministik yang jelas dari urutan pesan ini.",
+      ? "Desakan dalam percakapan meningkat. Hentikan interaksi dan periksa lewat sumber lain yang sudah dipercaya."
+      : "Belum terlihat peningkatan desakan yang jelas dari urutan pesan ini.",
     timeline,
     signals: allSignals,
   };

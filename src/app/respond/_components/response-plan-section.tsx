@@ -119,7 +119,7 @@ export function ResponsePlanSection(
         <div className="mt-7">
           <ExpandableSteps
             title="Langkah mendesak lainnya"
-            hint="Buka jika kamu memilih lebih dari satu kejadian atau layanan terdampak."
+            hint="Buka jika kamu memilih lebih dari satu kejadian atau layanan yang terkena dampak."
             steps={remainingImmediateSteps}
           />
           <ExpandableSteps

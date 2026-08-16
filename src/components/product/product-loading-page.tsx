@@ -17,13 +17,13 @@ export function ProductLoadingPage({
         eyebrow={eyebrow}
         title={title}
         description={description}
-        annotation="Data privat tetap diperiksa terhadap sesi browser aktif."
+        annotation="Data hanya ditampilkan jika berasal dari sesi browser ini."
         pattern="analysis"
       />
       <ProductSection width="wide">
         <StatusBand tone="loading" role="status">
           <strong>Memuat data sesi…</strong>
-          <p>Konten akan muncul di area ini tanpa menampilkan record sesi lain.</p>
+          <p>Konten akan muncul di sini tanpa menampilkan data dari sesi lain.</p>
         </StatusBand>
         <div className="product-loading-lines" aria-hidden="true">
           <span />

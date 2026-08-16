@@ -103,7 +103,7 @@ export function UrlAnatomySection() {
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-end lg:gap-8">
           <div className="lg:col-span-7">
             <p className="font-mono text-xs uppercase tracking-[0.2em] text-ai-on-dark">
-              02 / Anatomi URL
+              02 / Bagian-bagian tautan
             </p>
             <h2 className="mt-8 flex flex-col text-[clamp(2.5rem,5vw,4.5rem)] font-medium leading-[1.05] tracking-tight text-white">
               <div className="overflow-hidden pb-1"><span data-headline-line className="block origin-bottom-left">Nama merek bisa ditempel.</span></div>
@@ -113,8 +113,8 @@ export function UrlAnatomySection() {
           </div>
           <div className="lg:col-span-4 lg:col-start-9 lg:pb-3">
             <p className="text-lg leading-relaxed text-[#aaa9a2]">
-              Baca alamat dari kanan ke kiri. Adanya kata “bri.co.id” di
-              subdomain belum menjadikannya situs resmi bank tersebut.
+              Cari alamat utamanya. Adanya kata “bri.co.id” di bagian depan
+              alamat belum menjadikannya situs resmi bank tersebut.
             </p>
           </div>
         </div>
@@ -153,7 +153,7 @@ export function UrlAnatomySection() {
                 data-url-domain
                 className="relative inline-block rounded-xl bg-risk-text px-2 py-1 sm:px-4 sm:py-2 font-bold text-white shadow-[0_0_20px_rgba(255,51,51,0.2)]"
               >
-                layanan-pembaruan.com
+                layanan-pembaruan.example
               </span>
               <div className="absolute top-[calc(100%+0.5rem)] flex flex-col items-center z-10" data-url-label>
                 <div className="w-[1px] h-3 bg-risk/50 mb-1.5"></div>
@@ -168,7 +168,7 @@ export function UrlAnatomySection() {
               <div className="absolute top-[calc(100%+0.5rem)] flex flex-col items-center z-10" data-url-label>
                 <div className="w-[1px] h-3 bg-white/20 mb-1.5"></div>
                 <div className="flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-md text-[10px] sm:text-[11px] leading-none">
-                  <span className="whitespace-nowrap font-mono text-[#aaa9a2] uppercase tracking-[0.2em] font-semibold">Path</span>
+                  <span className="whitespace-nowrap font-mono text-[#aaa9a2] uppercase tracking-[0.2em] font-semibold">Halaman tujuan</span>
                 </div>
               </div>
             </div>
@@ -177,15 +177,15 @@ export function UrlAnatomySection() {
 
         <div className="mt-12 flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
           <p className="max-w-2xl text-sm leading-7 text-[#aaa9a2]">
-            Contoh memakai domain dokumentasi yang dicadangkan dan tidak pernah
-            di-fetch oleh AmanKlik.
+            Contoh memakai akhiran <code>.example</code> yang khusus disediakan
+            untuk dokumentasi. AmanKlik tidak membuka situs tujuan.
           </p>
           <MotionButton
             arrow
             className="bg-surface text-ink hover:bg-white shrink-0"
             href="/scan"
           >
-            Coba analisis tautan
+            Periksa tautan
           </MotionButton>
         </div>
       </div>

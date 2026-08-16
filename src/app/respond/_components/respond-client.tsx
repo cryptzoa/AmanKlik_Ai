@@ -157,7 +157,7 @@ export function RespondClient() {
             1. Apa yang sudah terjadi?
           </legend>
           <p className="mt-2 text-sm leading-6 text-muted">
-            Pilih semua yang relevan. Jangan masukkan OTP, password, nomor
+            Pilih semua yang sesuai. Jangan masukkan OTP, kata sandi, nomor
             rekening, nomor kartu, NIK, atau bukti transaksi.
           </p>
           <div className="mt-6 grid gap-2">
@@ -181,7 +181,7 @@ export function RespondClient() {
                 2. Akun atau layanan mana yang terdampak?
               </legend>
               <p className="mt-2 text-sm leading-6 text-muted">
-                Opsional. AmanKlik hanya menampilkan pilihan yang relevan dengan
+                Boleh dilewati. AmanKlik hanya menampilkan pilihan yang sesuai dengan
                 kejadian di atas agar langkah pemulihan lebih spesifik.
               </p>
               <div className="mt-5 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
@@ -227,7 +227,7 @@ export function RespondClient() {
           Yang AmanKlik lakukan
         </p>
         <p className="mt-4 text-sm leading-7 text-muted">
-          Menyusun urutan tindakan deterministik dari kategori yang kamu pilih.
+          Menyusun urutan tindakan dengan aturan tetap dari pilihanmu.
           Pilihan tidak dikirim ke Gemini dan tidak disimpan.
         </p>
         <p className="mt-7 font-mono text-xs uppercase tracking-[0.16em] text-ai">
@@ -235,16 +235,16 @@ export function RespondClient() {
         </p>
         <ul className="mt-3 divide-y divide-line border-b border-line text-sm leading-6 text-muted">
           <li className="py-4">
-            Tidak meminta OTP, PIN, password, atau data kartu.
+            Tidak meminta OTP, PIN, kata sandi, atau data kartu.
           </li>
           <li className="py-4">
             Tidak menjamin pemblokiran atau uang kembali.
           </li>
           <li className="py-4">
-            Tidak menghubungi bank, polisi, atau platform.
+            Tidak menghubungi bank, polisi, atau aplikasi lain.
           </li>
           <li className="py-4">
-            Tidak memakai nomor atau tautan dari pesan pelaku.
+            Tidak memakai nomor atau tautan dari pesan mencurigakan.
           </li>
         </ul>
       </aside>

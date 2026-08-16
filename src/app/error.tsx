@@ -25,7 +25,7 @@ export default function ErrorPage({
       code="500"
       eyebrow="Pemulihan halaman"
       title="Halaman belum dapat ditampilkan."
-      description="Proses berhenti sebelum halaman selesai dimuat. Coba lagi; bila kendala berulang, kembali ke scanner untuk memulai alur baru."
+      description="Halaman tidak berhasil dimuat. Coba lagi. Jika masalah berulang, mulai pemeriksaan baru."
       headingRef={headingRef}
       primaryAction={(
         <button
@@ -38,7 +38,7 @@ export default function ErrorPage({
       )}
       secondaryAction={(
         <Link className={systemStateStyles.actionSecondary} href="/scan">
-          Buka scanner
+          Mulai periksa
         </Link>
       )}
     />
