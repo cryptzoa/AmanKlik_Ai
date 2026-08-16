@@ -3,9 +3,6 @@
 import dynamic from "next/dynamic";
 import { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-
-gsap.registerPlugin(useGSAP);
 
 const PromoStage = dynamic(
   () => import("@/app/promo/_components/promo-stage").then((module) => module.PromoStage),

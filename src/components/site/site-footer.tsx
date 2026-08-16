@@ -5,6 +5,7 @@ import Link from "next/link";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useNearViewport } from "@/components/site/use-near-viewport";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -15,8 +16,10 @@ type SiteFooterProps = {
 export function SiteFooter({ variant = "landing" }: SiteFooterProps) {
   const container = useRef<HTMLElement>(null);
   const inner = useRef<HTMLDivElement>(null);
+  const motionReady = useNearViewport(container);
 
   useGSAP(() => {
+    if (!motionReady) return;
     if (
       typeof window.matchMedia !== "function" ||
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
@@ -52,7 +55,11 @@ export function SiteFooter({ variant = "landing" }: SiteFooterProps) {
         },
       }
     );
-  }, { scope: container });
+  }, {
+    dependencies: [motionReady],
+    revertOnUpdate: true,
+    scope: container,
+  });
 
   return (
     <footer

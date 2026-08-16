@@ -3,13 +3,12 @@
 import { useRef, useEffect } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTransition } from "@/components/site/transition-context";
 import { PRELOADER_COMPLETE_EVENT } from "@/components/site/preloader-events";
 
 import { MotionButton } from "@/components/ui/animated-button";
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+gsap.registerPlugin(useGSAP);
 const networkPoints = [
   [50, 145],
   [170, 96],

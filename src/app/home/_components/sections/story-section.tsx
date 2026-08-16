@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useNearViewport } from "@/components/site/use-near-viewport";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -53,8 +54,10 @@ const MessageText = () => (
 export function LandingStorySection() {
   const root = useRef<HTMLElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  const motionReady = useNearViewport(root);
 
   useGSAP(() => {
+    if (!motionReady) return;
     if (
       typeof window.matchMedia !== "function" ||
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
@@ -205,7 +208,11 @@ export function LandingStorySection() {
     });
 
     return () => media.revert();
-  }, { scope: root });
+  }, {
+    dependencies: [motionReady],
+    revertOnUpdate: true,
+    scope: root,
+  });
 
   return (
     <section

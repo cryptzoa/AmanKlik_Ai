@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useNearViewport } from "@/components/site/use-near-viewport";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -33,8 +34,10 @@ export function LandingPipelineSection() {
   const maskRefMob = useRef<SVGRectElement>(null);
   const desktopDotRef = useRef<HTMLDivElement>(null);
   const mobileDotRef = useRef<HTMLDivElement>(null);
+  const motionReady = useNearViewport(root);
 
   useEffect(() => {
+    if (!motionReady) return;
     const container = svgContainerRef.current;
     const maskRect = maskRefMob.current;
     const movingDot = mobileDotRef.current;
@@ -103,9 +106,10 @@ export function LandingPipelineSection() {
       window.removeEventListener("scroll", requestUpdate);
       window.removeEventListener("resize", requestUpdate);
     };
-  }, []);
+  }, [motionReady]);
 
   useGSAP(() => {
+    if (!motionReady) return;
     if (
       typeof window.matchMedia !== "function" ||
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
@@ -219,7 +223,11 @@ export function LandingPipelineSection() {
     });
 
     return () => media.revert();
-  }, { scope: root });
+  }, {
+    dependencies: [motionReady],
+    revertOnUpdate: true,
+    scope: root,
+  });
 
   return (
     <section
