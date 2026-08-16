@@ -61,33 +61,21 @@ export function UrlAnatomySection() {
           ));
         },
       });
-    });
 
-    media.add("(max-width: 767px)", () => {
-      const { entrance, breakout } = buildTimelines("1rem");
-      ScrollTrigger.create({
-        trigger: root.current,
-        start: "top 82%",
-        once: true,
-        onEnter: () => {
-          entrance.play();
-          breakout.play();
+      gsap.to("[data-url-domain]", {
+        boxShadow: "0 0 50px rgba(255,51,51,0.5)",
+        yoyo: true,
+        repeat: -1,
+        duration: 1.5,
+        ease: "sine.inOut",
+        scrollTrigger: {
+          trigger: root.current,
+          start: "top bottom",
+          end: "bottom top",
+          toggleActions: "play pause resume pause",
         },
       });
-    });
 
-    gsap.to("[data-url-domain]", {
-      boxShadow: "0 0 50px rgba(255,51,51,0.5)",
-      yoyo: true,
-      repeat: -1,
-      duration: 1.5,
-      ease: "sine.inOut",
-      scrollTrigger: {
-        trigger: root.current,
-        start: "top bottom",
-        end: "bottom top",
-        toggleActions: "play pause resume pause",
-      },
     });
 
     return () => media.revert();
@@ -97,7 +85,7 @@ export function UrlAnatomySection() {
     <section
       ref={root}
       data-url-anatomy
-      className="relative z-20 overflow-hidden rounded-t-[2.5rem] lg:rounded-t-[4rem] border-t border-white/5 bg-ink px-5 py-24 text-surface shadow-[0_-20px_50px_rgba(0,0,0,0.5)] sm:px-10 sm:py-32 lg:px-16"
+      className="relative z-20 -mt-10 overflow-hidden rounded-t-[2.5rem] border-t border-white/5 bg-ink px-5 py-24 text-surface shadow-[0_-20px_50px_rgba(0,0,0,0.5)] sm:px-10 sm:py-32 md:mt-0 lg:rounded-t-[4rem] lg:px-16"
     >
       <div className="mx-auto max-w-[1320px]">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-end lg:gap-8">
@@ -129,7 +117,7 @@ export function UrlAnatomySection() {
               <span data-url-part className="text-[#aaa9a2]">https://</span>
               <div className="absolute top-[calc(100%+0.5rem)] flex flex-col items-center z-10" data-url-label>
                 <div className="w-[1px] h-3 bg-white/20 mb-1.5"></div>
-                <div className="flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-md text-[10px] sm:text-[11px] leading-none">
+                <div className="flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] leading-none sm:text-[11px] md:backdrop-blur-md">
                   <span className="whitespace-nowrap font-mono text-[#aaa9a2] uppercase tracking-[0.2em] font-semibold">Protokol</span>
                 </div>
               </div>
@@ -139,7 +127,7 @@ export function UrlAnatomySection() {
               <span data-url-part className="text-ai-on-dark">ib.bri.co.id.</span>
               <div className="absolute top-[calc(100%+0.5rem)] flex flex-col items-center z-10" data-url-label>
                 <div className="w-[1px] h-3 bg-ai/40 mb-1.5"></div>
-                <div className="flex items-center justify-center rounded-full border border-ai/30 bg-ai/10 px-3 py-1.5 backdrop-blur-md shadow-[0_0_15px_rgba(99,91,255,0.15)] text-[10px] sm:text-[11px] leading-none">
+                <div className="flex items-center justify-center rounded-full border border-ai/30 bg-ai/10 px-3 py-1.5 text-[10px] leading-none shadow-[0_0_15px_rgba(99,91,255,0.15)] sm:text-[11px] md:backdrop-blur-md">
                   <span className="whitespace-nowrap font-mono text-ai-on-dark uppercase tracking-[0.2em] font-semibold">Subdomain / Hiasan</span>
                 </div>
               </div>
@@ -157,7 +145,7 @@ export function UrlAnatomySection() {
               </span>
               <div className="absolute top-[calc(100%+0.5rem)] flex flex-col items-center z-10" data-url-label>
                 <div className="w-[1px] h-3 bg-risk/50 mb-1.5"></div>
-                <div className="flex items-center justify-center rounded-full border border-risk/40 bg-risk/10 px-3 py-1.5 backdrop-blur-md shadow-[0_0_15px_rgba(255,51,51,0.2)] text-[10px] sm:text-[11px] leading-none">
+                <div className="flex items-center justify-center rounded-full border border-risk/40 bg-risk/10 px-3 py-1.5 text-[10px] leading-none shadow-[0_0_15px_rgba(255,51,51,0.2)] sm:text-[11px] md:backdrop-blur-md">
                   <span className="whitespace-nowrap font-mono text-risk-on-dark uppercase tracking-[0.2em] font-bold">Domain Sebenarnya</span>
                 </div>
               </div>
@@ -167,7 +155,7 @@ export function UrlAnatomySection() {
               <span data-url-part className="text-[#aaa9a2]">/login</span>
               <div className="absolute top-[calc(100%+0.5rem)] flex flex-col items-center z-10" data-url-label>
                 <div className="w-[1px] h-3 bg-white/20 mb-1.5"></div>
-                <div className="flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-md text-[10px] sm:text-[11px] leading-none">
+                <div className="flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] leading-none sm:text-[11px] md:backdrop-blur-md">
                   <span className="whitespace-nowrap font-mono text-[#aaa9a2] uppercase tracking-[0.2em] font-semibold">Halaman tujuan</span>
                 </div>
               </div>

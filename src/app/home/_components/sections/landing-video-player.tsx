@@ -40,18 +40,21 @@ export function LandingVideoPlayer() {
     if (!target) return;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const smallScreen = window.matchMedia("(max-width: 767px)");
     let hasStarted = false;
 
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          visibleRef.current = entry.isIntersecting && entry.intersectionRatio >= 0.01;
-          if (visibleRef.current) setShouldRender(true);
+          visibleRef.current = entry.isIntersecting && entry.intersectionRatio >= 0.35;
+          if (visibleRef.current && !smallScreen.matches) {
+            setShouldRender(true);
+          }
           if (reducedMotion.matches) {
             masterTl.pause(0);
             continue;
           }
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.25 && readyRef.current) {
+          if (visibleRef.current && readyRef.current) {
             if (!hasStarted) {
               hasStarted = true;
               masterTl.play();
@@ -59,14 +62,15 @@ export function LandingVideoPlayer() {
               masterTl.play();
             }
           } else if (!entry.isIntersecting && entry.intersectionRatio === 0) {
-            if (masterTl.isActive()) {
-              masterTl.pause();
-            }
+            masterTl.pause(0).clear();
+            readyRef.current = false;
+            hasStarted = false;
+            setShouldRender(false);
           }
         }
       },
       {
-        threshold: [0, 0.25, 0.5],
+        threshold: [0, 0.35, 0.5],
       }
     );
 
@@ -87,8 +91,6 @@ export function LandingVideoPlayer() {
     <div
       ref={containerRef}
       className="absolute inset-0 w-full h-full overflow-hidden flex items-center justify-center bg-[#111111] pointer-events-none select-none"
-      role="img"
-      aria-label="Area Film Animasi AmanKlik AI"
     >
       {shouldRender ? (
         <PromoStage
@@ -106,6 +108,22 @@ export function LandingVideoPlayer() {
             }
           }}
         />
+      ) : isPortrait ? (
+        <div className="pointer-events-auto relative z-10 flex max-w-[15rem] flex-col items-center px-5 text-center text-white">
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/55">
+            Film AmanKlik
+          </p>
+          <button
+            type="button"
+            className="mt-4 min-h-12 rounded-full border border-white/25 bg-white px-5 py-3 text-sm font-semibold text-ink transition-colors hover:bg-ai-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            onClick={() => setShouldRender(true)}
+          >
+            Putar film
+          </button>
+          <p className="mt-3 text-xs leading-5 text-white/55">
+            Film dimuat hanya saat kamu memilih memutarnya.
+          </p>
+        </div>
       ) : null}
     </div>
   );

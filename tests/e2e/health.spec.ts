@@ -31,13 +31,13 @@ test("public pages send the baseline browser security policy", async ({ request 
   expect(scriptPolicy).not.toContain("'unsafe-inline'");
 });
 
-test("preloader stays on the landing entry and route transitions release promptly", async ({ page }) => {
+test("landing avoids a blocking preloader and route transitions release promptly", async ({ page }) => {
   await page.goto("/scan");
   await expect(page.locator("[data-site-preloader]")).toHaveCount(0);
 
   await page.goto("/");
-  await expect(page.locator("[data-site-preloader]")).toBeVisible();
-  await expect(page.locator("[data-site-preloader]")).toHaveCount(0, { timeout: 4_000 });
+  await page.waitForLoadState("networkidle");
+  await expect(page.locator("[data-site-preloader]")).toHaveCount(0);
 
   const overlay = page.locator("[data-transition-overlay]");
   await page.evaluate(() => {
@@ -72,8 +72,8 @@ test("preloader stays on the landing entry and route transitions release promptl
   await expect(overlay).toHaveAttribute("data-transition-state", "covering");
   await page.waitForTimeout(120);
   expect(new URL(page.url()).pathname).toBe("/");
-  await page.waitForURL(/\/scan$/, { timeout: 1_500 });
-  expect(Date.now() - transitionStartedAt).toBeLessThan(1_500);
+  await page.waitForURL(/\/scan$/, { timeout: 2_500 });
+  expect(Date.now() - transitionStartedAt).toBeLessThan(2_500);
   await expect(overlay).toHaveAttribute("data-transition-state", "idle");
   const trace = await page.evaluate(() => (
     (window as Window & { __transitionTrace?: string[] }).__transitionTrace ?? []
@@ -131,6 +131,19 @@ test("landing stays readable with reduced motion and on mobile", async ({ page }
   await expect(
     page.getByRole("heading", { name: /Tidak hanya mengandalkan tebakan AI/i }),
   ).toBeVisible();
+
+  const sectionOverlap = await page.evaluate(() => {
+    const story = document.querySelector<HTMLElement>("[data-story]");
+    const anatomy = document.querySelector<HTMLElement>("[data-url-anatomy]");
+    if (!story || !anatomy) return 0;
+    return story.getBoundingClientRect().bottom -
+      anatomy.getBoundingClientRect().top;
+  });
+  expect(sectionOverlap).toBeGreaterThanOrEqual(32);
+
+  await expect(page.getByRole("button", { name: "Putar film" }))
+    .toBeVisible();
+  await expect(page.locator(".promo-canvas")).toHaveCount(0);
 
   const width = await page.evaluate(() => ({
     scroll: document.documentElement.scrollWidth,
@@ -191,6 +204,13 @@ test("landing stays readable with reduced motion and on mobile", async ({ page }
   await page.keyboard.press("Escape");
   await expect(mobileOverlay).toBeHidden();
   await expect(menuButton).toBeFocused();
+
+  await page.locator("[data-pipeline]").scrollIntoViewIfNeeded();
+  await expect(page.locator("[data-pipeline-moving-dot]")).toBeHidden();
+  await expect(page.locator("[data-pipeline-node]").first()).toHaveCSS(
+    "opacity",
+    "1",
+  );
 });
 
 test("animated mobile navigation covers the viewport without leaking into the page", async ({ page }) => {

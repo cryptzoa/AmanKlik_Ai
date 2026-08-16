@@ -4,7 +4,6 @@ import { useRef, useEffect } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { usePreloader } from "@/components/site/preloader-context";
 import { useTransition } from "@/components/site/transition-context";
 
 import { MotionButton } from "@/components/ui/animated-button";
@@ -36,9 +35,7 @@ const networkPoints = [
 ];
 export function LandingHeroSection() {
   const root = useRef<HTMLElement>(null);
-  const { isLoaded } = usePreloader();
   const { isTransitioning } = useTransition();
-  const isReady = isLoaded && !isTransitioning;
 
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
 
@@ -50,7 +47,7 @@ export function LandingHeroSection() {
 
     const timeline = gsap.timeline({
       defaults: { ease: "power3.out" },
-      paused: !isReady
+      paused: true,
     });
     timelineRef.current = timeline;
 
@@ -79,10 +76,9 @@ export function LandingHeroSection() {
   }, { scope: root });
 
   useEffect(() => {
-    if (isReady && timelineRef.current) {
-      timelineRef.current.play();
-    }
-  }, [isReady]);
+    if (isTransitioning) return;
+    timelineRef.current?.play();
+  }, [isTransitioning]);
 
   return (
     <section

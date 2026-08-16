@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
-import { PreloaderProvider } from "@/components/site/preloader-context";
 import { SmoothScroll } from "@/components/site/smooth-scroll";
 import { TransitionProvider } from "@/components/site/transition-context";
 import { TransitionOverlay } from "@/components/site/transition-overlay";
@@ -37,10 +36,10 @@ export function SiteRuntime({ children }: { children: React.ReactNode }) {
   return (
     <TransitionRuntime usesSmoothScroll={usesSmoothScroll}>
       {usesLegacyEffects ? (
-        <PreloaderProvider>
+        <>
           <LegacyRuntimeEffects />
           {children}
-        </PreloaderProvider>
+        </>
       ) : children}
     </TransitionRuntime>
   );

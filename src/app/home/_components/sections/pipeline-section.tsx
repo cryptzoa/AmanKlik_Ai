@@ -29,9 +29,7 @@ export function LandingPipelineSection() {
   const root = useRef<HTMLElement>(null);
   const svgContainerRef = useRef<HTMLDivElement>(null);
   const pathRefDesk = useRef<SVGPathElement>(null);
-  const pathRefMob = useRef<SVGPathElement>(null);
   const maskRefDesk = useRef<SVGRectElement>(null);
-  const maskRefMob = useRef<SVGRectElement>(null);
   const dotRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
@@ -44,28 +42,28 @@ export function LandingPipelineSection() {
     const movingDot = dotRef.current;
     if (!container || !movingDot) return;
 
-    const nodes = gsap.utils.toArray<HTMLElement>("[data-pipeline-node]");
-    gsap.set(nodes, { opacity: 0, y: 50 });
-    nodes.forEach((node) => {
-      gsap.to(node, {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: node,
-          start: "top 60%",
-          toggleActions: "play none none reverse"
-        }
-      });
-    });
-
     const media = gsap.matchMedia();
 
     media.add("(min-width: 768px)", () => {
       const path = pathRefDesk.current;
       const maskRect = maskRefDesk.current;
       if (!path || !maskRect) return;
+
+      const nodes = gsap.utils.toArray<HTMLElement>("[data-pipeline-node]");
+      gsap.set(nodes, { opacity: 0, y: 50 });
+      nodes.forEach((node) => {
+        gsap.to(node, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: node,
+            start: "top 60%",
+            toggleActions: "play none none reverse",
+          },
+        });
+      });
 
       const length = path.getTotalLength();
       const progressDots = gsap.utils.toArray<HTMLElement>(
@@ -147,51 +145,6 @@ export function LandingPipelineSection() {
       };
     });
 
-    media.add("(max-width: 767px)", () => {
-      const maskRect = maskRefMob.current;
-      if (!maskRect) return;
-
-      const progressDots = gsap.utils.toArray<HTMLElement>(
-        '[data-progress-dot="mobile"]',
-      );
-      const setX = gsap.quickSetter(movingDot, "x", "px");
-      const updateX = () => setX(container.clientWidth * 0.15);
-      updateX();
-      ScrollTrigger.addEventListener("refreshInit", updateX);
-
-      const timeline = gsap.timeline({
-        scrollTrigger: {
-          trigger: container,
-          start: "top 40%",
-          end: "bottom 60%",
-          scrub: true,
-          invalidateOnRefresh: true,
-        },
-      });
-
-      timeline.to(movingDot, {
-        y: () => container.clientHeight * 0.85,
-        ease: "none",
-        duration: 0.85,
-      }, 0).to(maskRect, {
-        attr: { height: 85 },
-        ease: "none",
-        duration: 0.85,
-      }, 0);
-
-      progressDots.forEach((dot, index) => {
-        timeline.to(dot, {
-          borderColor: "rgba(99,91,255,1)",
-          backgroundColor: "rgba(99,91,255,1)",
-          duration: 0.02,
-        }, stageTops[index] / 100);
-      });
-
-      return () => {
-        ScrollTrigger.removeEventListener("refreshInit", updateX);
-      };
-    });
-
     return () => media.revert();
   }, { scope: root });
 
@@ -247,14 +200,9 @@ export function LandingPipelineSection() {
           <path ref={pathRefDesk} mask="url(#mask-desk)" d="M50,0 C50,10 65,10 65,15 C65,25 35,25 35,32.5 C35,42.5 65,42.5 65,50 C65,60 35,60 35,67.5 C35,77.5 65,77.5 65,85 C65,95 50,95 50,100" fill="none" stroke="currentColor" strokeWidth="4" vectorEffect="non-scaling-stroke" />
         </svg>
 
-        <svg className="md:hidden absolute inset-0 w-full h-full text-ai" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <defs>
-            <mask id="mask-mob" maskUnits="userSpaceOnUse">
-              <rect ref={maskRefMob} x="0" y="0" width="100" height="0" fill="white" />
-            </mask>
-          </defs>
+        <svg className="absolute inset-0 h-full w-full text-ai md:hidden" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
           <path d="M15,0 L15,85" stroke="currentColor" strokeWidth="2" strokeOpacity="0.1" fill="none" vectorEffect="non-scaling-stroke" />
-          <path ref={pathRefMob} mask="url(#mask-mob)" d="M15,0 L15,85" stroke="currentColor" strokeWidth="2" fill="none" vectorEffect="non-scaling-stroke" />
+          <path d="M15,0 L15,85" stroke="currentColor" strokeWidth="2" strokeOpacity="0.45" fill="none" vectorEffect="non-scaling-stroke" />
         </svg>
 
         <div className="absolute inset-0 w-full h-full z-10 pointer-events-none">
@@ -266,7 +214,7 @@ export function LandingPipelineSection() {
               <div key={`dots-wrapper-${i}`}>
                 <div 
                   data-progress-dot="mobile"
-                  className="md:hidden absolute w-3 h-3 rounded-full border-2 border-ai/20 bg-[#f7f5f2] -ml-[6px] -mt-[6px]" 
+                  className="absolute -ml-[6px] -mt-[6px] h-3 w-3 rounded-full border-2 border-ai/50 bg-[#f7f5f2] md:hidden"
                   style={{ left: "15%", top }}
                 />
                 <div 
@@ -279,7 +227,7 @@ export function LandingPipelineSection() {
           })}
         </div>
 
-        <div ref={dotRef} className="absolute w-5 h-5 rounded-full bg-ai -ml-[10px] -mt-[10px] z-20 shadow-[0_0_20px_rgba(99,91,255,0.6)]" style={{ left: '0%', top: '0%' }} />
+        <div data-pipeline-moving-dot ref={dotRef} className="absolute z-20 -ml-[10px] -mt-[10px] hidden h-5 w-5 rounded-full bg-ai shadow-[0_0_20px_rgba(99,91,255,0.6)] md:block" style={{ left: '0%', top: '0%' }} />
 
         {stages.map((stage, i) => {
           const isRightDesk = i % 2 === 0;
