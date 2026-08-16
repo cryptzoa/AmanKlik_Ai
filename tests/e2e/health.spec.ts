@@ -38,8 +38,21 @@ test("landing preloader stays brief and route transitions release promptly", asy
   await page.goto("/");
   const preloader = page.locator("[data-site-preloader]");
   await expect(preloader).toBeAttached();
+  const progressBar = page.locator("[data-preloader-progress]");
+  await expect.poll(() => progressBar.evaluate((element) => (
+    element.getAnimations().length
+  ))).toBeGreaterThan(0);
+  await page.waitForTimeout(500);
+  await expect(preloader).toHaveAttribute("data-preloader-state", "active");
+  const progressWidths = await progressBar.evaluate((element) => ({
+    fill: element.getBoundingClientRect().width,
+    track: element.parentElement?.getBoundingClientRect().width ?? 0,
+  }));
+  expect(progressWidths.fill).toBeGreaterThan(1);
+  expect(progressWidths.fill).toBeLessThan(progressWidths.track);
+  await expect(page.locator("[data-preloader-seam-cover]")).toHaveCount(0);
   await expect(preloader).toHaveAttribute("data-preloader-state", "complete", {
-    timeout: 2_000,
+    timeout: 3_500,
   });
 
   const overlay = page.locator("[data-transition-overlay]");
@@ -216,12 +229,13 @@ test("landing stays readable with reduced motion and on mobile", async ({ page }
   );
 });
 
-test("mobile film autoplays in view and pipeline progress follows the scroll", async ({ page }) => {
+test("mobile film autoplays, anatomy overlaps, and pipeline follows the scroll", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
   await expect(page.locator("[data-site-preloader]")).toHaveAttribute(
     "data-preloader-state",
     "complete",
+    { timeout: 4_000 },
   );
   await expect(page.locator(".promo-canvas")).toHaveCount(0);
 
@@ -237,8 +251,37 @@ test("mobile film autoplays in view and pipeline progress follows the scroll", a
     timeout: 5_000,
   });
 
-  await page.locator("[data-url-anatomy]").scrollIntoViewIfNeeded();
+  const story = page.locator("[data-story]");
+  const pinStart = await story.evaluate((element) => {
+    const bounds = element.getBoundingClientRect();
+    return bounds.bottom + window.scrollY - window.innerHeight;
+  });
+  await page.evaluate((scrollTop) => {
+    window.scrollTo({ top: scrollTop, behavior: "instant" });
+  }, pinStart);
+  await page.waitForTimeout(250);
   await expect(page.locator(".promo-canvas")).toHaveCount(0);
+
+  const positionsBefore = await page.evaluate(() => ({
+    storyBottom: document.querySelector<HTMLElement>("[data-story]")
+      ?.getBoundingClientRect().bottom ?? 0,
+    anatomyTop: document.querySelector<HTMLElement>("[data-url-anatomy]")
+      ?.getBoundingClientRect().top ?? 0,
+  }));
+  await page.evaluate(() => {
+    window.scrollBy({ top: 240, behavior: "instant" });
+  });
+  await page.waitForTimeout(250);
+  const positionsAfter = await page.evaluate(() => ({
+    storyBottom: document.querySelector<HTMLElement>("[data-story]")
+      ?.getBoundingClientRect().bottom ?? 0,
+    anatomyTop: document.querySelector<HTMLElement>("[data-url-anatomy]")
+      ?.getBoundingClientRect().top ?? 0,
+  }));
+  expect(Math.abs(positionsAfter.storyBottom - positionsBefore.storyBottom))
+    .toBeLessThan(3);
+  expect(positionsAfter.anatomyTop - positionsBefore.anatomyTop)
+    .toBeLessThan(-200);
 
   const pipeline = page.locator("[data-pipeline-container]");
   await pipeline.evaluate((element) => {

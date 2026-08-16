@@ -78,6 +78,31 @@ export function UrlAnatomySection() {
 
     });
 
+    media.add("(max-width: 767px)", () => {
+      const { entrance, breakout } = buildTimelines("1rem");
+      const prevSection = root.current?.previousElementSibling;
+      if (!prevSection) return;
+
+      ScrollTrigger.create({
+        trigger: prevSection,
+        start: "bottom bottom",
+        endTrigger: root.current,
+        end: "bottom top",
+        pin: true,
+        pinSpacing: false,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          if (self.progress > 0.02) entrance.play();
+          breakout.progress(gsap.utils.clamp(
+            0,
+            1,
+            gsap.utils.mapRange(0.08, 0.42, 0, 1, self.progress),
+          ));
+        },
+      });
+    });
+
     return () => media.revert();
   }, { scope: root });
 

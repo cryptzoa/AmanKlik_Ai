@@ -6,20 +6,28 @@ import { PRELOADER_COMPLETE_EVENT } from "./preloader-events";
 
 const CHARS = "!<>-_\\/[]{}—=+*^?#________";
 const TARGET_TEXT = "AmanKlik";
-const SCRAMBLE_DURATION_MS = 520;
-const SCRAMBLE_FRAME_MS = 40;
+const SCRAMBLE_DURATION_MS = 1_300;
+const SCRAMBLE_FRAME_MS = 32;
 
 export function Preloader() {
   const pathname = usePathname();
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
+  const progressTrackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const container = containerRef.current;
     const text = textRef.current;
     const progress = progressRef.current;
-    if (pathname !== "/" || !container || !text || !progress) return;
+    const progressTrack = progressTrackRef.current;
+    if (
+      pathname !== "/" ||
+      !container ||
+      !text ||
+      !progress ||
+      !progressTrack
+    ) return;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let animationFrameId = 0;
@@ -64,17 +72,42 @@ export function Preloader() {
     animationFrameId = requestAnimationFrame(animateText);
     const progressAnimation = progress.animate(
       [{ transform: "scaleX(0)" }, { transform: "scaleX(1)" }],
-      { duration: 620, easing: "cubic-bezier(.65,0,.35,1)", fill: "forwards" },
+      {
+        duration: 1_350,
+        easing: "cubic-bezier(.65,0,.35,1)",
+        fill: "forwards",
+      },
+    );
+    const progressExitAnimation = progressTrack.animate(
+      [{ opacity: 1 }, { opacity: 0 }],
+      {
+        delay: 1_480,
+        duration: 200,
+        easing: "ease-out",
+        fill: "forwards",
+      },
+    );
+    const textAnimation = text.animate(
+      [
+        { opacity: 1, transform: "translate3d(0,0,0) scale(1)" },
+        { opacity: 0, transform: "translate3d(0,-10px,0) scale(.94)" },
+      ],
+      {
+        delay: 1_480,
+        duration: 420,
+        easing: "cubic-bezier(.22,1,.36,1)",
+        fill: "forwards",
+      },
     );
     const exitAnimation = container.animate(
       [
-        { opacity: 1, transform: "translate3d(0,0,0)" },
-        { opacity: 0, transform: "translate3d(0,-12px,0)" },
+        { clipPath: "inset(0% 0 0% 0)" },
+        { clipPath: "inset(50% 0 50% 0)" },
       ],
       {
-        delay: 620,
-        duration: 260,
-        easing: "cubic-bezier(.76,0,.24,1)",
+        delay: 1_680,
+        duration: 720,
+        easing: "cubic-bezier(.87,0,.13,1)",
         fill: "forwards",
       },
     );
@@ -82,8 +115,10 @@ export function Preloader() {
 
     return () => {
       cancelAnimationFrame(animationFrameId);
-      progressAnimation?.cancel();
-      exitAnimation?.cancel();
+      progressAnimation.cancel();
+      progressExitAnimation.cancel();
+      textAnimation.cancel();
+      exitAnimation.cancel();
     };
   }, [pathname]);
 
@@ -95,21 +130,26 @@ export function Preloader() {
       aria-hidden="true"
       data-site-preloader
       data-preloader-state="active"
-      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-ink text-white"
-      style={{ willChange: "opacity, transform" }}
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-ink text-white"
+      style={{ clipPath: "inset(0% 0 0% 0)", willChange: "clip-path" }}
     >
       <div
-        ref={textRef}
-        className="font-mono text-4xl font-bold tracking-wider sm:text-6xl"
+        ref={progressTrackRef}
+        className="absolute bottom-12 left-1/2 z-10 h-px w-48 -translate-x-1/2 overflow-hidden bg-white/20"
       >
-        {TARGET_TEXT}
-      </div>
-
-      <div className="absolute bottom-12 left-1/2 h-px w-48 -translate-x-1/2 overflow-hidden bg-white/20">
         <div
           ref={progressRef}
-          className="h-full w-full origin-left scale-x-0 bg-ai"
+          data-preloader-progress
+          className="h-full w-full origin-left bg-ai"
+          style={{ transform: "scaleX(0)", willChange: "transform" }}
         />
+      </div>
+
+      <div
+        ref={textRef}
+        className="relative z-10 font-mono text-4xl font-bold tracking-wider will-change-transform sm:text-6xl"
+      >
+        {TARGET_TEXT}
       </div>
     </div>
   );

@@ -128,7 +128,7 @@ export function LandingHeroSection() {
         </p>
         <h1 className="reference-hero-title mt-7 text-balanced">
           <span data-hero-line className="block overflow-hidden pb-[0.1em]">
-            <span className="block">Pesan mencurigakan?</span>
+            <span className="block">Pesan Mencurigakan?</span>
           </span>
           <span data-hero-line className="block overflow-hidden pb-[0.1em]">
             <span className="block">Jangan langsung percaya.</span>
