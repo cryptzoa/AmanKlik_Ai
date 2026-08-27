@@ -1,7 +1,7 @@
 ---
 id: ojk-part-time-task-scam
 title: Kenali penipuan kerja paruh waktu berbasis deposit
-publisher: Otoritas Jasa Keuangan — Satgas PASTI
+publisher: Otoritas Jasa Keuangan | Satgas PASTI
 source_url: https://ojk.go.id/id/berita-dan-kegiatan/siaran-pers/Documents/Pages/Satgas-Blokir-Situs-PT-Bingoby-Digital-Kreasi-%28Jombingo%29/SATGAS%20BLOKIR%20SITUS%20PT%20BINGOBY%20DIGITAL%20KREASI%20%28JOMBINGO%29.pdf
 retrieved_at: 2026-08-11
 language: id

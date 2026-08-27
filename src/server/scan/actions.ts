@@ -64,7 +64,7 @@ export function actionPlanFor(tags: string[] = [], knowledge: KnowledgeMatch[] =
     const source = knowledge.find((match) => match.actionTags.includes(tag));
     return source ? {
       ...action,
-      sourceTitle: `${source.documentTitle} — ${source.publisher}`,
+      sourceTitle: `${source.documentTitle}  (${source.publisher}`,
       sourceUrl: source.sourceUrl,
     } : { ...action };
   }).filter((action): action is ActionItem => Boolean(action));

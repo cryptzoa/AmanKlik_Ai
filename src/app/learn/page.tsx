@@ -5,7 +5,7 @@ import { RouteIntro } from "@/components/product/route-intro";
 import { getKnowledgeIndex } from "@/server/rag/retriever";
 
 export const metadata: Metadata = {
-  title: "Pelajari pola penipuan — AmanKlik AI",
+  title: "Pelajari pola penipuan | AmanKlik AI",
   description:
     "Pelajari prinsip keselamatan digital dari sumber resmi dan gunakan pada pesan yang mencurigakan.",
 };

@@ -89,7 +89,7 @@ export const RESPONSE_CATALOG: ResponseStep[] = [
     order: 1,
     title: "Matikan koneksi internet perangkat itu",
     body: "Aktifkan mode pesawat lalu matikan Wi-Fi. Jangan membuka mobile banking, email, atau akun penting dari perangkat tersebut sebelum langkah pengamanan selesai.",
-    sourceTitle: "Telanjur klik APK penipuan — Bank Indonesia",
+    sourceTitle: "Telanjur klik APK penipuan | Bank Indonesia",
     sourceUrl: BI_APK,
   },
   {
@@ -99,7 +99,7 @@ export const RESPONSE_CATALOG: ResponseStep[] = [
     order: 5,
     title: "Hapus aplikasi dan cabut izin berbahaya",
     body: "Copot aplikasi yang baru dipasang. Periksa izin Aksesibilitas, administrator perangkat, SMS, notifikasi, dan instalasi aplikasi tidak dikenal; cabut izin yang tidak kamu kenali.",
-    sourceTitle: "Telanjur klik APK penipuan — Bank Indonesia",
+    sourceTitle: "Telanjur klik APK penipuan | Bank Indonesia",
     sourceUrl: BI_APK,
   },
   {
@@ -108,8 +108,8 @@ export const RESPONSE_CATALOG: ResponseStep[] = [
     urgency: "immediate",
     order: 8,
     title: "Amankan akun dari perangkat lain yang tepercaya",
-    body: "Dari perangkat yang aman, hubungi bank atau e-wallet melalui aplikasi, nomor, atau situs resminya. Ganti kata sandi akun utama—mulai dari email. Jangan memakai tautan atau nomor dari chat tersebut.",
-    sourceTitle: "Telanjur klik APK penipuan — Bank Indonesia",
+    body: "Dari perangkat yang aman, hubungi bank atau e-wallet melalui aplikasi, nomor, atau situs resminya. Ganti kata sandi akun utama, mulai dari email. Jangan memakai tautan atau nomor dari chat tersebut.",
+    sourceTitle: "Telanjur klik APK penipuan | Bank Indonesia",
     sourceUrl: BI_APK,
   },
   {
@@ -127,7 +127,7 @@ export const RESPONSE_CATALOG: ResponseStep[] = [
     order: 10,
     title: "Hubungi bank atau e-wallet sekarang",
     body: "Pakai nomor di aplikasi, kartu, atau situs yang kamu ketik sendiri. Minta pengamanan akses dan jelaskan waktu, jumlah, serta rekening tujuan atau transaksi yang tidak dikenal. Pemblokiran atau pengembalian dana tidak bisa dijamin.",
-    sourceTitle: "Indonesia Anti-Scam Centre — OJK",
+    sourceTitle: "Indonesia Anti-Scam Centre | OJK",
     sourceUrl: IASC,
   },
   {
@@ -137,7 +137,7 @@ export const RESPONSE_CATALOG: ResponseStep[] = [
     order: 10,
     title: "Hentikan pengiriman data tambahan",
     body: "Jangan kirim foto identitas, selfie, tanda tangan, kode, atau dokumen tambahan. Jangan membayar pihak yang mengaku bisa menghapus atau memulihkan data.",
-    sourceTitle: "Proteksi diri dari kejahatan digital — OJK",
+    sourceTitle: "Proteksi diri dari kejahatan digital | OJK",
     sourceUrl: OJK_SECURITY,
   },
   {
@@ -147,7 +147,7 @@ export const RESPONSE_CATALOG: ResponseStep[] = [
     order: 10,
     title: "Tutup halaman dan jangan lanjutkan interaksi",
     body: "Membuka tautan atau memindai QR saja belum membuktikan akun atau perangkat sudah diambil alih. Jangan mengisi data, menyetujui izin, mengunduh file, atau melakukan pembayaran dari halaman itu.",
-    sourceTitle: "Proteksi diri dari kejahatan digital — OJK",
+    sourceTitle: "Proteksi diri dari kejahatan digital | OJK",
     sourceUrl: OJK_SECURITY,
   },
   {
@@ -166,7 +166,7 @@ export const RESPONSE_CATALOG: ResponseStep[] = [
     order: 11,
     title: "Kunci akses bank, kartu, atau e-wallet",
     body: "Hubungi penyedia lewat aplikasi atau situs resmi yang kamu cari sendiri. Blokir akses atau kartu yang terdampak, ubah kata sandi atau PIN dari perangkat aman, lalu periksa transaksi terakhir.",
-    sourceTitle: "Proteksi diri dari kejahatan digital — OJK",
+    sourceTitle: "Proteksi diri dari kejahatan digital | OJK",
     sourceUrl: OJK_SECURITY,
   },
   {
@@ -196,7 +196,7 @@ export const RESPONSE_CATALOG: ResponseStep[] = [
     order: 12,
     title: "Pulihkan email utama lebih dulu",
     body: "Masuk lewat aplikasi atau situs resmi, ubah kata sandi, keluarkan perangkat yang tidak dikenal, lalu periksa email pemulihan, nomor pemulihan, dan aturan penerusan pesan yang berubah.",
-    sourceTitle: "Proteksi diri dari kejahatan digital — OJK",
+    sourceTitle: "Proteksi diri dari kejahatan digital | OJK",
     sourceUrl: OJK_SECURITY,
   },
   {
@@ -243,7 +243,7 @@ export const RESPONSE_CATALOG: ResponseStep[] = [
     order: 14,
     title: "Amankan akun yang paling penting lebih dulu",
     body: "Mulai dari email utama, lalu akun keuangan dan komunikasi. Buka aplikasi atau situs resmi sendiri, ubah kata sandi, keluarkan perangkat yang tidak dikenal, dan periksa cara pemulihan akun.",
-    sourceTitle: "Proteksi diri dari kejahatan digital — OJK",
+    sourceTitle: "Proteksi diri dari kejahatan digital | OJK",
     sourceUrl: OJK_SECURITY,
   },
   {
@@ -261,7 +261,7 @@ export const RESPONSE_CATALOG: ResponseStep[] = [
     order: 15,
     title: "Blokir akses atau alat pembayaran yang terdampak",
     body: "Ikuti petunjuk resmi penyedia untuk memblokir kartu, akun, atau perangkat yang terhubung. Ubah kata sandi atau PIN dari perangkat tepercaya dan jangan menyetujui notifikasi atau OTP baru.",
-    sourceTitle: "Proteksi diri dari kejahatan digital — OJK",
+    sourceTitle: "Proteksi diri dari kejahatan digital | OJK",
     sourceUrl: OJK_SECURITY,
   },
   {
@@ -295,7 +295,7 @@ export const RESPONSE_CATALOG: ResponseStep[] = [
     order: 20,
     title: "Ganti rahasia dan keluarkan sesi asing",
     body: "Dari perangkat tepercaya, ganti kata sandi atau PIN yang terdampak. Jangan pakai ulang kata sandi lama, keluarkan perangkat yang tidak dikenal, dan aktifkan verifikasi dua langkah jika tersedia.",
-    sourceTitle: "Proteksi diri dari kejahatan digital — OJK",
+    sourceTitle: "Proteksi diri dari kejahatan digital | OJK",
     sourceUrl: OJK_SECURITY,
   },
   {
@@ -329,7 +329,7 @@ export const RESPONSE_CATALOG: ResponseStep[] = [
     order: 30,
     title: "Periksa email, nomor, dan perangkat pemulihan",
     body: "Hapus cara pemulihan dan perangkat yang tidak dikenal. Jika data kartu ikut dibagikan, hubungi penerbit kartu melalui nomor atau aplikasi resminya untuk pengamanan atau penggantian.",
-    sourceTitle: "Proteksi diri dari kejahatan digital — OJK",
+    sourceTitle: "Proteksi diri dari kejahatan digital | OJK",
     sourceUrl: OJK_SECURITY,
   },
   {
@@ -355,7 +355,7 @@ export const RESPONSE_CATALOG: ResponseStep[] = [
     order: 30,
     title: "Periksa iDeb SLIK secara berkala",
     body: "Gunakan iDebKu OJK untuk melihat informasi debitur atas identitasmu. Hasil yang tidak dikenal perlu dikonfirmasi kepada lembaga terkait dan didokumentasikan.",
-    sourceTitle: "iDebKu — OJK",
+    sourceTitle: "iDebKu | OJK",
     sourceUrl: OJK_IDEB,
   },
   {
@@ -373,7 +373,7 @@ export const RESPONSE_CATALOG: ResponseStep[] = [
     order: 30,
     title: "Buat Laporan Polisi",
     body: "Laporan IASC tidak menggantikan proses hukum. Bawa identitas, bukti transaksi, urutan kejadian, dan bukti komunikasi ke kantor polisi terdekat; simpan nomor laporannya.",
-    sourceTitle: "Alur pelaporan korban penipuan — IASC OJK",
+    sourceTitle: "Alur pelaporan korban penipuan | IASC OJK",
     sourceUrl: IASC,
   },
   {
@@ -391,7 +391,7 @@ export const RESPONSE_CATALOG: ResponseStep[] = [
     order: 100,
     title: "Satukan bukti dan urutan kejadian",
     body: "Simpan tangkapan layar, nomor atau akun pengirim, waktu, transaksi, nomor pesanan atau resi, nama aplikasi, dan nomor laporan. Pertahankan file asli dan jangan unggah data rahasia ke AmanKlik.",
-    sourceTitle: "Bukti yang dibutuhkan untuk laporan — IASC OJK",
+    sourceTitle: "Bukti yang dibutuhkan untuk laporan | IASC OJK",
     sourceUrl: IASC,
   },
   {
@@ -419,7 +419,7 @@ export const RESPONSE_CATALOG: ResponseStep[] = [
     order: 115,
     title: "Pertimbangkan pemeriksaan teknis atau reset perangkat",
     body: "Jika masih ada gejala, minta bantuan teknis tepercaya. Cadangkan hanya data penting sebelum reset pabrik; AmanKlik tidak dapat memastikan malware sudah hilang.",
-    sourceTitle: "Telanjur klik APK penipuan — Bank Indonesia",
+    sourceTitle: "Telanjur klik APK penipuan | Bank Indonesia",
     sourceUrl: BI_APK,
   },
   {

@@ -119,7 +119,7 @@ export function RespondClient() {
         ]
         : [];
     const text = [
-      "AmanKlik — langkah setelah terlanjur",
+      "AmanKlik  (langkah setelah terlanjur",
       `Situasi: ${selectedIncidents.map(labelForIncident).join(", ")}`,
       `Layanan terdampak: ${
         selectedAssets.length

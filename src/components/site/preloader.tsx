@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { PRELOADER_COMPLETE_EVENT } from "./preloader-events";
 
-const CHARS = "!<>-_\\/[]{}—=+*^?#________";
+const CHARS = "!<>-_\\/[]{}~=+*^?#________";
 const TARGET_TEXT = "AmanKlik";
 const SCRAMBLE_DURATION_MS = 1_300;
 const SCRAMBLE_FRAME_MS = 32;

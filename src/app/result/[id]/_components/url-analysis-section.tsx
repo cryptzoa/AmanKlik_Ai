@@ -35,7 +35,7 @@ export function UrlAnalysisSection(
             Bagian sebelum alamat utama
           </dt>
           <dd className="mt-1 break-all font-mono">
-            {analysis.subdomain ?? "—"}
+            {analysis.subdomain ?? "-"}
           </dd>
         </div>
         <div>

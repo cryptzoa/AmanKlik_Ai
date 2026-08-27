@@ -4,7 +4,7 @@ import { PageFrame } from "@/components/product/page-frame";
 import { RouteIntro } from "@/components/product/route-intro";
 
 export const metadata: Metadata = {
-  title: "Latihan Keputusan Aman — AmanKlik AI",
+  title: "Latihan Keputusan Aman | AmanKlik AI",
   description:
     "Latih respons aman melalui delapan situasi buatan tanpa data atau akibat nyata.",
 };

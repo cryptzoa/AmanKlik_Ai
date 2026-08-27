@@ -98,7 +98,7 @@ export function ResponsePlanSection(
                   rel="noreferrer"
                 >
                   Buka sumber resmi ↗ · {officialHost(primaryStep.sourceUrl)}
-                  <span className="sr-only">— {primaryStep.sourceTitle}</span>
+                  <span className="sr-only"> ({primaryStep.sourceTitle}</span>
                 </a>
               )
               : null}

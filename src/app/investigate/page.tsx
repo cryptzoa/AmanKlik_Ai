@@ -9,7 +9,7 @@ import { reportServerError } from "@/server/observability/report-error";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
-  title: "Bandingkan hasil pemeriksaan — AmanKlik AI",
+  title: "Bandingkan hasil pemeriksaan | AmanKlik AI",
   description:
     "Bandingkan hasil pemeriksaan untuk melihat tanda bahaya yang muncul berulang.",
   robots: { index: false, follow: false },
@@ -54,7 +54,7 @@ export default async function InvestigatePage(
         eyebrow="Bandingkan hasil"
         title="Temukan pola yang muncul di beberapa hasil."
         description="Gabungkan pesan, tautan, dan tangkapan layar yang berkaitan. AmanKlik hanya menampilkan pola yang muncul pada sedikitnya dua hasil berbeda."
-        annotation="Pilih 2–8 hasil · isi yang sama dihitung sekali · hanya tersedia di sesi browser ini"
+        annotation="Pilih 2 sampai 8 hasil · isi yang sama dihitung sekali · hanya tersedia di sesi browser ini"
         pattern="analysis"
       >
         {cases.length} kasus tersimpan dalam sesi ini.

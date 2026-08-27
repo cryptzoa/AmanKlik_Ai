@@ -86,7 +86,7 @@ export function formatEvaluationReport(summary: EvaluationSummary): string {
     "## Result",
     "",
     failures.length ? "| ID | Type | Score | Expected | Signals |" : "All curated cases passed.",
-    ...(failures.length ? ["|---|---|---:|---|---|", ...failures.map((item) => `| ${item.id} | ${item.inputType} | ${item.score} | ${item.expectedScore[0]}–${item.expectedScore[1]} | ${item.signalCategories.join(", ") || "—"} |`)] : []),
+    ...(failures.length ? ["|---|---|---:|---|---|", ...failures.map((item) => `| ${item.id} | ${item.inputType} | ${item.score} | ${item.expectedScore[0]}-${item.expectedScore[1]} | ${item.signalCategories.join(", ") || "-"} |`)] : []),
     "",
     "> This synthetic evaluation checks deterministic regression behavior. It is not a universal fraud-detection accuracy claim.",
   ];

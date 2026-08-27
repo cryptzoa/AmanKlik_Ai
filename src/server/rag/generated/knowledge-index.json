@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-16T03:23:32.181Z",
+  "generatedAt": "2026-08-27T03:44:25.214Z",
   "embeddingModel": null,
   "embeddingDimension": null,
   "chunks": [
@@ -300,7 +300,7 @@
       "documentId": "ojk-investment-legality",
       "title": "Nilai pihak, izin, dan cara keuntungannya",
       "documentTitle": "Periksa legalitas dan kewajaran tawaran investasi",
-      "publisher": "Otoritas Jasa Keuangan — Satgas PASTI",
+      "publisher": "Otoritas Jasa Keuangan | Satgas PASTI",
       "sourceUrl": "https://www.ojk.go.id/waspada-investasi/id/FAQ.aspx",
       "retrievedAt": "2026-08-11",
       "language": "id",
@@ -379,7 +379,7 @@
       "documentId": "ojk-part-time-task-scam",
       "title": "Bayaran awal tidak membuktikan pekerjaan itu sah",
       "documentTitle": "Kenali penipuan kerja paruh waktu berbasis deposit",
-      "publisher": "Otoritas Jasa Keuangan — Satgas PASTI",
+      "publisher": "Otoritas Jasa Keuangan | Satgas PASTI",
       "sourceUrl": "https://ojk.go.id/id/berita-dan-kegiatan/siaran-pers/Documents/Pages/Satgas-Blokir-Situs-PT-Bingoby-Digital-Kreasi-%28Jombingo%29/SATGAS%20BLOKIR%20SITUS%20PT%20BINGOBY%20DIGITAL%20KREASI%20%28JOMBINGO%29.pdf",
       "retrievedAt": "2026-08-11",
       "language": "id",

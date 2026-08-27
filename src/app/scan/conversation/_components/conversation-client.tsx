@@ -337,7 +337,7 @@ export function ConversationClient() {
 
     let generalError: string | null = null;
     if (messages.length < 2 || messages.length > MAX_MESSAGES) {
-      generalError = "Percakapan harus berisi 2–12 pesan.";
+      generalError = "Percakapan harus berisi 2 sampai 12 pesan.";
     } else if (totalTooLong) {
       generalError = "Total percakapan melebihi batas 16.000 karakter.";
     }

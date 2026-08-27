@@ -6,7 +6,7 @@ import { env } from "@/lib/env";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
-  title: "Hubungkan ekstensi browser — AmanKlik AI",
+  title: "Hubungkan ekstensi browser | AmanKlik AI",
   description:
     "Hubungkan ekstensi browser AmanKlik dan atur perangkat yang masih boleh menggunakannya.",
   robots: { index: false, follow: false },

@@ -12,7 +12,7 @@ import { reportServerError } from "@/server/observability/report-error";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
-  title: "Hasil pemeriksaan — AmanKlik AI",
+  title: "Hasil pemeriksaan | AmanKlik AI",
   description:
     "Tinjau skor risiko, bukti, keterbatasan analisis, dan langkah aman berikutnya.",
   robots: { index: false, follow: false },

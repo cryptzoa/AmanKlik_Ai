@@ -4,7 +4,7 @@ import { PageFrame } from "@/components/product/page-frame";
 import { RouteIntro } from "@/components/product/route-intro";
 
 export const metadata: Metadata = {
-  title: "Periksa percakapan — AmanKlik AI",
+  title: "Periksa percakapan | AmanKlik AI",
   description:
     "Susun pesan sesuai urutan waktu untuk melihat peningkatan tekanan, permintaan data pribadi, dan perubahan pola percakapan.",
 };
@@ -23,7 +23,7 @@ export default function ConversationPage() {
           </p>
         }
       >
-        2–12 pesan · maksimum 16.000 karakter
+        2 sampai 12 pesan · maksimum 16.000 karakter
       </RouteIntro>
       <ConversationSection />
     </PageFrame>

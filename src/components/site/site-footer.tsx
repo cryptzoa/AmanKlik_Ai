@@ -93,7 +93,7 @@ export function SiteFooter({ variant = "landing" }: SiteFooterProps) {
             </div>
             <div className="footer-stagger flex flex-col gap-3 col-span-2 md:col-span-1 mt-4 md:mt-0">
               <p className="font-mono text-xs uppercase tracking-widest text-[#aaa9a2] mb-2">Legal</p>
-              <Link href="/privacy" className="hover:text-white transition-colors duration-200">Penjelasan Privasi — Draf</Link>
+              <Link href="/privacy" className="hover:text-white transition-colors duration-200">Penjelasan Privasi | Draf</Link>
             </div>
           </div>
         </div>

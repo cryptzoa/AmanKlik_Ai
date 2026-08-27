@@ -8,7 +8,7 @@ import { runAdversarialEvaluation } from "@/lib/evaluation/adversarial-runner";
 import { runDeterministicEvaluation } from "@/lib/evaluation/runner";
 
 export const metadata: Metadata = {
-  title: "Hasil pengujian — AmanKlik AI",
+  title: "Hasil pengujian | AmanKlik AI",
   description:
     "Lihat hasil contoh pengujian internal, bagian yang sesuai harapan, dan bagian yang masih perlu diperbaiki.",
 };

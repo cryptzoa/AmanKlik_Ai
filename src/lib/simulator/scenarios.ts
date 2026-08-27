@@ -87,15 +87,15 @@ export const SIMULATOR_SCENARIOS: SimulatorScenario[] = [
     transferableRule: "Suara, foto, dan jawaban di chat bukan bukti identitas. Hubungi orangnya melalui nomor lama atau orang tepercaya lain.",
     estimatedMinutes: 2,
     sources: [
-      { title: "Periksa melalui sumber lain yang tepercaya — OJK", url: OJK_INDEPENDENT },
-      { title: "Waspada deepfake untuk penipuan — Komdigi", url: KOMDIGI_DEEPFAKE },
+      { title: "Periksa melalui sumber lain yang tepercaya | OJK", url: OJK_INDEPENDENT },
+      { title: "Waspada deepfake untuk penipuan | Komdigi", url: KOMDIGI_DEEPFAKE },
     ],
     steps: [
       {
         id: "new-number-proof",
         phase: "Pesan masuk",
         prompt: "Apa respons pertamamu?",
-        message: "Ini nomor baruku. HP lama rusak. Aku kirim voice note biar kamu percaya—tolong transfer untuk biaya rumah sakit sekarang.",
+        message: "Ini nomor baruku. HP lama rusak. Aku kirim voice note biar kamu percaya, tolong transfer untuk biaya rumah sakit sekarang.",
         choices: [
           { id: "call-known-number", label: "Hubungi nomor lama atau keluarga lain yang sudah dikenal", quality: "safe", points: 100, feedback: "Kamu memeriksa pengakuan melalui sumber lain. Suara yang mirip tidak dijadikan satu-satunya bukti." },
           { id: "ask-private-question", label: "Tanyakan hal pribadi yang hanya keluarga tahu", quality: "partial", points: 45, feedback: "Ini menciptakan jeda, tetapi jawaban pribadi bisa ditebak atau sudah bocor.", saferAction: "Tetap konfirmasi melalui nomor lama atau anggota keluarga lain." },
@@ -134,7 +134,7 @@ export const SIMULATOR_SCENARIOS: SimulatorScenario[] = [
     learningObjective: "Menjaga OTP, PIN, dan kata sandi lalu berpindah ke aplikasi atau situs resmi yang dibuka sendiri.",
     transferableRule: "Pihak resmi tidak perlu mengetahui OTP, PIN, kata sandi, atau CVV untuk membantumu.",
     estimatedMinutes: 2,
-    sources: [{ title: "Lindungi OTP, PIN, dan kata sandi — OJK", url: OJK_SECURITY }],
+    sources: [{ title: "Lindungi OTP, PIN, dan kata sandi | OJK", url: OJK_SECURITY }],
     steps: [
       {
         id: "incoming-bank-call",
@@ -179,7 +179,7 @@ export const SIMULATOR_SCENARIOS: SimulatorScenario[] = [
     learningObjective: "Mengenali file aplikasi, menolak izin berbahaya, dan tahu langkah awal jika sudah terpasang.",
     transferableRule: "Dokumen tidak perlu dipasang sebagai aplikasi. File APK dan permintaan izin perangkat harus dihentikan.",
     estimatedMinutes: 3,
-    sources: [{ title: "Modus penipuan melalui file APK — Bank Indonesia", url: BI_APK }],
+    sources: [{ title: "Modus penipuan melalui file APK | Bank Indonesia", url: BI_APK }],
     steps: [
       {
         id: "apk-attachment",
@@ -224,7 +224,7 @@ export const SIMULATOR_SCENARIOS: SimulatorScenario[] = [
     learningObjective: "Mengenali bayaran awal sebagai pembangun kepercayaan dan menolak pekerjaan yang mengharuskan deposit.",
     transferableRule: "Pekerjaan yang sah tidak meminta deposit untuk membuka tugas atau mencairkan upah.",
     estimatedMinutes: 3,
-    sources: [{ title: "Waspada kerja paruh waktu berbasis deposit — OJK", url: OJK_TASK_SCAM }],
+    sources: [{ title: "Waspada kerja paruh waktu berbasis deposit | OJK", url: OJK_TASK_SCAM }],
     steps: [
       {
         id: "unexpected-job-offer",
@@ -270,8 +270,8 @@ export const SIMULATOR_SCENARIOS: SimulatorScenario[] = [
     transferableRule: "Periksa badan hukum, izin yang sesuai, dan kewajaran hasil. Figur terkenal serta tampilan profit bukan legalitas.",
     estimatedMinutes: 3,
     sources: [
-      { title: "Periksa legalitas dan kewajaran investasi — OJK", url: OJK_INVESTMENT },
-      { title: "Deepfake dapat dipakai untuk penipuan — Komdigi", url: KOMDIGI_DEEPFAKE },
+      { title: "Periksa legalitas dan kewajaran investasi | OJK", url: OJK_INVESTMENT },
+      { title: "Deepfake dapat dipakai untuk penipuan | Komdigi", url: KOMDIGI_DEEPFAKE },
     ],
     steps: [
       {
@@ -318,15 +318,15 @@ export const SIMULATOR_SCENARIOS: SimulatorScenario[] = [
     transferableRule: "Screenshot bukan dana. Serahkan barang atau refund hanya berdasarkan transaksi yang benar-benar tercatat di akunmu.",
     estimatedMinutes: 2,
     sources: [
-      { title: "Status chat bukan bukti transaksi — OJK", url: OJK_MARKETPLACE },
-      { title: "Waspada bukti transfer palsu — Bank Indonesia", url: BI_TRANSFER_PROOF },
+      { title: "Status chat bukan bukti transaksi | OJK", url: OJK_MARKETPLACE },
+      { title: "Waspada bukti transfer palsu | Bank Indonesia", url: BI_TRANSFER_PROOF },
     ],
     steps: [
       {
         id: "transfer-screenshot",
         phase: "Pembayaran diklaim",
         prompt: "Bukti transfer terlihat meyakinkan. Apa pemeriksaan utamanya?",
-        message: "Saya sudah transfer. Ini tangkapan layar berhasil—barang bisa diberikan ke kurir sekarang.",
+        message: "Saya sudah transfer. Ini tangkapan layar berhasil, barang bisa diberikan ke kurir sekarang.",
         choices: [
           { id: "check-own-mutation", label: "Periksa saldo, mutasi, atau notifikasi di aplikasi sendiri", quality: "safe", points: 100, feedback: "Hanya catatan pada akun atau penyedia pembayaranmu yang menunjukkan dana benar-benar masuk." },
           { id: "inspect-screenshot", label: "Perbesar tangkapan layar untuk mencari tanda edit", quality: "partial", points: 25, feedback: "Bukti palsu dapat terlihat sempurna dan bukti asli pun tidak menjamin transaksi belum dibatalkan.", saferAction: "Periksa transaksi dari akunmu sendiri." },
@@ -337,7 +337,7 @@ export const SIMULATOR_SCENARIOS: SimulatorScenario[] = [
         id: "courier-pressure",
         phase: "Tekanan di lokasi",
         prompt: "Kurir sudah menunggu dan pembeli terus menelepon. Apa keputusanmu?",
-        message: "Aplikasi bank sedang gangguan. Kalau kurir pulang saya rugi—bukti transfernya kan sudah ada.",
+        message: "Aplikasi bank sedang gangguan. Kalau kurir pulang saya rugi, bukti transfernya kan sudah ada.",
         choices: [
           { id: "hold-goods", label: "Tahan barang sampai transaksi dapat dipastikan", quality: "safe", points: 100, feedback: "Biaya atau tekanan waktu tidak menggantikan pemeriksaan pembayaran." },
           { id: "take-courier-id", label: "Serahkan setelah memfoto identitas kurir", quality: "partial", points: 15, feedback: "Identitas kurir tidak membuktikan pembayaran dan dapat menambah risiko privasi.", saferAction: "Tahan barang; gunakan prosedur platform atau logistik resmi." },
@@ -365,7 +365,7 @@ export const SIMULATOR_SCENARIOS: SimulatorScenario[] = [
     learningObjective: "Memeriksa nama merchant, tujuan transaksi, dan notifikasi dari aplikasi pembayaran resmi.",
     transferableRule: "Sebelum menekan Bayar, cocokkan nama merchant dan tujuan transaksi. QR untuk menerima refund tidak meminta kamu mengirim uang.",
     estimatedMinutes: 2,
-    sources: [{ title: "Keamanan transaksi QRIS — Bank Indonesia", url: BI_QRIS }],
+    sources: [{ title: "Keamanan transaksi QRIS | Bank Indonesia", url: BI_QRIS }],
     steps: [
       {
         id: "merchant-name-mismatch",
@@ -410,7 +410,7 @@ export const SIMULATOR_SCENARIOS: SimulatorScenario[] = [
     learningObjective: "Berpindah ke aplikasi resmi dan membaca alamat utama tanpa menjadikan tampilan merek sebagai bukti.",
     transferableRule: "Status paket diperiksa di aplikasi atau situs yang dibuka sendiri. Nama merek di depan alamat belum tentu alamat utama.",
     estimatedMinutes: 2,
-    sources: [{ title: "Periksa layanan melalui sumber lain — OJK", url: OJK_INDEPENDENT }],
+    sources: [{ title: "Periksa layanan melalui sumber lain | OJK", url: OJK_INDEPENDENT }],
     steps: [
       {
         id: "parcel-notice",

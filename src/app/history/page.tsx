@@ -7,7 +7,7 @@ import { reportServerError } from "@/server/observability/report-error";
 import { getAnonymousSessionId } from "@/server/session/anonymous-session";
 
 export const metadata: Metadata = {
-  title: "Riwayat pemeriksaan — AmanKlik AI",
+  title: "Riwayat pemeriksaan | AmanKlik AI",
   description:
     "Temukan kembali hasil pemeriksaan dari browser ini tanpa menampilkan isi lengkap yang pernah dikirim.",
   robots: {

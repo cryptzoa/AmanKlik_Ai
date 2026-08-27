@@ -15,3 +15,10 @@ test-results/
 /CLAUDE.md
 /STATE.md
 /agents/
+/.agents/
+/.gemini/
+/.cursor/
+/.vscode/
+/.idea/
+PRESENTASI*.md
+DEPLOYMENT*.md

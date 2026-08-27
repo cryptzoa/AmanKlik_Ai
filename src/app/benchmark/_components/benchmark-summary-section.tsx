@@ -4,7 +4,7 @@ import type { EvaluationSummary } from "@/lib/evaluation/runner";
 function MetricValue({ rate, total }: { rate: number; total: number }) {
   return (
     <p className="mt-5 font-mono text-5xl font-semibold tabular-nums sm:text-6xl">
-      {total > 0 ? `${rate}%` : "—"}
+      {total > 0 ? `${rate}%` : "-"}
     </p>
   );
 }

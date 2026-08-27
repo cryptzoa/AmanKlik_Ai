@@ -122,7 +122,7 @@ export function getKnowledgeIndex(): KnowledgeIndex {
 
 export function formatKnowledgeForPrompt(matches: KnowledgeMatch[]): string[] {
   return matches.map((match) => [
-    `Reference: ${match.documentTitle} — ${match.publisher}`,
+    `Reference: ${match.documentTitle}  (${match.publisher}`,
     `Guidance: ${match.text}`,
   ].join("\n"));
 }

@@ -4,7 +4,7 @@ import { PageFrame } from "@/components/product/page-frame";
 import { RouteIntro } from "@/components/product/route-intro";
 
 export const metadata: Metadata = {
-  title: "Sudah terlanjur? — AmanKlik AI",
+  title: "Sudah terlanjur? | AmanKlik AI",
   description:
     "Susun langkah pemulihan yang paling mendesak tanpa membagikan data sensitif.",
 };

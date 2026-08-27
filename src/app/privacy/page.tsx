@@ -7,7 +7,7 @@ import { RouteIntro } from "@/components/product/route-intro";
 import styles from "./privacy.module.css";
 
 export const metadata: Metadata = {
-  title: "Penjelasan privasi — Draf AmanKlik AI",
+  title: "Penjelasan privasi | Draf AmanKlik AI",
   description:
     "Penjelasan tentang data yang diproses, disimpan, dan dikirim saat menggunakan AmanKlik AI.",
   robots: {
@@ -96,8 +96,8 @@ export default function PrivacyPage() {
                 <span>01</span>
                 <h3>Yang diproses</h3>
                 <p>
-                  Isi yang kamu pilih—pesan, tautan, tangkapan layar, atau
-                  percakapan—beserta data teknis yang diperlukan untuk
+                  Isi yang kamu pilih (pesan, tautan, tangkapan layar, atau
+                  percakapan) beserta data teknis yang diperlukan untuk
                   menjalankan pemeriksaan dan menjaga layanan tetap aman.
                 </p>
               </article>
@@ -157,7 +157,7 @@ export default function PrivacyPage() {
               <div className={styles.factRows}>
                 <FactRow
                   term="Pesan"
-                  detail="Teks sepanjang 8–8.000 karakter. Spasi dan bentuk tulisan dirapikan sebelum tanda bahaya dicari."
+                  detail="Teks sepanjang 8 hingga 8.000 karakter. Spasi dan bentuk tulisan dirapikan sebelum tanda bahaya dicari."
                 />
                 <FactRow
                   term="Tautan"
@@ -174,7 +174,7 @@ export default function PrivacyPage() {
               </div>
               <div className={styles.inlineNote}>
                 <p>
-                  AmanKlik menyamarkan pola tertentu—email, nomor HP
+                  AmanKlik menyamarkan pola tertentu seperti email, nomor HP
                   Indonesia, rangkaian angka panjang, dan kode OTP dalam
                   konteks tertentu. Penyaringan ini tidak menghapus semua data
                   pribadi: nama, alamat, tautan, atau data lain yang tidak cocok dengan pola
@@ -246,7 +246,7 @@ export default function PrivacyPage() {
               </div>
               <p>
                 Saat memakai analisis AI utama, kutipan bukti baru disamarkan
-                setelah jawaban AI diterima—bukan sebelum bahan dikirim ke
+                setelah jawaban AI diterima, bukan sebelum bahan dikirim ke
                 Gemini. Karena itu, hapus rahasia dari bahan sebelum diperiksa.
               </p>
               <p>
@@ -288,7 +288,7 @@ export default function PrivacyPage() {
                 />
                 <StorageRow
                   term="Data untuk keamanan layanan"
-                  detail="Kode akses ekstensi disimpan sebagai penanda yang tidak menampilkan kode aslinya, bersama nama perangkat dan waktu. Pembatasan penggunaan juga menyimpan penanda pengguna dan, bila tersedia, penanda alamat jaringan—bukan alamat aslinya di tabel aplikasi."
+                  detail="Kode akses ekstensi disimpan sebagai penanda yang tidak menampilkan kode aslinya, bersama nama perangkat dan waktu. Pembatasan penggunaan juga menyimpan penanda pengguna dan, bila tersedia, penanda alamat jaringan, bukan alamat aslinya di tabel aplikasi."
                 />
               </dl>
               <div className={styles.retentionBlock}>

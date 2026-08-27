@@ -21,7 +21,7 @@ function SourceLink({ step }: { step: ResponseStep }) {
         Sumber resmi · {officialHost(step.sourceUrl)}
       </span>
       <span className="product-source-link__arrow" aria-hidden="true">↗</span>
-      <span className="sr-only">— {step.sourceTitle}</span>
+      <span className="sr-only"> ({step.sourceTitle})</span>
     </a>
   );
 }

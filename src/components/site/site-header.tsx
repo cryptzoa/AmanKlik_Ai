@@ -697,7 +697,7 @@ export function SiteHeader({ variant }: { variant: "landing" | "interior" }) {
             data-header-brand
             className="flex min-w-0 items-center rounded-full px-3 sm:px-4 text-white lg:text-ink"
             href="/"
-            aria-label="AmanKlik AI — Beranda"
+            aria-label="AmanKlik AI Beranda"
           >
             <span className="text-[15px] font-semibold leading-none tracking-[-0.035em]">
               Aman<span className="text-white lg:text-ai">Klik</span>

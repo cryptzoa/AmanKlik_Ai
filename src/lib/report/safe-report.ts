@@ -52,7 +52,7 @@ export function buildSafeReport(result: AnalysisResult, generatedAt = new Date()
 
 export function formatSafeReport(report: SafeReport): string {
   const lines = [
-    "AmanKlik AI — RINGKASAN LANGKAH AMAN",
+    "AmanKlik AI | RINGKASAN LANGKAH AMAN",
     "",
     `Tingkat risiko: ${report.riskLevel}`,
     `Skor heuristik: ${report.finalScore}/100`,

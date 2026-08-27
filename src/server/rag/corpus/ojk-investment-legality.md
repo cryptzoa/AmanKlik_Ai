@@ -1,7 +1,7 @@
 ---
 id: ojk-investment-legality
 title: Periksa legalitas dan kewajaran tawaran investasi
-publisher: Otoritas Jasa Keuangan — Satgas PASTI
+publisher: Otoritas Jasa Keuangan | Satgas PASTI
 source_url: https://www.ojk.go.id/waspada-investasi/id/FAQ.aspx
 retrieved_at: 2026-08-11
 language: id

@@ -9,7 +9,7 @@ export function RespondSection() {
         </h2>
         <p className="max-w-lg text-sm leading-7 text-muted lg:justify-self-end">
           Untuk uang yang sudah terkirim, kecepatan melapor penting. Gunakan
-          hanya aplikasi, nomor, atau situs resmi yang kamu buka sendiri—bukan nomor atau tautan dari
+          hanya aplikasi, nomor, atau situs resmi yang kamu buka sendiri, bukan nomor atau tautan dari
           pesan.
         </p>
       </div>
