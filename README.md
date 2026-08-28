@@ -35,7 +35,7 @@ Proyek ini dikembangkan dan diajukan untuk kompetisi:
 Penipuan digital modern di Indonesia jarang terjadi karena korban buta teknologi. Penipu memanfaatkan manipulasi psikologis: kepanikan mendadak, klaim instansi resmi palsu, rekayasa bukti transfer, dan jebakan aplikasi APK.
 
 **AmanKlik AI** dibangun dengan prinsip *explainable digital safety*:
-1. **Bukan Sekadar Black-box AI**: AI mendeteksi konteks semantik, namun skor risiko akhir dikendalikan oleh aturan deterministik yang dapat diaudit.
+1. **Bukan Sekadar AI Analyzer**: AI mendeteksi konteks semantik, namun skor risiko akhir dikendalikan oleh aturan deterministik yang dapat diaudit.
 2. **Keamanan Tanpa Kompromi**: Analisis URL dilakukan secara statis tanpa pernah membuka situs berbahaya. File gambar diproses di memori tanpa menyimpan blob screenshot pengguna.
 3. **Edukasi & Mitigasi**: Bukan hanya memberi peringatan, aplikasi melatih keputusan aman pengguna lewat simulator interaktif dan panduan pemulihan darurat jika sudah terlanjur menjadi korban.
 
