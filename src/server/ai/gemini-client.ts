@@ -337,7 +337,9 @@ export class GeminiAiClient implements AiClient {
     };
     const requestOptions = {
       timeout: env.AI_TIMEOUT_MS,
-      maxRetries: 1,
+      // The application owns cross-model fallback; SDK retries would multiply
+      // the user-facing timeout before the next model gets a chance to run.
+      maxRetries: 0,
     };
 
     try {

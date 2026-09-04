@@ -16,8 +16,8 @@ vi.mock("@/lib/env", () => ({
     AI_MAX_QUEUE: 8,
     AI_TIMEOUT_MS: 1_000,
     GEMINI_API_KEY: "test-key",
-    GEMINI_MODEL: "gemini-3.5-flash-lite",
-    GEMINI_FALLBACK_MODEL: "gemini-3.8-flash",
+    GEMINI_MODEL: "gemini-3.8-flash",
+    GEMINI_FALLBACK_MODEL: "gemini-3.5-flash-lite",
   },
 }));
 
@@ -46,18 +46,18 @@ describe("Gemini client model strategy", () => {
     createInteraction.mockReset();
   });
 
-  it("uses the low-latency primary model through the Interactions API", async () => {
+  it("uses the responsive primary model through the Interactions API", async () => {
     createInteraction.mockResolvedValue({ output_text: validResponse });
 
     const analysis = await new GeminiAiClient().analyzeText(input);
 
     expect(analysis.meta).toMatchObject({
-      modelId: "gemini-3.5-flash-lite",
+      modelId: "gemini-3.8-flash",
       attemptedFallback: false,
     });
     expect(createInteraction).toHaveBeenCalledOnce();
     expect(createInteraction.mock.calls[0]?.[0]).toMatchObject({
-      model: "gemini-3.5-flash-lite",
+      model: "gemini-3.8-flash",
       store: false,
       system_instruction: expect.any(String),
       response_format: {
@@ -67,12 +67,12 @@ describe("Gemini client model strategy", () => {
       },
       generation_config: {
         max_output_tokens: 4_096,
-        thinking_level: "minimal",
+        thinking_level: "low",
       },
     });
     expect(createInteraction.mock.calls[0]?.[1]).toEqual({
       timeout: 1_000,
-      maxRetries: 1,
+      maxRetries: 0,
     });
   });
 
@@ -84,14 +84,14 @@ describe("Gemini client model strategy", () => {
     const analysis = await new GeminiAiClient().analyzeText(input);
 
     expect(analysis.meta).toMatchObject({
-      modelId: "gemini-3.8-flash",
+      modelId: "gemini-3.5-flash-lite",
       attemptedFallback: true,
     });
     expect(createInteraction).toHaveBeenCalledTimes(2);
     expect(createInteraction.mock.calls[1]?.[0]).toMatchObject({
-      model: "gemini-3.8-flash",
+      model: "gemini-3.5-flash-lite",
       generation_config: {
-        thinking_level: "low",
+        thinking_level: "minimal",
       },
     });
   });
@@ -104,12 +104,12 @@ describe("Gemini client model strategy", () => {
     const analysis = await new GeminiAiClient().analyzeText(input);
 
     expect(analysis.meta).toMatchObject({
-      modelId: "gemini-3.5-flash-lite",
+      modelId: "gemini-3.8-flash",
       attemptedFallback: false,
     });
     expect(createInteraction).toHaveBeenCalledTimes(2);
     expect(createInteraction.mock.calls[1]?.[0]).toMatchObject({
-      model: "gemini-3.5-flash-lite",
+      model: "gemini-3.8-flash",
       response_format: {
         type: "text",
         mime_type: "application/json",
