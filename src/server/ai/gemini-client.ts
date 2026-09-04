@@ -294,18 +294,39 @@ export class GeminiAiClient implements AiClient {
       const timeout = setTimeout(() => controller.abort(), env.AI_TIMEOUT_MS);
 
       try {
-        const response = await this.ai.models.generateContent({
-          model,
-          contents,
-          config: {
-            abortSignal: controller.signal,
-            systemInstruction: SYSTEM_INSTRUCTION,
-            responseMimeType: "application/json",
-            responseJsonSchema: AiSemanticJsonSchema,
-            temperature: 0.2,
-            maxOutputTokens: 4_096,
-          },
-        });
+        let response;
+        try {
+          response = await this.ai.models.generateContent({
+            model,
+            contents,
+            config: {
+              abortSignal: controller.signal,
+              systemInstruction: SYSTEM_INSTRUCTION,
+              responseMimeType: "application/json",
+              responseJsonSchema: AiSemanticJsonSchema,
+              temperature: 0.2,
+              maxOutputTokens: 4_096,
+            },
+          });
+        } catch (callError) {
+          const msg = callError instanceof Error ? callError.message : String(callError);
+          if (msg.includes("400") || msg.toLowerCase().includes("schema") || msg.toLowerCase().includes("invalid_argument")) {
+            console.warn(`[AmanKlik AI Schema Fallback on ${model}]:`, msg);
+            response = await this.ai.models.generateContent({
+              model,
+              contents,
+              config: {
+                abortSignal: controller.signal,
+                systemInstruction: SYSTEM_INSTRUCTION,
+                responseMimeType: "application/json",
+                temperature: 0.2,
+                maxOutputTokens: 4_096,
+              },
+            });
+          } else {
+            throw callError;
+          }
+        }
 
         const rawText = response.text
           ?? response.candidates?.[0]?.content?.parts?.map((part) => ("text" in part ? part.text : "")).join("")
@@ -369,18 +390,39 @@ export class GeminiAiClient implements AiClient {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), env.AI_TIMEOUT_MS);
         try {
-          const response = await this.ai.models.generateContent({
-            model,
-            contents: conversationAnalysisPrompt(input),
-            config: {
-              abortSignal: controller.signal,
-              systemInstruction: SYSTEM_INSTRUCTION,
-              responseMimeType: "application/json",
-              responseJsonSchema: ConversationAiSemanticJsonSchema,
-              temperature: 0.2,
-              maxOutputTokens: 4_096,
-            },
-          });
+          let response;
+          try {
+            response = await this.ai.models.generateContent({
+              model,
+              contents: conversationAnalysisPrompt(input),
+              config: {
+                abortSignal: controller.signal,
+                systemInstruction: SYSTEM_INSTRUCTION,
+                responseMimeType: "application/json",
+                responseJsonSchema: ConversationAiSemanticJsonSchema,
+                temperature: 0.2,
+                maxOutputTokens: 4_096,
+              },
+            });
+          } catch (callError) {
+            const msg = callError instanceof Error ? callError.message : String(callError);
+            if (msg.includes("400") || msg.toLowerCase().includes("schema") || msg.toLowerCase().includes("invalid_argument")) {
+              console.warn(`[AmanKlik AI Conversation Schema Fallback on ${model}]:`, msg);
+              response = await this.ai.models.generateContent({
+                model,
+                contents: conversationAnalysisPrompt(input),
+                config: {
+                  abortSignal: controller.signal,
+                  systemInstruction: SYSTEM_INSTRUCTION,
+                  responseMimeType: "application/json",
+                  temperature: 0.2,
+                  maxOutputTokens: 4_096,
+                },
+              });
+            } else {
+              throw callError;
+            }
+          }
 
           const rawText = response.text
             ?? response.candidates?.[0]?.content?.parts?.map((part) => ("text" in part ? part.text : "")).join("")

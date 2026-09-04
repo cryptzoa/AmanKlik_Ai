@@ -86,7 +86,6 @@ export type ConversationAiSemanticResult = z.infer<typeof ConversationAiSemantic
 
 export const AiSemanticJsonSchema = {
   type: "object",
-  additionalProperties: false,
   required: [
     "semanticRisk",
     "confidence",
@@ -98,7 +97,7 @@ export const AiSemanticJsonSchema = {
     "recommendedActionTags",
   ],
   properties: {
-    semanticRisk: { type: "integer", minimum: 0, maximum: 100 },
+    semanticRisk: { type: "integer" },
     confidence: { type: "string", enum: ["low", "medium", "high"] },
     category: {
       type: "string",
@@ -116,15 +115,13 @@ export const AiSemanticJsonSchema = {
         "unknown",
       ],
     },
-    summary: { type: "string", minLength: 1, maxLength: 500 },
-    extractedText: { type: "string", maxLength: 10_000 },
-    claimedBrands: { type: "array", maxItems: 10, items: { type: "string", minLength: 1, maxLength: 80 } },
+    summary: { type: "string" },
+    extractedText: { type: "string" },
+    claimedBrands: { type: "array", items: { type: "string" } },
     indicators: {
       type: "array",
-      maxItems: 12,
       items: {
         type: "object",
-        additionalProperties: false,
         required: ["category", "label", "technique", "severity", "evidence", "explanation"],
         properties: {
           category: {
@@ -146,18 +143,17 @@ export const AiSemanticJsonSchema = {
               "other",
             ],
           },
-          label: { type: "string", minLength: 1, maxLength: 120 },
-          technique: { type: "string", minLength: 1, maxLength: 120 },
+          label: { type: "string" },
+          technique: { type: "string" },
           severity: { type: "string", enum: ["low", "medium", "high"] },
-          evidence: { type: "string", maxLength: 280 },
-          explanation: { type: "string", minLength: 1, maxLength: 500 },
+          evidence: { type: "string" },
+          explanation: { type: "string" },
         },
       },
     },
-    uncertainty: { type: "string", minLength: 1, maxLength: 500 },
+    uncertainty: { type: "string" },
     recommendedActionTags: {
       type: "array",
-      maxItems: 8,
       items: {
         type: "string",
         enum: [
@@ -177,31 +173,29 @@ export const AiSemanticJsonSchema = {
 
 export const ConversationAiSemanticJsonSchema = {
   type: "object",
-  additionalProperties: false,
   required: ["semanticRisk", "confidence", "summary", "indicators", "progressionSummary", "uncertainty", "recommendedActionTags"],
   properties: {
-    semanticRisk: { type: "integer", minimum: 0, maximum: 100 },
+    semanticRisk: { type: "integer" },
     confidence: { type: "string", enum: ["low", "medium", "high"] },
-    summary: { type: "string", minLength: 1, maxLength: 500 },
+    summary: { type: "string" },
     indicators: {
       type: "array",
-      maxItems: 12,
       items: {
         type: "object",
-        additionalProperties: false,
         required: ["category", "label", "severity", "evidence", "explanation", "messageIds"],
         properties: {
           category: { type: "string" },
-          label: { type: "string", minLength: 1, maxLength: 120 },
+          label: { type: "string" },
           severity: { type: "string", enum: ["low", "medium", "high"] },
-          evidence: { type: "string", maxLength: 280 },
-          explanation: { type: "string", minLength: 1, maxLength: 500 },
-          messageIds: { type: "array", minItems: 1, maxItems: 6, items: { type: "string", minLength: 1, maxLength: 80 } },
+          evidence: { type: "string" },
+          explanation: { type: "string" },
+          messageIds: { type: "array", items: { type: "string" } },
         },
       },
     },
-    progressionSummary: { type: "string", minLength: 1, maxLength: 500 },
-    uncertainty: { type: "string", minLength: 1, maxLength: 500 },
-    recommendedActionTags: { type: "array", maxItems: 8, items: { type: "string" } },
+    progressionSummary: { type: "string" },
+    uncertainty: { type: "string" },
+    recommendedActionTags: { type: "array", items: { type: "string" } },
   },
 } as const;
+
