@@ -56,7 +56,20 @@ function parseConversationResponse(raw: string | undefined): ConversationAiSeman
 
 function retryable(error: unknown): boolean {
   const message = error instanceof Error ? error.message.toLowerCase() : "";
-  return message.includes("429") || message.includes("timeout") || message.includes("temporarily") || message.includes("503");
+  const status = error && typeof error === "object" && "status" in error ? String(error.status) : "";
+  return (
+    status === "429" ||
+    status === "503" ||
+    message.includes("429") ||
+    message.includes("timeout") ||
+    message.includes("temporarily") ||
+    message.includes("503") ||
+    message.includes("quota") ||
+    message.includes("resource_exhausted") ||
+    message.includes("rate") ||
+    message.includes("overloaded") ||
+    message.includes("unavailable")
+  );
 }
 
 export class GeminiAiClient implements AiClient {
@@ -102,7 +115,7 @@ export class GeminiAiClient implements AiClient {
         };
       } catch (error) {
         lastError = error;
-        if (index === 0 && retryable(error)) continue;
+        if (index === 0) continue;
         break;
       } finally {
         clearTimeout(timeout);
@@ -163,7 +176,7 @@ export class GeminiAiClient implements AiClient {
           return { result: parseConversationResponse(response.text), meta: { provider: "google", modelId: model, latencyMs: Date.now() - startedAt, attemptedFallback } };
         } catch (error) {
           lastError = error;
-          if (index === 0 && retryable(error)) continue;
+          if (index === 0) continue;
           break;
         } finally {
           clearTimeout(timeout);
