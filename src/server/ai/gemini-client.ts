@@ -1,6 +1,6 @@
 import "server-only";
 
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 
 import { env } from "@/lib/env";
 import { AiProviderError, AiSchemaError } from "@/lib/errors";
@@ -66,14 +66,63 @@ const VALID_ACTION_TAGS = new Set([
   "report_officially",
 ]);
 
+type SemanticCategory = AiSemanticResult["category"];
+type IndicatorCategory = AiSemanticResult["indicators"][number]["category"];
+type IndicatorSeverity = AiSemanticResult["indicators"][number]["severity"];
+type ActionTag = AiSemanticResult["recommendedActionTags"][number];
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function isSemanticCategory(value: unknown): value is SemanticCategory {
+  return typeof value === "string" && VALID_CATEGORIES.has(value);
+}
+
+function isIndicatorCategory(value: unknown): value is IndicatorCategory {
+  return typeof value === "string" && VALID_INDICATOR_CATEGORIES.has(value);
+}
+
+function isIndicatorSeverity(value: unknown): value is IndicatorSeverity {
+  return value === "low" || value === "medium" || value === "high";
+}
+
+function isActionTag(value: unknown): value is ActionTag {
+  return typeof value === "string" && VALID_ACTION_TAGS.has(value);
+}
+
+function boundedText(value: unknown, fallback: string, maxLength: number): string {
+  return typeof value === "string" && value.trim()
+    ? value.trim().slice(0, maxLength)
+    : fallback;
+}
+
+function thinkingConfigFor(model: string) {
+  const normalizedModel = model.toLocaleLowerCase("en-US");
+
+  if (normalizedModel.startsWith("gemini-2.5-")) {
+    return { thinkingBudget: 0 } as const;
+  }
+
+  if (normalizedModel.startsWith("gemini-3.") && normalizedModel.includes("flash-lite")) {
+    return { thinkingLevel: ThinkingLevel.MINIMAL } as const;
+  }
+
+  if (normalizedModel.startsWith("gemini-3.")) {
+    return { thinkingLevel: ThinkingLevel.LOW } as const;
+  }
+
+  return undefined;
+}
+
 function coerceSemanticResult(obj: Record<string, unknown>): AiSemanticResult {
   const semanticRisk = Math.min(100, Math.max(0, Math.round(Number(obj.semanticRisk) || 0)));
   const confidence = obj.confidence === "low" || obj.confidence === "medium" || obj.confidence === "high"
     ? obj.confidence
     : "medium";
 
-  const category = typeof obj.category === "string" && VALID_CATEGORIES.has(obj.category)
-    ? (obj.category as AiSemanticResult["category"])
+  const category = isSemanticCategory(obj.category)
+    ? obj.category
     : "unknown";
 
   const summary = typeof obj.summary === "string" && obj.summary.trim()
@@ -93,24 +142,24 @@ function coerceSemanticResult(obj: Record<string, unknown>): AiSemanticResult {
   const seenCategories = new Set<string>();
 
   for (const item of rawIndicators) {
-    if (!item || typeof item !== "object") continue;
-    const cat = typeof (item as any).category === "string" && VALID_INDICATOR_CATEGORIES.has((item as any).category)
-      ? (item as any).category
+    if (!isRecord(item)) continue;
+    const category = isIndicatorCategory(item.category)
+      ? item.category
       : "other";
-    if (seenCategories.has(cat)) continue;
-    seenCategories.add(cat);
+    if (seenCategories.has(category)) continue;
+    seenCategories.add(category);
 
-    const severity = (item as any).severity === "low" || (item as any).severity === "medium" || (item as any).severity === "high"
-      ? (item as any).severity
+    const severity = isIndicatorSeverity(item.severity)
+      ? item.severity
       : "medium";
 
     indicators.push({
-      category: cat as any,
-      label: typeof (item as any).label === "string" && (item as any).label.trim() ? (item as any).label.trim().slice(0, 120) : "Pola mencurigakan",
-      technique: typeof (item as any).technique === "string" && (item as any).technique.trim() ? (item as any).technique.trim().slice(0, 120) : "Manipulasi informasi",
+      category,
+      label: boundedText(item.label, "Pola mencurigakan", 120),
+      technique: boundedText(item.technique, "Manipulasi informasi", 120),
       severity,
-      evidence: typeof (item as any).evidence === "string" ? redactEvidence((item as any).evidence, 120) : "",
-      explanation: typeof (item as any).explanation === "string" && (item as any).explanation.trim() ? (item as any).explanation.trim().slice(0, 500) : "Terdeteksi teknik rekayasa sosial.",
+      evidence: typeof item.evidence === "string" ? redactEvidence(item.evidence, 120) : "",
+      explanation: boundedText(item.explanation, "Terdeteksi teknik rekayasa sosial.", 500),
     });
     if (indicators.length >= 12) break;
   }
@@ -118,8 +167,8 @@ function coerceSemanticResult(obj: Record<string, unknown>): AiSemanticResult {
   const rawTags = Array.isArray(obj.recommendedActionTags) ? obj.recommendedActionTags : [];
   const recommendedActionTags: AiSemanticResult["recommendedActionTags"] = [];
   for (const tag of rawTags) {
-    if (typeof tag === "string" && VALID_ACTION_TAGS.has(tag)) {
-      recommendedActionTags.push(tag as any);
+    if (isActionTag(tag)) {
+      recommendedActionTags.push(tag);
       if (recommendedActionTags.length >= 8) break;
     }
   }
@@ -162,23 +211,23 @@ function coerceConversationResult(obj: Record<string, unknown>): ConversationAiS
   const seen = new Set<string>();
 
   for (const item of rawIndicators) {
-    if (!item || typeof item !== "object") continue;
-    const cat = typeof (item as any).category === "string" && VALID_INDICATOR_CATEGORIES.has((item as any).category)
-      ? (item as any).category
+    if (!isRecord(item)) continue;
+    const category = isIndicatorCategory(item.category)
+      ? item.category
       : "other";
-    if (seen.has(cat)) continue;
-    seen.add(cat);
+    if (seen.has(category)) continue;
+    seen.add(category);
 
-    const messageIds = Array.isArray((item as any).messageIds)
-      ? (item as any).messageIds.filter((id: any): id is string => typeof id === "string" && Boolean(id.trim())).slice(0, 6)
+    const messageIds = Array.isArray(item.messageIds)
+      ? item.messageIds.filter((id): id is string => typeof id === "string" && Boolean(id.trim())).slice(0, 6)
       : ["m1"];
 
     indicators.push({
-      category: cat as any,
-      label: typeof (item as any).label === "string" && (item as any).label.trim() ? (item as any).label.trim().slice(0, 120) : "Indikator manipulasi",
-      severity: (item as any).severity === "low" || (item as any).severity === "medium" || (item as any).severity === "high" ? (item as any).severity : "medium",
-      evidence: typeof (item as any).evidence === "string" ? redactEvidence((item as any).evidence, 120) : "",
-      explanation: typeof (item as any).explanation === "string" && (item as any).explanation.trim() ? (item as any).explanation.trim().slice(0, 500) : "Penjelasan indikator.",
+      category,
+      label: boundedText(item.label, "Indikator manipulasi", 120),
+      severity: isIndicatorSeverity(item.severity) ? item.severity : "medium",
+      evidence: typeof item.evidence === "string" ? redactEvidence(item.evidence, 120) : "",
+      explanation: boundedText(item.explanation, "Penjelasan indikator.", 500),
       messageIds: messageIds.length ? messageIds : ["m1"],
     });
   }
@@ -186,8 +235,8 @@ function coerceConversationResult(obj: Record<string, unknown>): ConversationAiS
   const rawTags = Array.isArray(obj.recommendedActionTags) ? obj.recommendedActionTags : [];
   const recommendedActionTags: ConversationAiSemanticResult["recommendedActionTags"] = [];
   for (const tag of rawTags) {
-    if (typeof tag === "string" && VALID_ACTION_TAGS.has(tag)) {
-      recommendedActionTags.push(tag as any);
+    if (isActionTag(tag)) {
+      recommendedActionTags.push(tag);
       if (recommendedActionTags.length >= 8) break;
     }
   }
@@ -257,24 +306,6 @@ function parseConversationResponse(raw: string | undefined): ConversationAiSeman
   }
 }
 
-function retryable(error: unknown): boolean {
-  const message = error instanceof Error ? error.message.toLowerCase() : "";
-  const status = error && typeof error === "object" && "status" in error ? String(error.status) : "";
-  return (
-    status === "429" ||
-    status === "503" ||
-    message.includes("429") ||
-    message.includes("timeout") ||
-    message.includes("temporarily") ||
-    message.includes("503") ||
-    message.includes("quota") ||
-    message.includes("resource_exhausted") ||
-    message.includes("rate") ||
-    message.includes("overloaded") ||
-    message.includes("unavailable")
-  );
-}
-
 export class GeminiAiClient implements AiClient {
   private readonly ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
 
@@ -286,7 +317,7 @@ export class GeminiAiClient implements AiClient {
     const startedAt = Date.now();
     let attemptedFallback = false;
     let lastError: unknown;
-    const models = [env.GEMINI_MODEL, env.GEMINI_FALLBACK_MODEL];
+    const models = [...new Set([env.GEMINI_MODEL, env.GEMINI_FALLBACK_MODEL])];
 
     for (const [index, model] of models.entries()) {
       if (index === 1) attemptedFallback = true;
@@ -304,7 +335,7 @@ export class GeminiAiClient implements AiClient {
               systemInstruction: SYSTEM_INSTRUCTION,
               responseMimeType: "application/json",
               responseJsonSchema: AiSemanticJsonSchema,
-              temperature: 0.2,
+              thinkingConfig: thinkingConfigFor(model),
               maxOutputTokens: 4_096,
             },
           });
@@ -319,7 +350,7 @@ export class GeminiAiClient implements AiClient {
                 abortSignal: controller.signal,
                 systemInstruction: SYSTEM_INSTRUCTION,
                 responseMimeType: "application/json",
-                temperature: 0.2,
+                thinkingConfig: thinkingConfigFor(model),
                 maxOutputTokens: 4_096,
               },
             });
@@ -385,7 +416,8 @@ export class GeminiAiClient implements AiClient {
       const startedAt = Date.now();
       let attemptedFallback = false;
       let lastError: unknown;
-      for (const [index, model] of [env.GEMINI_MODEL, env.GEMINI_FALLBACK_MODEL].entries()) {
+      const models = [...new Set([env.GEMINI_MODEL, env.GEMINI_FALLBACK_MODEL])];
+      for (const [index, model] of models.entries()) {
         if (index === 1) attemptedFallback = true;
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), env.AI_TIMEOUT_MS);
@@ -400,7 +432,7 @@ export class GeminiAiClient implements AiClient {
                 systemInstruction: SYSTEM_INSTRUCTION,
                 responseMimeType: "application/json",
                 responseJsonSchema: ConversationAiSemanticJsonSchema,
-                temperature: 0.2,
+                thinkingConfig: thinkingConfigFor(model),
                 maxOutputTokens: 4_096,
               },
             });
@@ -415,7 +447,7 @@ export class GeminiAiClient implements AiClient {
                   abortSignal: controller.signal,
                   systemInstruction: SYSTEM_INSTRUCTION,
                   responseMimeType: "application/json",
-                  temperature: 0.2,
+                  thinkingConfig: thinkingConfigFor(model),
                   maxOutputTokens: 4_096,
                 },
               });
