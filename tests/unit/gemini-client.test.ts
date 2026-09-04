@@ -1,16 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { generateContent } = vi.hoisted(() => ({
-  generateContent: vi.fn(),
+const { createInteraction } = vi.hoisted(() => ({
+  createInteraction: vi.fn(),
 }));
 
 vi.mock("@google/genai", () => ({
   GoogleGenAI: class {
-    models = { generateContent };
-  },
-  ThinkingLevel: {
-    LOW: "LOW",
-    MINIMAL: "MINIMAL",
+    interactions = { create: createInteraction };
   },
 }));
 
@@ -20,9 +16,8 @@ vi.mock("@/lib/env", () => ({
     AI_MAX_QUEUE: 8,
     AI_TIMEOUT_MS: 1_000,
     GEMINI_API_KEY: "test-key",
-    GEMINI_MODEL: "gemini-3.8-flash",
-    GEMINI_RECOVERY_MODEL: "gemini-2.5-flash-lite",
-    GEMINI_FALLBACK_MODEL: "gemini-3.5-flash-lite",
+    GEMINI_MODEL: "gemini-3.5-flash-lite",
+    GEMINI_FALLBACK_MODEL: "gemini-3.8-flash",
   },
 }));
 
@@ -48,67 +43,92 @@ const input = {
 
 describe("Gemini client model strategy", () => {
   beforeEach(() => {
-    generateContent.mockReset();
+    createInteraction.mockReset();
   });
 
-  it("reduces thinking latency for the configured Gemini 3 primary model", async () => {
-    generateContent.mockResolvedValue({ text: validResponse });
-
-    const analysis = await new GeminiAiClient().analyzeText(input);
-
-    expect(analysis.meta).toMatchObject({
-      modelId: "gemini-3.8-flash",
-      attemptedFallback: false,
-    });
-    expect(generateContent).toHaveBeenCalledOnce();
-    expect(generateContent.mock.calls[0]?.[0]).toMatchObject({
-      model: "gemini-3.8-flash",
-      config: {
-        responseMimeType: "application/json",
-        thinkingConfig: { thinkingLevel: "LOW" },
-      },
-    });
-    expect(generateContent.mock.calls[0]?.[0].config).not.toHaveProperty("temperature");
-  });
-
-  it("uses the low-latency recovery model after a primary provider outage", async () => {
-    generateContent
-      .mockRejectedValueOnce(new Error("503 UNAVAILABLE: high demand"))
-      .mockResolvedValueOnce({ text: validResponse });
-
-    const analysis = await new GeminiAiClient().analyzeText(input);
-
-    expect(analysis.meta).toMatchObject({
-      modelId: "gemini-2.5-flash-lite",
-      attemptedFallback: true,
-    });
-    expect(generateContent).toHaveBeenCalledTimes(2);
-    expect(generateContent.mock.calls[1]?.[0]).toMatchObject({
-      model: "gemini-2.5-flash-lite",
-      config: {
-        thinkingConfig: { thinkingBudget: 0 },
-      },
-    });
-  });
-
-  it("continues to the configured fallback when primary and recovery models fail", async () => {
-    generateContent
-      .mockRejectedValueOnce(new Error("503 UNAVAILABLE: high demand"))
-      .mockRejectedValueOnce(new Error("429 RESOURCE_EXHAUSTED"))
-      .mockResolvedValueOnce({ text: validResponse });
+  it("uses the low-latency primary model through the Interactions API", async () => {
+    createInteraction.mockResolvedValue({ output_text: validResponse });
 
     const analysis = await new GeminiAiClient().analyzeText(input);
 
     expect(analysis.meta).toMatchObject({
       modelId: "gemini-3.5-flash-lite",
-      attemptedFallback: true,
+      attemptedFallback: false,
     });
-    expect(generateContent).toHaveBeenCalledTimes(3);
-    expect(generateContent.mock.calls[2]?.[0]).toMatchObject({
+    expect(createInteraction).toHaveBeenCalledOnce();
+    expect(createInteraction.mock.calls[0]?.[0]).toMatchObject({
       model: "gemini-3.5-flash-lite",
-      config: {
-        thinkingConfig: { thinkingLevel: "MINIMAL" },
+      store: false,
+      system_instruction: expect.any(String),
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: expect.any(Object),
+      },
+      generation_config: {
+        max_output_tokens: 4_096,
+        thinking_level: "minimal",
       },
     });
+    expect(createInteraction.mock.calls[0]?.[1]).toEqual({
+      timeout: 1_000,
+      maxRetries: 1,
+    });
+  });
+
+  it("uses the fallback model after a primary provider outage", async () => {
+    createInteraction
+      .mockRejectedValueOnce(new Error("503 UNAVAILABLE: high demand"))
+      .mockResolvedValueOnce({ output_text: validResponse });
+
+    const analysis = await new GeminiAiClient().analyzeText(input);
+
+    expect(analysis.meta).toMatchObject({
+      modelId: "gemini-3.8-flash",
+      attemptedFallback: true,
+    });
+    expect(createInteraction).toHaveBeenCalledTimes(2);
+    expect(createInteraction.mock.calls[1]?.[0]).toMatchObject({
+      model: "gemini-3.8-flash",
+      generation_config: {
+        thinking_level: "low",
+      },
+    });
+  });
+
+  it("retries without a JSON schema when the provider rejects the schema", async () => {
+    createInteraction
+      .mockRejectedValueOnce(new Error("400 INVALID_ARGUMENT: invalid schema"))
+      .mockResolvedValueOnce({ output_text: validResponse });
+
+    const analysis = await new GeminiAiClient().analyzeText(input);
+
+    expect(analysis.meta).toMatchObject({
+      modelId: "gemini-3.5-flash-lite",
+      attemptedFallback: false,
+    });
+    expect(createInteraction).toHaveBeenCalledTimes(2);
+    expect(createInteraction.mock.calls[1]?.[0]).toMatchObject({
+      model: "gemini-3.5-flash-lite",
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+      },
+    });
+    expect(createInteraction.mock.calls[1]?.[0].response_format).not.toHaveProperty("schema");
+  });
+
+  it("sends image bytes as multimodal Interactions input", async () => {
+    createInteraction.mockResolvedValue({ output_text: validResponse });
+
+    await new GeminiAiClient().analyzeImage({
+      bytes: Uint8Array.from([1, 2, 3]),
+      mimeType: "image/png",
+    });
+
+    expect(createInteraction.mock.calls[0]?.[0].input).toEqual([
+      { type: "text", text: expect.any(String) },
+      { type: "image", data: "AQID", mime_type: "image/png" },
+    ]);
   });
 });
