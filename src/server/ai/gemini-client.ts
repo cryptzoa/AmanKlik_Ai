@@ -1,6 +1,6 @@
 import "server-only";
 
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 
 import { env } from "@/lib/env";
 import { AiProviderError, AiSchemaError } from "@/lib/errors";
@@ -97,7 +97,23 @@ function boundedText(value: unknown, fallback: string, maxLength: number): strin
     : fallback;
 }
 
-type InteractionInput = Parameters<GoogleGenAI["interactions"]["create"]>[0]["input"];
+type AiInput = string | Array<
+  | { type: "text"; text: string }
+  | { type: "image"; data: string; mime_type: string }
+>;
+
+type GenerateContentInput = Parameters<GoogleGenAI["models"]["generateContent"]>[0]["contents"];
+
+function toGenerateContentInput(input: AiInput): GenerateContentInput {
+  if (typeof input === "string") return input;
+
+  return [{
+    role: "user",
+    parts: input.map((part) => part.type === "text"
+      ? { text: part.text }
+      : { inlineData: { data: part.data, mimeType: part.mime_type } }),
+  }];
+}
 
 function thinkingLevelFor(model: string): "minimal" | "low" | undefined {
   const normalizedModel = model.toLocaleLowerCase("en-US");
@@ -118,6 +134,10 @@ function modelCandidates(): string[] {
     env.GEMINI_MODEL,
     env.GEMINI_FALLBACK_MODEL,
   ])];
+}
+
+function usesGenerateContentApi(model: string): boolean {
+  return model.toLocaleLowerCase("en-US").startsWith("gemini-3.8-");
 }
 
 function coerceSemanticResult(obj: Record<string, unknown>): AiSemanticResult {
@@ -314,13 +334,13 @@ function parseConversationResponse(raw: string | undefined): ConversationAiSeman
 export class GeminiAiClient implements AiClient {
   private readonly ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
 
-  private generate(input: InteractionInput): Promise<AiAnalysis> {
+  private generate(input: AiInput): Promise<AiAnalysis> {
     return withAiConcurrency(() => this.generateWithinLimit(input));
   }
 
   private async createStructuredInteraction(
     model: string,
-    input: InteractionInput,
+    input: AiInput,
     schema: Record<string, unknown>,
     logContext: string,
   ): Promise<string | undefined> {
@@ -372,7 +392,69 @@ export class GeminiAiClient implements AiClient {
     }
   }
 
-  private async generateWithinLimit(input: InteractionInput): Promise<AiAnalysis> {
+  private async createStructuredContent(
+    model: string,
+    input: AiInput,
+    schema: Record<string, unknown>,
+    logContext: string,
+  ): Promise<string | undefined> {
+    const controller = new AbortController();
+    const timeout = setTimeout(
+      () => controller.abort(),
+      Math.min(env.AI_TIMEOUT_MS, 15_000),
+    );
+    const contents = toGenerateContentInput(input);
+    const config = {
+      abortSignal: controller.signal,
+      systemInstruction: SYSTEM_INSTRUCTION,
+      responseMimeType: "application/json",
+      thinkingConfig: { thinkingLevel: ThinkingLevel.LOW } as const,
+      maxOutputTokens: 4_096,
+    };
+
+    try {
+      let response;
+      try {
+        response = await this.ai.models.generateContent({
+          model,
+          contents,
+          config: { ...config, responseJsonSchema: schema },
+        });
+      } catch (callError) {
+        const message = callError instanceof Error ? callError.message : String(callError);
+        const isSchemaError = message.includes("400")
+          || message.toLowerCase().includes("schema")
+          || message.toLowerCase().includes("invalid_argument");
+
+        if (!isSchemaError) throw callError;
+
+        console.warn(`[AmanKlik AI ${logContext} Schema Fallback on ${model}]:`, message);
+        response = await this.ai.models.generateContent({ model, contents, config });
+      }
+
+      return response.text
+        ?? response.candidates?.[0]?.content?.parts
+          ?.map((part) => ("text" in part ? part.text : ""))
+          .join("");
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  private createStructuredResponse(
+    model: string,
+    input: AiInput,
+    schema: Record<string, unknown>,
+    logContext: string,
+  ): Promise<string | undefined> {
+    if (usesGenerateContentApi(model)) {
+      return this.createStructuredContent(model, input, schema, logContext);
+    }
+
+    return this.createStructuredInteraction(model, input, schema, logContext);
+  }
+
+  private async generateWithinLimit(input: AiInput): Promise<AiAnalysis> {
     const startedAt = Date.now();
     let attemptedFallback = false;
     let lastError: unknown;
@@ -382,7 +464,7 @@ export class GeminiAiClient implements AiClient {
       if (index === 1) attemptedFallback = true;
 
       try {
-        const rawText = await this.createStructuredInteraction(
+        const rawText = await this.createStructuredResponse(
           model,
           input,
           AiSemanticJsonSchema,
@@ -441,7 +523,7 @@ export class GeminiAiClient implements AiClient {
       for (const [index, model] of models.entries()) {
         if (index === 1) attemptedFallback = true;
         try {
-          const rawText = await this.createStructuredInteraction(
+          const rawText = await this.createStructuredResponse(
             model,
             conversationAnalysisPrompt(input),
             ConversationAiSemanticJsonSchema,
