@@ -115,6 +115,14 @@ function thinkingConfigFor(model: string) {
   return undefined;
 }
 
+function modelCandidates(): string[] {
+  return [...new Set([
+    env.GEMINI_MODEL,
+    env.GEMINI_RECOVERY_MODEL,
+    env.GEMINI_FALLBACK_MODEL,
+  ])];
+}
+
 function coerceSemanticResult(obj: Record<string, unknown>): AiSemanticResult {
   const semanticRisk = Math.min(100, Math.max(0, Math.round(Number(obj.semanticRisk) || 0)));
   const confidence = obj.confidence === "low" || obj.confidence === "medium" || obj.confidence === "high"
@@ -317,7 +325,7 @@ export class GeminiAiClient implements AiClient {
     const startedAt = Date.now();
     let attemptedFallback = false;
     let lastError: unknown;
-    const models = [...new Set([env.GEMINI_MODEL, env.GEMINI_FALLBACK_MODEL])];
+    const models = modelCandidates();
 
     for (const [index, model] of models.entries()) {
       if (index === 1) attemptedFallback = true;
@@ -375,7 +383,7 @@ export class GeminiAiClient implements AiClient {
       } catch (error) {
         console.error(`[AmanKlik AI Error on ${model}]:`, error instanceof Error ? error.message : error);
         lastError = error;
-        if (index === 0) continue;
+        if (index < models.length - 1) continue;
         break;
       } finally {
         clearTimeout(timeout);
@@ -416,7 +424,7 @@ export class GeminiAiClient implements AiClient {
       const startedAt = Date.now();
       let attemptedFallback = false;
       let lastError: unknown;
-      const models = [...new Set([env.GEMINI_MODEL, env.GEMINI_FALLBACK_MODEL])];
+      const models = modelCandidates();
       for (const [index, model] of models.entries()) {
         if (index === 1) attemptedFallback = true;
         const controller = new AbortController();
@@ -464,7 +472,7 @@ export class GeminiAiClient implements AiClient {
         } catch (error) {
           console.error(`[AmanKlik AI Conversation Error on ${model}]:`, error instanceof Error ? error.message : error);
           lastError = error;
-          if (index === 0) continue;
+          if (index < models.length - 1) continue;
           break;
         } finally {
           clearTimeout(timeout);

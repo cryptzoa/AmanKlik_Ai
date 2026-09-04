@@ -9,6 +9,7 @@ const rawEnvSchema = z.object({
   DATABASE_URL: z.string().url().optional(),
   GEMINI_API_KEY: z.string().min(1).optional(),
   GEMINI_MODEL: z.string().default("gemini-2.5-flash-lite"),
+  GEMINI_RECOVERY_MODEL: z.string().default("gemini-2.5-flash-lite"),
   GEMINI_FALLBACK_MODEL: z.string().default("gemini-3.5-flash-lite"),
   GEMINI_EMBEDDING_MODEL: z.string().default("gemini-embedding-2"),
   AI_MODE: z.enum(["live", "mock"]).default("mock"),
