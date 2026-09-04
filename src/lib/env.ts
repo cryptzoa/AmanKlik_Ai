@@ -13,7 +13,7 @@ const rawEnvSchema = z.object({
   GEMINI_EMBEDDING_MODEL: z.string().default("gemini-embedding-2"),
   AI_MODE: z.enum(["live", "mock"]).default("mock"),
   CACHE_HMAC_SECRET: z.string().min(32).default(LOCAL_CACHE_SECRET),
-  APP_BASE_URL: z.string().url().refine((value) => ["http:", "https:"].includes(new URL(value).protocol), "APP_BASE_URL must use HTTP or HTTPS").default("http://localhost:3000"),
+  APP_BASE_URL: z.string().url().refine((value) => ["http:", "https:"].includes(new URL(value).protocol), "APP_BASE_URL must use HTTP or HTTPS").default(process.env.NODE_ENV === "production" ? "https://amanklik.id" : "http://localhost:3000"),
   SCAN_RATE_LIMIT: z.coerce.number().int().positive().default(10),
   SCAN_RATE_WINDOW_SECONDS: z.coerce.number().int().positive().default(600),
   ANALYSIS_CACHE_TTL_SECONDS: z.coerce.number().int().positive().default(86_400),

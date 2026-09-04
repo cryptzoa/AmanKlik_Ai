@@ -77,6 +77,52 @@ describe("API validation boundaries", () => {
     expect((await response.json()).error.code).toBe("FORBIDDEN");
   });
 
+  it("accepts production submissions from amanklik.id and its www subdomain", async () => {
+    const responseApex = await postText(new Request("http://localhost/api/scans/text", {
+      method: "POST",
+      body: JSON.stringify({ text: "pendek" }),
+      headers: {
+        "content-type": "application/json",
+        origin: "https://amanklik.id",
+        "sec-fetch-site": "same-origin",
+      },
+    }));
+
+    // Reaching INVALID_INPUT (400) proves origin check passed (not 403 FORBIDDEN)
+    expect(responseApex.status).toBe(400);
+    expect((await responseApex.json()).error.code).toBe("INVALID_INPUT");
+
+    const responseWww = await postText(new Request("http://localhost/api/scans/text", {
+      method: "POST",
+      body: JSON.stringify({ text: "pendek" }),
+      headers: {
+        "content-type": "application/json",
+        origin: "https://www.amanklik.id",
+        "sec-fetch-site": "same-site",
+      },
+    }));
+
+    expect(responseWww.status).toBe(400);
+    expect((await responseWww.json()).error.code).toBe("INVALID_INPUT");
+  });
+
+  it("accepts submissions behind reverse proxies forwarding host and proto", async () => {
+    const response = await postText(new Request("http://127.0.0.1:3000/api/scans/text", {
+      method: "POST",
+      body: JSON.stringify({ text: "pendek" }),
+      headers: {
+        "content-type": "application/json",
+        origin: "https://custom-deploy.example.com",
+        "x-forwarded-host": "custom-deploy.example.com",
+        "x-forwarded-proto": "https",
+        "sec-fetch-site": "same-origin",
+      },
+    }));
+
+    expect(response.status).toBe(400);
+    expect((await response.json()).error.code).toBe("INVALID_INPUT");
+  });
+
   it("rejects non-http URL protocols", async () => {
     const response = await postUrl(new Request("http://localhost/api/scans/url", {
       method: "POST",
